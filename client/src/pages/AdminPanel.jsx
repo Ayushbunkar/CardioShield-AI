@@ -9,6 +9,7 @@ import CustomerQueries from "../components/Admin/CustomerQueries";
 import CustomerFeedback from "../components/Admin/CustomerFeedback";
 import BanquetHall from "../components/Admin/BanquetHall";
 import CateringService from "../components/Admin/CateringService";
+import AIAdminDashboard from "../components/Admin/AIAdminDashboard";
 
 const AdminPannel = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const AdminPannel = () => {
         <Sidebar active={active} setActive={setActive} />
         <div className="w-full">
           {active === "overview" && <Overview />}
+          {active === "aiHealth" && <AIAdminDashboard />}
           {active === "banquetHall" && <BanquetHall />}
           {active === "cateringService" && <CateringService />}
           {active === "customers" && <Customers />}

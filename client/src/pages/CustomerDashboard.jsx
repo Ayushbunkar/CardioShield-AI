@@ -5,6 +5,7 @@ import Profile from "../components/Customer/Profile";
 import Bookings from "../components/Customer/Bookings";
 import Support from "../components/Customer/Support";
 import Feedback from "../components/Customer/Feedback";
+import AIHistory from "../components/Customer/AIHistory";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +27,7 @@ const CustomerDashboard = () => {
         <Sidebar active={active} setActive={setActive} />
         <div className=" w-full">
           {active === "overview" && <Overview />}
+          {active === "aihealth" && <AIHistory />}
           {active === "profile" && <Profile />}
           {active === "bookings" && <Bookings />}
           {active === "support" && <Support />}

@@ -9,12 +9,13 @@ import AuthRouter from "./src/routes/authRoutes.js";
 import UserRouter from "./src/routes/userRoutes.js";
 import PublicRouter from "./src/routes/publicRoutes.js";
 import AdminRouter from "./src/routes/adminRoutes.js";
+import AssessmentRouter from "./src/routes/assessmentRoutes.js";
 import cookieParser from "cookie-parser";
 import cloudinary from "./src/config/cloudinary.js";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000"], credentials: true }));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -24,6 +25,7 @@ app.use("/auth", AuthRouter);
 app.use("/user", UserRouter);
 app.use("/public", PublicRouter);
 app.use("/admin", AdminRouter);
+app.use("/assessment", AssessmentRouter);
 
 app.get("/", (req, res) => {
   res.json({ message: "Server Connected" });

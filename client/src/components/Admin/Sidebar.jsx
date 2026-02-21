@@ -89,6 +89,7 @@ import {
   FaQuestionCircle,
   FaCommentDots,
   FaSignOutAlt,
+  FaHeartbeat,
 } from "react-icons/fa";
 import { FaTent } from "react-icons/fa6";
 import { GiCook } from "react-icons/gi";
@@ -128,6 +129,15 @@ const Sidebar = ({ active, setActive }) => {
                 onClick={() => setActive("overview")}
               >
                 <FaTachometerAlt className="text-xl" /> Overview
+              </li>
+              <li
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
+                  active === "aiHealth" &&
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
+                }`}
+                onClick={() => setActive("aiHealth")}
+              >
+                <FaHeartbeat className="text-xl" /> AI Health
               </li>
               <li
                 className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${

@@ -6,6 +6,7 @@ import {
   FaLifeRing,
   FaCommentDots,
   FaSignOutAlt,
+  FaHeartbeat,
 } from "react-icons/fa";
 import api from "../../config/api";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +43,7 @@ const Sidebar = ({ active, setActive }) => {
           <ul className="grid gap-3">
             {[
               { key: "overview", icon: <FaTachometerAlt />, label: "Overview" },
+              { key: "aihealth", icon: <FaHeartbeat />, label: "AI Health" },
               { key: "profile", icon: <FaUser />, label: "Profile" },
               { key: "bookings", icon: <FaCalendarCheck />, label: "Bookings" },
               { key: "support", icon: <FaLifeRing />, label: "Support" },
