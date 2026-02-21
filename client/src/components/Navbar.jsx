@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserMd, FaUserPlus } from "react-icons/fa";
+import { Heart } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -26,6 +27,14 @@ const Navbar = () => {
             className="hover:text-[#8B7FCF] transition duration-200 hover:scale-105"
           >
             Home
+          </Link>
+
+          <Link 
+            to="/ai" 
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] text-white rounded-lg hover:shadow-lg transition duration-200 hover:scale-105"
+          >
+            <Heart className="w-4 h-4" />
+            AI Assessment
           </Link>
 
           <Link 

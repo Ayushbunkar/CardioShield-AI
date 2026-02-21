@@ -9,6 +9,7 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminPanel from "./pages/AdminPanel";
 import ContactUs from "./pages/ContactUs";
 import About from "./pages/About";
+import CardioAI from "./pages/CardioAI";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/adminpanel" element={<AdminPanel />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/about" element={<About />} />
+          <Route path="/ai" element={<CardioAI />} />
           
           
         </Routes>

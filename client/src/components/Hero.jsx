@@ -46,7 +46,7 @@ export default function Hero() {
             {/* CTA Section */}
             <div className="flex items-center gap-6 flex-wrap">
               <Link 
-                to="/about"
+                to="/ai"
                 className="group"
               >
                 <div className="relative">
@@ -55,7 +55,7 @@ export default function Hero() {
                       <FaHeartbeat className="text-2xl animate-pulse drop-shadow-lg" />
                     </div>
                     <span className="font-semibold text-lg whitespace-nowrap max-w-0 group-hover:max-w-xs opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:pr-2 drop-shadow-lg">
-                      AI Risk Management
+                      Start AI Assessment
                     </span>
                   </div>
                   <div className="absolute inset-0 rounded-full bg-[#8B7FCF] opacity-40 animate-ping"></div>
