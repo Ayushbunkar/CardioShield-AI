@@ -110,10 +110,10 @@ const Sidebar = ({ active, setActive }) => {
 
   return (
     <>
-      <div className="w-100 bg-gradient-to-b from-[#fbe8d3] to-[#fff3e0] border-r border-[#c49b63] min-h-[87vh] p-4 flex flex-col justify-between shadow-lg">
+      <div className="w-100 bg-gradient-to-b from-[#F5F1ED] to-white border-r border-[#E8DFF5] min-h-[87vh] p-4 flex flex-col justify-between shadow-lg">
         <div>
-          <div className="border-b-2 border-[#c49b63] pb-4 h-fit text-center">
-            <span className="text-2xl font-bold text-[#8b1f1f] font-serif">
+          <div className="border-b-2 border-[#E8DFF5] pb-4 h-fit text-center">
+            <span className="text-2xl font-bold text-[#4A3B5C] font-serif">
               Admin Dashboard
             </span>
           </div>
@@ -121,63 +121,63 @@ const Sidebar = ({ active, setActive }) => {
           <div className="py-4 px-2">
             <ul className="grid gap-3 h-100 overflow-y-auto scrollbar-hide">
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "overview" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("overview")}
               >
                 <FaTachometerAlt className="text-xl" /> Overview
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "banquetHall" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("banquetHall")}
               >
                 <FaTent className="text-xl" /> Banquet Hall
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "cateringService" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("cateringService")}
               >
                 <GiCook className="text-xl" /> Catering Service
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "customers" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("customers")}
               >
                 <FaUsers className="text-xl" /> Customers
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "bookings" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("bookings")}
               >
                 <FaCalendarCheck className="text-xl" /> Bookings
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "cusQueries" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("cusQueries")}
               >
                 <FaQuestionCircle className="text-xl" /> Customer Queries
               </li>
               <li
-                className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
+                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
                   active === "cusFeedback" &&
-                  "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
+                  "bg-[#8B7FCF] text-white shadow-md scale-105"
                 }`}
                 onClick={() => setActive("cusFeedback")}
               >
@@ -188,7 +188,7 @@ const Sidebar = ({ active, setActive }) => {
         </div>
         <div>
           <button
-            className="text-lg text-[#8b1f1f] font-semibold w-full border-2 border-[#c49b63] p-4 rounded-xl flex gap-3 items-center justify-center hover:bg-[#8b1f1f] hover:text-white hover:border-[#8b1f1f] transition-all duration-300 hover:shadow-lg bg-[#fce7d3]"
+            className="text-lg text-[#4A3B5C] font-semibold w-full border-2 border-[#E8DFF5] p-4 rounded-xl flex gap-3 items-center justify-center hover:bg-[#B8A4C9] hover:text-white hover:border-[#B8A4C9] transition-all duration-300 hover:shadow-lg bg-white"
             onClick={handleLogout}
           >
             Logout

@@ -58,17 +58,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-950 via-slate-900 to-red-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#F5F1ED] px-4">
 
       {/* Login Card */}
-      <div className="w-full max-w-md bg-slate-800/70 backdrop-blur-xl border border-cyan-500/20 shadow-2xl rounded-2xl p-8">
+      <div className="w-full max-w-md bg-white border border-[#E8DFF5] shadow-2xl rounded-2xl p-8">
 
         {/* Heading */}
-        <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-red-400 to-cyan-400 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold text-center mb-2 text-[#4A3B5C]">
           CardioShield AI
         </h2>
 
-        <p className="text-center text-gray-400 text-sm mb-6">
+        <p className="text-center text-[#6B5B7C] text-sm mb-6">
           Secure Access to Cardiovascular Risk Intelligence Platform
         </p>
 
@@ -77,7 +77,7 @@ const Login = () => {
 
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-300">
+            <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
               Email Address
             </label>
             <input
@@ -85,14 +85,14 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+              className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
               placeholder="doctor@cardioshield.ai"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-300">
+            <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
               Password
             </label>
             <input
@@ -100,7 +100,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition"
+              className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
               placeholder="••••••••"
             />
           </div>
@@ -109,19 +109,19 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg bg-gradient-to-r from-red-500 to-cyan-500 text-white font-semibold shadow-lg transition-all duration-300 ${
-              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+            className={`w-full py-3 rounded-lg bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white font-semibold shadow-lg transition-all duration-300 ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
             {loading ? "Signing In..." : "Sign In"}
           </button>
 
           {/* Register Link */}
-          <div className="text-center text-gray-400 text-sm mt-4">
-            Don’t have an account?{" "}
+          <div className="text-center text-[#6B5B7C] text-sm mt-4">
+            Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-cyan-400 font-medium hover:text-cyan-300"
+              className="text-[#8B7FCF] font-medium hover:text-[#7A6EBE]"
             >
               Register
             </Link>
@@ -130,7 +130,7 @@ const Login = () => {
         </form>
 
         {/* Footer */}
-        <div className="mt-6 text-xs text-center text-gray-500">
+        <div className="mt-6 text-xs text-center text-[#6B5B7C]">
           HIPAA-aware • Secure Authentication • Encrypted Session
         </div>
 

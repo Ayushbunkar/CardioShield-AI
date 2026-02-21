@@ -81,13 +81,13 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
   return (
     <>
       <div className="fixed inset-0 bg-black/50">
-        <div className="mt-30 mx-auto w-1/2 min-h-[80vh] bg-gradient-to-b from-[#fff3e0] to-[#fbe8d3] rounded-lg border border-[#c49b63] shadow-xl">
-          <div className="p-3 flex justify-between border-b-2 border-[#c49b63]">
-            <h1 className="text-xl font-bold text-[#8b1f1f]">
+        <div className="mt-30 mx-auto w-1/2 min-h-[80vh] bg-white rounded-lg border border-[#E8DFF5] shadow-xl">
+          <div className="p-3 flex justify-between border-b-2 border-[#E8DFF5]">
+            <h1 className="text-xl font-bold text-[#4A3B5C]">
               Add Banquet Hall
             </h1>
             <button
-              className="text-3xl text-[#8b1f1f] hover:text-red-500 transition"
+              className="text-3xl text-[#8B7FCF] hover:text-red-500 transition"
               onClick={onClose}
             >
               <IoCloseCircle />
@@ -101,7 +101,7 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
             >
               <div className="flex gap-3">
                 <div className="w-2/3">
-                  <label className="block mb-1 font-medium text-[#8b1f1f]">
+                  <label className="block mb-1 font-medium text-[#4A3B5C]">
                     Hall Name
                   </label>
                   <input
@@ -110,12 +110,12 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                     required
                     value={banquetHallData.hallName}
                     onChange={handleChange}
-                    className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                    className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                   />
                 </div>
 
                 <div className="w-1/3">
-                  <label className="block mb-1 font-medium text-[#8b1f1f]">
+                  <label className="block mb-1 font-medium text-[#4A3B5C]">
                     Capacity
                   </label>
                   <input
@@ -124,13 +124,13 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                     required
                     value={banquetHallData.capacity}
                     onChange={handleChange}
-                    className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                    className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Address
                 </label>
                 <textarea
@@ -138,12 +138,12 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                   required
                   onChange={handleChange}
                   value={banquetHallData.address}
-                  className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                  className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Manager Name
                 </label>
                 <input
@@ -152,12 +152,12 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                   required
                   onChange={handleChange}
                   value={banquetHallData.managerName}
-                  className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                  className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Contact Number
                 </label>
                 <input
@@ -166,12 +166,12 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                   required
                   onChange={handleChange}
                   value={banquetHallData.contactNumber}
-                  className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                  className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Email
                 </label>
                 <input
@@ -180,13 +180,13 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                   required
                   onChange={handleChange}
                   value={banquetHallData.email}
-                  className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                  className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block mb-1 font-medium text-[#8b1f1f]">
+                  <label className="block mb-1 font-medium text-[#4A3B5C]">
                     Rent
                   </label>
                   <input
@@ -195,12 +195,12 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                     required
                     onChange={handleChange}
                     value={banquetHallData.rent}
-                    className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                    className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium text-[#8b1f1f]">
+                  <label className="block mb-1 font-medium text-[#4A3B5C]">
                     Minimum Booking Amount
                   </label>
                   <input
@@ -209,13 +209,13 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                     required
                     onChange={handleChange}
                     value={banquetHallData.minBookingAmount}
-                    className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                    className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Feature Description
                 </label>
                 <textarea
@@ -223,19 +223,19 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                   required
                   onChange={handleChange}
                   value={banquetHallData.featureDescription}
-                  className="w-full border border-[#c49b63] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8b1f1f]"
+                  className="w-full border border-[#E8DFF5] px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 font-medium text-[#8b1f1f]">
+                <label className="block mb-1 font-medium text-[#4A3B5C]">
                   Photos (Max: 5 Photos, Size: &lt;1MB/photo)
                 </label>
                 <input
                   type="file"
                   name="photos"
                   accept="image/*"
-                  className="w-full border border-[#c49b63] p-2 rounded"
+                  className="w-full border border-[#E8DFF5] p-2 rounded"
                   onChange={handlePhotoChange}
                   multiple
                 />
@@ -247,14 +247,14 @@ const AddBanquetHall = ({ isOpen, onClose }) => {
                     <img
                       src={image}
                       key={index}
-                      className="rounded border border-[#c49b63]"
+                      className="rounded border border-[#E8DFF5]"
                     />
                   ))}
               </div>
 
               <button
                 type="submit"
-                className="bg-[#8b1f1f] text-white px-6 py-2 rounded hover:bg-[#a02828] transition font-medium shadow-md"
+                className="bg-[#8B7FCF] text-white px-6 py-2 rounded hover:bg-[#7A6EBE] transition font-medium shadow-md"
               >
                 Submit
               </button>

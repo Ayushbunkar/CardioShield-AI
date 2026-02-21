@@ -94,41 +94,41 @@ const CustomerQueries = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#8b1f1f]"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#8B7FCF]"></div>
       </div>
     );
   }
 
   return (
     <>
-      <div className="bg-gradient-to-b from-[#fbe8d3] to-[#fff3e0] min-h-[87vh] p-6 overflow-y-auto">
+      <div className="bg-[#F5F1ED] min-h-[87vh] p-6 overflow-y-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#8b1f1f] mb-2 font-serif">
+          <h1 className="text-3xl font-bold text-[#4A3B5C] mb-2 font-serif">
             Customer Queries
           </h1>
-          <p className="text-[#6c3d0c]">
+          <p className="text-[#6B5B7C]">
             Manage and respond to customer inquiries with care and clarity.
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md border border-[#c49b63] p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-md border border-[#E8DFF5] p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex-1 relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#c49b63]" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#B8A4C9]" />
               <input
                 type="text"
                 placeholder="Search by name, email, or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-[#c49b63] rounded-lg focus:ring-2 focus:ring-[#8b1f1f] focus:border-[#8b1f1f] outline-none"
+                className="w-full pl-10 pr-4 py-3 border border-[#E8DFF5] rounded-lg focus:ring-2 focus:ring-[#8B7FCF] focus:border-[#8B7FCF] outline-none"
               />
             </div>
             <div className="flex items-center gap-2">
-              <FaFilter className="text-[#c49b63]" />
+              <FaFilter className="text-[#B8A4C9]" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3 border border-[#c49b63] rounded-lg focus:ring-2 focus:ring-[#8b1f1f] focus:border-[#8b1f1f] outline-none"
+                className="px-4 py-3 border border-[#E8DFF5] rounded-lg focus:ring-2 focus:ring-[#8B7FCF] focus:border-[#8B7FCF] outline-none"
               >
                 <option value="all">All Status</option>
                 <option value="Pending">Pending</option>
@@ -139,56 +139,56 @@ const CustomerQueries = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md border border-[#c49b63] overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-[#E8DFF5] overflow-hidden">
           {filteredQueries.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[#fce7d3] border-b border-[#c49b63]">
+                <thead className="bg-[#E8DFF5] border-b border-[#B8A4C9]">
                   <tr>
-                    <th className="text-left px-6 py-4 font-semibold text-[#6c3d0c]">
+                    <th className="text-left px-6 py-4 font-semibold text-[#4A3B5C]">
                       <div className="flex items-center gap-2">
-                        <FaUser className="text-[#8b1f1f]" /> Customer
+                        <FaUser className="text-[#8B7FCF]" /> Customer
                       </div>
                     </th>
-                    <th className="text-left px-6 py-4 font-semibold text-[#6c3d0c]">
+                    <th className="text-left px-6 py-4 font-semibold text-[#4A3B5C]">
                       <div className="flex items-center gap-2">
-                        <FaEnvelope className="text-[#8b1f1f]" /> Email
+                        <FaEnvelope className="text-[#8B7FCF]" /> Email
                       </div>
                     </th>
-                    <th className="text-left px-6 py-4 font-semibold text-[#6c3d0c]">
+                    <th className="text-left px-6 py-4 font-semibold text-[#4A3B5C]">
                       <div className="flex items-center gap-2">
-                        <FaPhone className="text-[#8b1f1f]" /> Phone
+                        <FaPhone className="text-[#8B7FCF]" /> Phone
                       </div>
                     </th>
-                    <th className="text-left px-6 py-4 font-semibold text-[#6c3d0c]">
+                    <th className="text-left px-6 py-4 font-semibold text-[#4A3B5C]">
                       Status
                     </th>
-                    <th className="text-left px-6 py-4 font-semibold text-[#6c3d0c]">
+                    <th className="text-left px-6 py-4 font-semibold text-[#4A3B5C]">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#fbe8d3]">
+                <tbody className="divide-y divide-[#E8DFF5]">
                   {filteredQueries.map((query, index) => (
-                    <tr key={index} className="hover:bg-[#fff3e0] transition-colors">
+                    <tr key={index} className="hover:bg-[#F5F1ED] transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-[#8b1f1f] to-[#c49b63] rounded-full flex items-center justify-center text-white font-semibold">
+                          <div className="w-10 h-10 bg-gradient-to-br from-[#8B7FCF] to-[#B8A4C9] rounded-full flex items-center justify-center text-white font-semibold">
                             {query.name?.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <div className="font-medium text-[#5e2c04]">{query.name}</div>
-                            <div className="text-sm text-[#6c3d0c]">Customer</div>
+                            <div className="font-medium text-[#4A3B5C]">{query.name}</div>
+                            <div className="text-sm text-[#6B5B7C]">Customer</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-[#6c3d0c]">{query.email}</td>
-                      <td className="px-6 py-4 text-[#6c3d0c]">{query.phone}</td>
+                      <td className="px-6 py-4 text-[#6B5B7C]">{query.email}</td>
+                      <td className="px-6 py-4 text-[#6B5B7C]">{query.phone}</td>
                       <td className="px-6 py-4">{getStatusBadge(query.status)}</td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleViewQuery(query)}
-                          className="px-3 py-2 text-[#8b1f1f] hover:bg-[#fce7d3] rounded-lg transition-colors flex gap-2 items-center"
+                          className="px-3 py-2 text-[#8B7FCF] hover:bg-[#E8DFF5] rounded-lg transition-colors flex gap-2 items-center"
                         >
                           <FaEye /> View Details
                         </button>
@@ -200,13 +200,13 @@ const CustomerQueries = () => {
             </div>
           ) : (
             <div className="text-center py-16">
-              <div className="w-24 h-24 bg-[#fbe8d3] rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaEnvelope className="text-3xl text-[#c49b63]" />
+              <div className="w-24 h-24 bg-[#E8DFF5] rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaEnvelope className="text-3xl text-[#B8A4C9]" />
               </div>
-              <h3 className="text-lg font-medium text-[#8b1f1f] mb-2">
+              <h3 className="text-lg font-medium text-[#4A3B5C] mb-2">
                 No Queries Found
               </h3>
-              <p className="text-[#6c3d0c]">
+              <p className="text-[#6B5B7C]">
                 {searchTerm || statusFilter !== "all"
                   ? "Try adjusting your search or filter criteria"
                   : "No customer queries have been submitted yet"}

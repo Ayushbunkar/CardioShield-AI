@@ -51,25 +51,25 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-red-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#F5F1ED] px-4 py-10">
       
-      <div className="w-full max-w-4xl bg-slate-800/60 backdrop-blur-md border border-cyan-500/20 rounded-2xl shadow-2xl p-6">
+      <div className="w-full max-w-4xl bg-white border border-[#E8DFF5] rounded-2xl shadow-2xl p-6">
         
-        <h2 className="text-3xl font-extrabold text-center mb-2 bg-gradient-to-r from-red-400 to-cyan-400 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-extrabold text-center mb-2 text-[#4A3B5C]">
           Contact CardioShield AI
         </h2>
 
-        <p className="text-center text-gray-400 text-sm mb-6">
+        <p className="text-center text-[#6B5B7C] text-sm mb-6">
           Reach out for deployment partnerships, technical queries, or collaboration.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-gray-300">
+        <form onSubmit={handleSubmit} className="space-y-4 text-[#4A3B5C]">
 
           <div className="grid md:grid-cols-2 gap-4">
             
             <div>
               <label className="block text-sm mb-1">
-                <FaUser className="inline mr-2 text-cyan-400" />
+                <FaUser className="inline mr-2 text-[#8B7FCF]" />
                 Full Name
               </label>
               <input
@@ -78,14 +78,14 @@ const ContactUs = () => {
                 value={contactData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-slate-900 border border-cyan-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3 py-2 bg-[#F5F1ED] border border-[#E8DFF5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 placeholder="Your full name"
               />
             </div>
 
             <div>
               <label className="block text-sm mb-1">
-                <FaEnvelope className="inline mr-2 text-red-400" />
+                <FaEnvelope className="inline mr-2 text-[#B8A4C9]" />
                 Email
               </label>
               <input
@@ -94,7 +94,7 @@ const ContactUs = () => {
                 value={contactData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-slate-900 border border-red-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 bg-[#F5F1ED] border border-[#E5D9F2] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8A4C9]"
                 placeholder="you@example.com"
               />
             </div>
@@ -105,7 +105,7 @@ const ContactUs = () => {
             
             <div>
               <label className="block text-sm mb-1">
-                <FaPhone className="inline mr-2 text-cyan-400" />
+                <FaPhone className="inline mr-2 text-[#8B7FCF]" />
                 Phone
               </label>
               <input
@@ -114,14 +114,14 @@ const ContactUs = () => {
                 value={contactData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-slate-900 border border-cyan-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-3 py-2 bg-[#F5F1ED] border border-[#E8DFF5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FCF]"
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
 
             <div>
               <label className="block text-sm mb-1">
-                <FaEdit className="inline mr-2 text-red-400" />
+                <FaEdit className="inline mr-2 text-[#B8A4C9]" />
                 Subject
               </label>
               <input
@@ -130,7 +130,7 @@ const ContactUs = () => {
                 value={contactData.subject}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-slate-900 border border-red-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 bg-[#F5F1ED] border border-[#E5D9F2] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B8A4C9]"
                 placeholder="Deployment / Partnership / Inquiry"
               />
             </div>
@@ -139,7 +139,7 @@ const ContactUs = () => {
 
           <div>
             <label className="block text-sm mb-1">
-              <FaEdit className="inline mr-2 text-cyan-400" />
+              <FaEdit className="inline mr-2 text-[#8B7FCF]" />
               Message
             </label>
             <textarea
@@ -148,7 +148,7 @@ const ContactUs = () => {
               value={contactData.message}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 bg-slate-900 border border-cyan-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+              className="w-full px-3 py-2 bg-[#F5F1ED] border border-[#E8DFF5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] resize-none"
               placeholder="Tell us about your inquiry..."
             />
           </div>
@@ -156,7 +156,7 @@ const ContactUs = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-red-500 to-cyan-500 text-white font-semibold rounded-lg hover:scale-[1.02] transition duration-300 flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full py-3 bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white font-semibold rounded-lg transition duration-300 flex items-center justify-center space-x-2 shadow-lg"
           >
             {loading ? (
               <>
@@ -173,7 +173,7 @@ const ContactUs = () => {
 
         </form>
 
-        <p className="text-xs text-center text-gray-500 mt-4">
+        <p className="text-xs text-center text-[#6B5B7C] mt-4">
           We respond within 24 hours. Secure & confidential communication.
         </p>
 

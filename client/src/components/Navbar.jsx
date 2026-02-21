@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaUserMd, FaUserPlus } from "react-icons/fa";
 
 const Navbar = () => {
   return (
-    <nav className="bg-[#F5F1ED] shadow-sm py-4 px-8">
+    <nav className="bg-[#F5F1ED] shadow-md py-3 px-8 sticky top-0 z-50">
       
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
@@ -18,52 +19,49 @@ const Navbar = () => {
         </Link>
 
         {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-8 text-[#6B5B7C] font-medium">
+        <div className="hidden lg:flex items-center gap-6 text-[#6B5B7C] font-medium">
           
           <Link 
-            to="/banquets" 
-            className="hover:text-[#8B7FCF] transition duration-200"
+            to="/"
+            className="hover:text-[#8B7FCF] transition duration-200 hover:scale-105"
           >
-            Banquet Halls
-          </Link>
-
-          <Link 
-            to="/catering" 
-            className="hover:text-[#8B7FCF] transition duration-200"
-          >
-            Catering
+            Home
           </Link>
 
           <Link 
             to="/about" 
-            className="hover:text-[#8B7FCF] transition duration-200"
-          >
-            Success Stories
-          </Link>
-
-          <Link 
-            to="/about" 
-            className="hover:text-[#8B7FCF] transition duration-200"
+            className="hover:text-[#8B7FCF] transition duration-200 hover:scale-105"
           >
             About Us
           </Link>
 
           <Link 
             to="/contact" 
-            className="hover:text-[#8B7FCF] transition duration-200"
+            className="hover:text-[#8B7FCF] transition duration-200 hover:scale-105"
           >
-            Contact
+            Contact Us
           </Link>
 
         </div>
 
-        {/* CTA Button */}
-        <Link 
-          to="/login" 
-          className="bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white px-6 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm"
-        >
-          Need Help?
-        </Link>
+        {/* Auth Buttons */}
+        <div className="flex items-center gap-3">
+          <Link 
+            to="/login" 
+            className="hidden md:flex items-center gap-2 text-[#6B5B7C] hover:text-[#8B7FCF] font-medium transition duration-200 px-4 py-2 rounded-lg hover:bg-[#E8DFF5]"
+          >
+            <FaUserMd className="text-lg" />
+            Login
+          </Link>
+
+          <Link 
+            to="/register" 
+            className="flex items-center gap-2 bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white px-5 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm hover:shadow-md"
+          >
+            <FaUserPlus className="text-lg" />
+            Register
+          </Link>
+        </div>
 
       </div>
     </nav>

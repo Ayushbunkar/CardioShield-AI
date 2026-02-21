@@ -2,33 +2,33 @@ import React from "react";
 
 const About = () => {
   return (
-    <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-red-950 py-20 px-6 text-gray-200">
+    <section className="bg-[#F5F1ED] py-20 px-6 text-[#4A3B5C]">
       
       <div className="max-w-6xl mx-auto text-center">
 
         {/* Title */}
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-red-400 to-cyan-400 bg-clip-text text-transparent">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-[#4A3B5C]">
           About CardioShield AI
         </h2>
 
-        <p className="text-gray-400 text-lg mb-12 max-w-3xl mx-auto">
+        <p className="text-[#6B5B7C] text-lg mb-12 max-w-3xl mx-auto">
           AI-Powered Early Cardiovascular Risk Stratification Platform
         </p>
 
         {/* Executive Summary */}
-        <div className="bg-slate-800/60 backdrop-blur-md border border-cyan-500/20 rounded-2xl shadow-xl p-8 mb-16 text-left">
-          <h3 className="text-2xl font-bold text-cyan-400 mb-4">
+        <div className="bg-white border border-[#E8DFF5] rounded-2xl shadow-xl p-8 mb-16 text-left">
+          <h3 className="text-2xl font-bold text-[#8B7FCF] mb-4">
             1. Executive Summary
           </h3>
 
-          <p className="mb-6 leading-relaxed text-gray-300">
+          <p className="mb-6 leading-relaxed text-[#6B5B7C]">
             CardioShield AI is an explainable, low-cost, deployable AI platform 
             designed for early risk prediction of cardiovascular diseases (CVD) 
             — specifically heart attacks and strokes — in underserved and 
             resource-constrained populations.
           </p>
 
-          <ul className="list-disc pl-6 space-y-3 text-gray-300">
+          <ul className="list-disc pl-6 space-y-3 text-[#6B5B7C]">
             <li>High-accuracy 5–10 year CVD risk prediction</li>
             <li>Point-of-care screening using low-cost clinical inputs</li>
             <li>Real-time explainable risk scoring</li>
@@ -36,18 +36,18 @@ const About = () => {
             <li>Offline-capable deployment in rural health settings</li>
           </ul>
 
-          <p className="mt-6 text-gray-400 italic">
+          <p className="mt-6 text-[#6B5B7C] italic">
             Input → Clean → Engineer → Predict → Calibrate → Explain → Stratify → Act
           </p>
         </div>
 
         {/* Product Vision */}
-        <div className="bg-slate-800/60 backdrop-blur-md border border-red-500/20 rounded-2xl shadow-xl p-8 mb-16 text-left">
-          <h3 className="text-2xl font-bold text-red-400 mb-4">
+        <div className="bg-white border border-[#E5D9F2] rounded-2xl shadow-xl p-8 mb-16 text-left">
+          <h3 className="text-2xl font-bold text-[#B8A4C9] mb-4">
             2. Product Vision
           </h3>
 
-          <ul className="list-disc pl-6 space-y-3 text-gray-300">
+          <ul className="list-disc pl-6 space-y-3 text-[#6B5B7C]">
             <li>Affordable AI-based risk screening</li>
             <li>Clinically interpretable risk explanations</li>
             <li>Bias-aware decision support</li>
@@ -55,7 +55,7 @@ const About = () => {
             <li>Deployment-ready architecture for rural clinics</li>
           </ul>
 
-          <p className="mt-6 text-gray-400 font-semibold">
+          <p className="mt-6 text-[#6B5B7C] font-semibold">
             CardioShield AI is not a diagnostic replacement.  
             It is an early-warning risk stratification system.
           </p>
@@ -64,11 +64,11 @@ const About = () => {
         {/* Target Users */}
         <div className="grid md:grid-cols-2 gap-8 mb-16 text-left">
           
-          <div className="bg-slate-800/60 border border-cyan-500/20 rounded-xl shadow-md p-6">
-            <h4 className="text-xl font-semibold text-cyan-400 mb-4">
+          <div className="bg-white border border-[#E8DFF5] rounded-xl shadow-md p-6">
+            <h4 className="text-xl font-semibold text-[#8B7FCF] mb-4">
               3. Target Users – Primary
             </h4>
-            <ul className="list-disc pl-6 space-y-2 text-gray-300">
+            <ul className="list-disc pl-6 space-y-2 text-[#6B5B7C]">
               <li>Rural Primary Health Centers (PHCs)</li>
               <li>Community Health Workers</li>
               <li>Government screening programs</li>
@@ -77,11 +77,11 @@ const About = () => {
             </ul>
           </div>
 
-          <div className="bg-slate-800/60 border border-red-500/20 rounded-xl shadow-md p-6">
-            <h4 className="text-xl font-semibold text-red-400 mb-4">
+          <div className="bg-white border border-[#E5D9F2] rounded-xl shadow-md p-6">
+            <h4 className="text-xl font-semibold text-[#B8A4C9] mb-4">
               End Beneficiaries
             </h4>
-            <ul className="list-disc pl-6 space-y-2 text-gray-300">
+            <ul className="list-disc pl-6 space-y-2 text-[#6B5B7C]">
               <li>Adults aged 30–65</li>
               <li>High-risk South Asian populations</li>
               <li>Low-income & underserved communities</li>
@@ -91,31 +91,31 @@ const About = () => {
         </div>
 
         {/* System Architecture */}
-        <div className="bg-slate-800/60 backdrop-blur-md border border-cyan-500/20 rounded-2xl shadow-xl p-8 text-left max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold text-cyan-400 mb-4">
+        <div className="bg-white border border-[#E8DFF5] rounded-2xl shadow-xl p-8 text-left max-w-4xl mx-auto">
+          <h3 className="text-2xl font-bold text-[#8B7FCF] mb-4">
             4. System Architecture
           </h3>
 
-          <p className="mb-6 text-gray-300">
+          <p className="mb-6 text-[#6B5B7C]">
             CardioShield AI consists of two major components:
           </p>
 
           <div className="space-y-4">
-            <div className="bg-slate-900 p-4 rounded-lg border border-cyan-500/20">
-              <h5 className="font-semibold text-cyan-300">
+            <div className="bg-[#F5F1ED] p-4 rounded-lg border border-[#E8DFF5]">
+              <h5 className="font-semibold text-[#8B7FCF]">
                 PART 1 – Core Risk Stratification Engine (~70%)
               </h5>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-[#6B5B7C]">
                 Machine learning-based predictive modeling system for 
                 cardiovascular risk scoring using structured clinical inputs.
               </p>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-lg border border-red-500/20">
-              <h5 className="font-semibold text-red-300">
+            <div className="bg-[#F5F1ED] p-4 rounded-lg border border-[#E5D9F2]">
+              <h5 className="font-semibold text-[#B8A4C9]">
                 PART 2 – Advanced Clinical Intelligence, Ethics & Deployment Layer (~30%)
               </h5>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-[#6B5B7C]">
                 Explainability framework, bias calibration, fairness evaluation,
                 and deployment infrastructure for rural and low-resource settings.
               </p>

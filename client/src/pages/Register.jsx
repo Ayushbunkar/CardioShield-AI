@@ -76,17 +76,17 @@ const Register = () => {
     <>
       {showConfetti && <Confetti width={width} height={height} />}
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-950 via-slate-900 to-red-950 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F1ED] px-4">
 
         {/* Register Card */}
-        <div className="w-full mt-16 max-w-lg bg-slate-800/70 backdrop-blur-xl border border-cyan-500/20 shadow-2xl rounded-2xl p-2">
+        <div className="w-full mt-16 max-w-lg bg-white border border-[#E8DFF5] shadow-2xl rounded-2xl p-2">
 
           {/* Heading */}
-          <h2 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-red-400 to-cyan-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-center mb-2 text-[#4A3B5C]">
             Create CardioShield Account
           </h2>
 
-          <p className="text-center text-gray-400 text-sm mb-6">
+          <p className="text-center text-[#6B5B7C] text-sm mb-6">
             Join the AI-Powered Cardiovascular Risk Platform
           </p>
 
@@ -94,7 +94,7 @@ const Register = () => {
 
             {/* Full Name */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-300">
+              <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
                 Full Name
               </label>
               <input
@@ -103,14 +103,14 @@ const Register = () => {
                 value={registerData.fullName}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
                 placeholder="Dr. John Doe"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-300">
+              <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
                 Email Address
               </label>
               <input
@@ -119,14 +119,14 @@ const Register = () => {
                 value={registerData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
                 placeholder="doctor@cardioshield.ai"
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-300">
+              <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
                 Phone Number
               </label>
               <input
@@ -135,14 +135,14 @@ const Register = () => {
                 value={registerData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
                 placeholder="+91 9876543210"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-300">
+              <label className="block mb-1 text-sm font-medium text-[#4A3B5C]">
                 Password
               </label>
               <input
@@ -151,7 +151,7 @@ const Register = () => {
                 value={registerData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition"
+                className="w-full px-4 py-3 rounded-lg bg-[#F5F1ED] border border-[#E8DFF5] text-[#4A3B5C] placeholder-[#6B5B7C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] transition"
                 placeholder="Create a secure password"
               />
             </div>
@@ -160,19 +160,19 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-lg bg-gradient-to-r from-red-500 to-cyan-500 text-white font-semibold shadow-lg transition-all duration-300 ${
-                loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+              className={`w-full py-3 rounded-lg bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white font-semibold shadow-lg transition-all duration-300 ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
               {loading ? "Creating Account..." : "Register"}
             </button>
 
             {/* Login Link */}
-            <div className="text-center text-gray-400 text-sm mt-4">
+            <div className="text-center text-[#6B5B7C] text-sm mt-4">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-cyan-400 font-medium hover:text-cyan-300"
+                className="text-[#8B7FCF] font-medium hover:text-[#7A6EBE]"
               >
                 Sign In
               </Link>
@@ -181,7 +181,7 @@ const Register = () => {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 text-xs text-center text-gray-500">
+          <div className="mt-6 text-xs text-center text-[#6B5B7C]">
             Secure Registration • Encrypted Data • Healthcare Compliance Ready
           </div>
 

@@ -4,10 +4,12 @@
 
 
 import React from "react";
+import { Link } from "react-router-dom";
+import { FaHeartbeat } from "react-icons/fa";
 
 export default function Hero() {
   return (
-    <div className="min-h-screen bg-[#F5F1ED]">
+    <div className="min-h-screen bg-[#F5F1ED] relative">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-8 lg:px-12 pt-16 pb-12">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
@@ -29,25 +31,38 @@ export default function Hero() {
 
             {/* Main Heading */}
             <h1 className="text-5xl lg:text-6xl font-bold text-[#4A3B5C] leading-tight">
-              Your Event is not a
+              Early 
               <br />
-              Destination, but a
+              Detection
               <br />
-              <span className="text-[#4A3B5C]">Process.</span>
+              <span className="text-[#4A3B5C]">Saves Lives.</span>
             </h1>
 
             {/* Description */}
             <p className="text-lg text-[#6B5B7C] leading-relaxed max-w-xl">
-              Our work has resulted in positive change. We have educated
-              millions about event planning and reduced barriers
-              to creating memorable celebrations and gatherings.
+              Turning routine data into life-saving insights. Our AI-driven platform detects early signs of heart conditions, empowering you to take control of your health and make informed decisions for a healthier future.
             </p>
 
             {/* CTA Section */}
             <div className="flex items-center gap-6 flex-wrap">
-              <button className="bg-[#B8A4C9] hover:bg-[#A593B8] text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 shadow-sm">
-                Schedule Appointment
-              </button>
+              <Link 
+                to="/about"
+                className="group"
+              >
+                <div className="relative">
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-[#8B7FCF] via-[#9D8FD9] to-[#B8A4C9] text-white font-semibold px-8 py-4 rounded-full shadow-2xl transition-all duration-300 group-hover:shadow-3xl overflow-hidden border-2 border-white group-hover:scale-105 animate-bounce-slow animate-blink-soft">
+                    <div className="p-1">
+                      <FaHeartbeat className="text-2xl animate-pulse drop-shadow-lg" />
+                    </div>
+                    <span className="font-semibold text-lg whitespace-nowrap max-w-0 group-hover:max-w-xs opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:pr-2 drop-shadow-lg">
+                      AI Risk Management
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-[#8B7FCF] opacity-40 animate-ping"></div>
+                  <div className="absolute inset-0 rounded-full bg-[#B8A4C9] opacity-30 animate-ping" style={{animationDelay: '0.5s'}}></div>
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#8B7FCF] to-[#B8A4C9] blur-xl opacity-60 animate-pulse"></div>
+                </div>
+              </Link>
               
               <div className="flex items-center gap-3">
                 <div className="bg-[#E8DFF5] w-14 h-14 rounded-full flex items-center justify-center">
@@ -190,6 +205,7 @@ export default function Hero() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

@@ -13,10 +13,10 @@ const Profile = () => {
 
   return (
     <>
-      <div className="flex justify-between bg-gradient-to-r from-[#fff3e0] to-[#fbe8d3] p-4 shadow-lg">
-        <h1 className="text-3xl font-bold text-[#8b1f1f] font-serif">Profile</h1>
+      <div className="flex justify-between bg-gradient-to-r from-[#F5F1ED] to-white p-4 shadow-lg">
+        <h1 className="text-3xl font-bold text-[#4A3B5C] font-serif">Profile</h1>
         <button
-          className="border border-[#8b1f1f] hover:scale-105 cursor-pointer text-[#8b1f1f] p-2 rounded-lg font-bold flex gap-2 justify-center items-center hover:bg-[#fbe8d3] text-lg"
+          className="border border-[#8B7FCF] hover:scale-105 cursor-pointer text-[#8B7FCF] p-2 rounded-lg font-bold flex gap-2 justify-center items-center hover:bg-[#E8DFF5] text-lg"
           onClick={() => setIsEditModalOpen(true)}
         >
           <FaUserEdit className="text-xl" />
@@ -24,59 +24,59 @@ const Profile = () => {
         </button>
       </div>
 
-      <div className="p-6 flex gap-6 bg-[#fff9f2]">
-        <div className="flex flex-col gap-6 border border-[#c49b63] w-2/7 rounded-xl bg-white shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-          <div className="border-4 border-[#f5d1a1] w-48 h-48 rounded-full overflow-hidden m-auto shadow-md">
+      <div className="p-6 flex gap-6 bg-[#F5F1ED]">
+        <div className="flex flex-col gap-6 border border-[#E8DFF5] w-2/7 rounded-xl bg-white shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+          <div className="border-4 border-[#E8DFF5] w-48 h-48 rounded-full overflow-hidden m-auto shadow-md">
             <img
               src={user.photo}
               alt="profilePic"
               className="w-full h-full object-cover rounded-full"
             />
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Name:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Name:</b>{" "}
             <span className="ml-2">{user.fullName}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Email:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Email:</b>{" "}
             <span className="ml-2">{user.email}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Phone:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Phone:</b>{" "}
             <span className="ml-2">{user.phone}</span>
           </div>
         </div>
 
-        <div className="border border-[#c49b63] p-6 w-5/7 grid gap-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <h2 className="text-xl font-semibold text-[#8b1f1f] mb-4 border-b border-[#c49b63] pb-2 font-serif">
+        <div className="border border-[#E8DFF5] p-6 w-5/7 grid gap-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <h2 className="text-xl font-semibold text-[#8B7FCF] mb-4 border-b border-[#E8DFF5] pb-2 font-serif">
             Additional Information
           </h2>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Gender:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Gender:</b>{" "}
             <span className="ml-2">{user.gender}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Occupation:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Occupation:</b>{" "}
             <span className="ml-2">{user.occupation}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Address:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Address:</b>{" "}
             <span className="ml-2">{user.address}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">City:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">City:</b>{" "}
             <span className="ml-2">{user.city}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">District:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">District:</b>{" "}
             <span className="ml-2">{user.district}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">State:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">State:</b>{" "}
             <span className="ml-2">{user.state}</span>
           </div>
-          <div className="text-[#5e2c04]">
-            <b className="text-[#8b1f1f]">Representing:</b>{" "}
+          <div className="text-[#4A3B5C]">
+            <b className="text-[#8B7FCF]">Representing:</b>{" "}
             <span className="ml-2">{user.representing}</span>
           </div>
         </div>
