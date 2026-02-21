@@ -1,9 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUserMd, FaUserPlus } from "react-icons/fa";
-import { Heart } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, User } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { isLogin, isAdmin, user, setUser, setIsLogin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("EventUser");
+    setUser("");
+    setIsLogin(false);
+    navigate("/");
+  };
+
   return (
     <nav className="bg-[#F5F1ED] shadow-md py-3 px-8 sticky top-0 z-50">
       
@@ -55,21 +66,51 @@ const Navbar = () => {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-3">
-          <Link 
-            to="/login" 
-            className="hidden md:flex items-center gap-2 text-[#6B5B7C] hover:text-[#8B7FCF] font-medium transition duration-200 px-4 py-2 rounded-lg hover:bg-[#E8DFF5]"
-          >
-            <FaUserMd className="text-lg" />
-            Login
-          </Link>
+          {isLogin ? (
+            <>
+              {/* User Info */}
+              <div className="hidden md:flex items-center gap-2 text-[#6B5B7C]">
+                <User className="w-4 h-4" />
+                <span className="font-medium">{user?.fullName || 'User'}</span>
+              </div>
 
-          <Link 
-            to="/register" 
-            className="flex items-center gap-2 bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white px-5 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm hover:shadow-md"
-          >
-            <FaUserPlus className="text-lg" />
-            Register
-          </Link>
+              {/* Dashboard Button */}
+              <Link 
+                to={isAdmin ? "/admin" : "/dashboard"} 
+                className="flex items-center gap-2 bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white px-5 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm hover:shadow-md"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+
+              {/* Logout Button */}
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-[#6B5B7C] hover:text-red-600 font-medium transition duration-200 px-4 py-2 rounded-lg hover:bg-red-50"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden md:inline">Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link 
+                to="/login" 
+                className="hidden md:flex items-center gap-2 text-[#6B5B7C] hover:text-[#8B7FCF] font-medium transition duration-200 px-4 py-2 rounded-lg hover:bg-[#E8DFF5]"
+              >
+                <FaUserMd className="text-lg" />
+                Login
+              </Link>
+
+              <Link 
+                to="/register" 
+                className="flex items-center gap-2 bg-[#8B7FCF] hover:bg-[#7A6EBE] text-white px-5 py-2.5 rounded-lg font-medium transition duration-200 shadow-sm hover:shadow-md"
+              >
+                <FaUserPlus className="text-lg" />
+                Register
+              </Link>
+            </>
+          )}
         </div>
 
       </div>

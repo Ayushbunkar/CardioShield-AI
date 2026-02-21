@@ -1,41 +1,158 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Brain, TrendingUp, TrendingDown } from 'lucide-react';
+import { Brain, TrendingUp, TrendingDown, AlertCircle, CheckCircle, Info, Heart, Activity, Stethoscope, Beaker, Zap, Calendar, Scale, Cigarette, BarChart2, Droplets, Ruler, Wine, Dumbbell, User, Users, Search, Lightbulb } from 'lucide-react';
+
+// Human-readable feature names and descriptions for UCI Heart Disease dataset
+const featureInfo = {
+  'Chest Pain Type': { 
+    name: 'Chest Pain Type', 
+    desc: 'Type of chest pain experienced (1=Typical Angina, 2=Atypical, 3=Non-Anginal, 4=Asymptomatic)'
+  },
+  'Exercise Angina': { 
+    name: 'Exercise Induced Angina', 
+    desc: 'Whether you experience chest pain during exercise'
+  },
+  'Cholesterol': { 
+    name: 'Serum Cholesterol', 
+    desc: 'Your cholesterol level in mg/dl'
+  },
+  'Sex': { 
+    name: 'Sex', 
+    desc: 'Your biological sex (Male/Female)'
+  },
+  'Thalassemia': { 
+    name: 'Thalassemia', 
+    desc: 'Thallium stress test result (Normal, Fixed Defect, Reversible Defect)'
+  },
+  'ST Depression': { 
+    name: 'ST Depression (Oldpeak)', 
+    desc: 'ST depression induced by exercise relative to rest'
+  },
+  'Vessels Colored': { 
+    name: 'Major Vessels Colored', 
+    desc: 'Number of major vessels (0-3) colored by flouroscopy'
+  },
+  'Max Heart Rate': { 
+    name: 'Maximum Heart Rate', 
+    desc: 'Maximum heart rate achieved during exercise test'
+  },
+  'Age': { 
+    name: 'Age', 
+    desc: 'Your age in years'
+  },
+  'Blood Pressure': { 
+    name: 'Resting Blood Pressure', 
+    desc: 'Resting blood pressure in mm Hg'
+  },
+  'Blood Sugar': { 
+    name: 'Fasting Blood Sugar', 
+    desc: 'Whether fasting blood sugar > 120 mg/dl'
+  },
+  'ST Slope': { 
+    name: 'ST Slope', 
+    desc: 'Slope of peak exercise ST segment (Upsloping, Flat, Downsloping)'
+  },
+  'ECG Result': { 
+    name: 'Resting ECG', 
+    desc: 'Resting electrocardiographic results'
+  },
+  'cp': { 
+    name: 'Chest Pain Type', 
+    desc: 'Type of chest pain (1=Typical Angina, 2=Atypical, 3=Non-Anginal, 4=Asymptomatic)'
+  },
+  'trestbps': { 
+    name: 'Resting Blood Pressure', 
+    desc: 'Resting blood pressure in mm Hg'
+  },
+  'chol': { 
+    name: 'Serum Cholesterol', 
+    desc: 'Cholesterol level in mg/dl'
+  },
+  'thalach': { 
+    name: 'Max Heart Rate', 
+    desc: 'Maximum heart rate achieved'
+  },
+  'exang': { 
+    name: 'Exercise Angina', 
+    desc: 'Exercise induced angina (Yes/No)'
+  },
+  'oldpeak': { 
+    name: 'ST Depression', 
+    desc: 'ST depression induced by exercise'
+  },
+  'ca': { 
+    name: 'Vessels Colored', 
+    desc: 'Number of major vessels colored by flouroscopy'
+  },
+  'thal': { 
+    name: 'Thalassemia', 
+    desc: 'Thallium stress test result'
+  },
+  'slope': { 
+    name: 'ST Slope', 
+    desc: 'Slope of peak exercise ST segment'
+  },
+  'fbs': { 
+    name: 'Fasting Blood Sugar', 
+    desc: 'Fasting blood sugar > 120 mg/dl'
+  },
+  'restecg': { 
+    name: 'Resting ECG', 
+    desc: 'Resting electrocardiographic results'
+  },
+  'age': { 
+    name: 'Age', 
+    desc: 'Age in years'
+  },
+  'sex': { 
+    name: 'Sex', 
+    desc: 'Biological sex'
+  },
+};
+
+const getFeatureName = (key) => featureInfo[key]?.name || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+const getFeatureDesc = (key) => featureInfo[key]?.desc || '';
 
 const ExplainabilityTab = ({ explanation, isLoading }) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#8B7FCF] border-t-transparent" />
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#8B7FCF] border-t-transparent mx-auto mb-4" />
+          <p className="text-gray-500">Analyzing your results...</p>
+        </div>
       </div>
     );
   }
 
   if (!explanation) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-        <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500">Submit a patient assessment to see the AI explanation</p>
+      <div className="bg-white rounded-2xl shadow-lg p-8 text-center border-2 border-dashed border-gray-200">
+        <Brain className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-600 mb-2">No Assessment Yet</h3>
+        <p className="text-gray-500 max-w-md mx-auto">
+          Complete a patient assessment in the "Patient Assessment" tab to see a detailed explanation of how the AI analyzed your health data.
+        </p>
       </div>
     );
   }
 
   const { feature_impacts, feature_importance } = explanation;
 
-  // Prepare chart data from feature impacts
-  const chartData = feature_impacts.map(f => ({
-    name: f.feature,
-    impact: parseFloat(f.impact.toFixed(3)),
-    direction: f.direction,
-    description: f.description
-  }));
-
-  // Sort feature importance for bar chart
+  // Sort feature importance for bar chart with human-readable names
   const importanceData = Object.entries(feature_importance)
-    .map(([name, value]) => ({ name, importance: parseFloat((value * 100).toFixed(1)) }))
+    .map(([name, value]) => ({ 
+      name: getFeatureName(name), 
+      rawName: name,
+      importance: parseFloat((value * 100).toFixed(1))
+    }))
     .sort((a, b) => b.importance - a.importance)
     .slice(0, 10);
+
+  // Separate factors that increase vs decrease risk
+  const riskIncreasing = feature_impacts.filter(f => f.direction === 'increases');
+  const riskDecreasing = feature_impacts.filter(f => f.direction === 'decreases');
 
   return (
     <motion.div
@@ -43,87 +160,194 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
-      {/* Feature Impact Analysis */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <h3 className="text-xl font-semibold text-[#4A3B5C] mb-4 flex items-center gap-2">
-          <Brain className="w-6 h-6 text-[#8B7FCF]" />
-          How the AI Made This Decision
-        </h3>
-        <p className="text-gray-600 mb-6">
-          These are the top factors that influenced the prediction for this patient.
-        </p>
-
-        {/* Impact List */}
-        <div className="space-y-3">
-          {feature_impacts.map((impact, idx) => (
-            <motion.div
-              key={impact.feature}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: idx * 0.1 }}
-              className={`p-4 rounded-xl flex items-center gap-4 ${
-                impact.direction === 'increases' ? 'bg-red-50' : 'bg-green-50'
-              }`}
-            >
-              {impact.direction === 'increases' ? (
-                <TrendingUp className="w-6 h-6 text-red-500 flex-shrink-0" />
-              ) : (
-                <TrendingDown className="w-6 h-6 text-green-500 flex-shrink-0" />
-              )}
-              <div className="flex-1">
-                <p className={`font-medium ${impact.direction === 'increases' ? 'text-red-700' : 'text-green-700'}`}>
-                  {impact.description}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Value: {impact.value.toFixed(2)} | Impact: {Math.abs(impact.impact).toFixed(3)}
-                </p>
-              </div>
-              <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                impact.direction === 'increases' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-              }`}>
-                {impact.direction === 'increases' ? '+' : '-'}{Math.abs(impact.impact * 100).toFixed(1)}%
-              </div>
-            </motion.div>
-          ))}
+      {/* Summary Banner */}
+      <div className="bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] rounded-2xl p-6 text-white">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-white/20 rounded-xl">
+            <Activity className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+              <Search className="w-5 h-5" /> Your Latest Assessment Explained
+            </h3>
+            <p className="text-white/90">
+              The AI analyzed {Object.keys(feature_importance).length} health factors to predict your cardiovascular risk. 
+              Below you'll see exactly what influenced your result - updated from your most recent test.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Feature Importance Chart */}
+      {/* Two Column Layout for Risk Factors */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Risk Increasing Factors */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-red-100">
+          <h3 className="text-lg font-semibold text-red-700 mb-4 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            Factors INCREASING Your Risk
+          </h3>
+          
+          {riskIncreasing.length === 0 ? (
+            <p className="text-gray-500 text-center py-4 flex items-center justify-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              No major risk-increasing factors!
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {riskIncreasing.map((impact, idx) => (
+                <motion.div
+                  key={impact.feature}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-red-50 rounded-xl p-4 border border-red-100"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-red-800 flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4" />
+                      {getFeatureName(impact.feature)}
+                    </span>
+                    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      +{Math.abs(impact.impact * 100).toFixed(1)}% risk
+                    </span>
+                  </div>
+                  <p className="text-red-700 text-sm mb-1">{impact.description}</p>
+                  <p className="text-red-600/70 text-xs">{getFeatureDesc(impact.feature)}</p>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Risk Decreasing Factors */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-green-100">
+          <h3 className="text-lg font-semibold text-green-700 mb-4 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            Factors PROTECTING You
+          </h3>
+          
+          {riskDecreasing.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">Focus on the risk factors to improve your score</p>
+          ) : (
+            <div className="space-y-3">
+              {riskDecreasing.map((impact, idx) => (
+                <motion.div
+                  key={impact.feature}
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-green-50 rounded-xl p-4 border border-green-100"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-green-800 flex items-center gap-2">
+                      <TrendingDown className="w-4 h-4" />
+                      {getFeatureName(impact.feature)}
+                    </span>
+                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      -{Math.abs(impact.impact * 100).toFixed(1)}% risk
+                    </span>
+                  </div>
+                  <p className="text-green-700 text-sm mb-1">{impact.description}</p>
+                  <p className="text-green-600/70 text-xs">{getFeatureDesc(impact.feature)}</p>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Feature Importance Chart - What Matters Most */}
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <h3 className="text-xl font-semibold text-[#4A3B5C] mb-4">
-          Overall Feature Importance
-        </h3>
-        <p className="text-gray-600 mb-6">
-          How much each feature contributes to the model's decisions in general.
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-[#4A3B5C] flex items-center gap-2">
+            <BarChart2 className="w-6 h-6 text-[#8B7FCF]" />
+            What Matters Most for Heart Health
+          </h3>
+          <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">
+            Based on your data
+          </span>
+        </div>
+        
+        <p className="text-gray-600 mb-6 flex items-center gap-2">
+          <Info className="w-4 h-4 text-gray-400" />
+          This chart shows which health factors have the biggest impact on cardiovascular risk predictions.
         </p>
 
-        <div className="h-80">
+        <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={importanceData} layout="vertical" margin={{ left: 80, right: 20 }}>
-              <XAxis type="number" tickFormatter={(v) => `${v}%`} />
-              <YAxis type="category" dataKey="name" width={70} tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value) => [`${value}%`, 'Importance']}
-                contentStyle={{ borderRadius: '8px', border: '1px solid #E5E7EB' }}
+            <BarChart data={importanceData} layout="vertical" margin={{ left: 140, right: 30 }}>
+              <XAxis 
+                type="number" 
+                tickFormatter={(v) => `${v}%`} 
+                domain={[0, 'dataMax']}
+                tick={{ fontSize: 12 }}
               />
-              <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                width={130} 
+                tick={{ fontSize: 13, fontWeight: 500 }}
+              />
+              <Tooltip 
+                formatter={(value, name, props) => [
+                  `${value}% importance`, 
+                  props.payload.name
+                ]}
+                contentStyle={{ 
+                  borderRadius: '12px', 
+                  border: '1px solid #E5E7EB',
+                  padding: '10px 14px'
+                }}
+              />
+              <Bar dataKey="importance" radius={[0, 8, 8, 0]}>
                 {importanceData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={index < 3 ? '#8B7FCF' : '#C4B5FD'} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={index === 0 ? '#7C3AED' : index < 3 ? '#8B7FCF' : '#C4B5FD'} 
+                  />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Legend */}
+        <div className="flex justify-center gap-6 mt-4 text-sm">
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-[#7C3AED]"></span>
+            Most Important
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-[#8B7FCF]"></span>
+            Very Important
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded bg-[#C4B5FD]"></span>
+            Important
+          </span>
+        </div>
       </div>
 
-      {/* SHAP Base Value */}
-      <div className="bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] rounded-2xl p-6 text-white">
-        <h4 className="font-semibold mb-2">Understanding the Prediction</h4>
-        <p className="text-white/90 text-sm">
-          The model starts with a base risk of {(explanation.base_value * 100).toFixed(1)}% (average population risk).
-          Each feature then pushes the prediction higher or lower based on the patient's specific values.
-          The final risk score combines all these individual contributions.
-        </p>
+      {/* How It Works - Simple Explanation */}
+      <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+        <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+          <Lightbulb className="w-5 h-5" />
+          How the AI Made This Prediction
+        </h4>
+        <div className="text-blue-700 space-y-2">
+          <p>
+            <strong>Step 1:</strong> The AI starts with an average baseline risk of <strong>{(explanation.base_value * 100).toFixed(1)}%</strong> (typical population risk).
+          </p>
+          <p>
+            <strong>Step 2:</strong> Each of your health values either <span className="text-red-600 font-semibold">increases</span> or <span className="text-green-600 font-semibold">decreases</span> this baseline.
+          </p>
+          <p>
+            <strong>Step 3:</strong> All these changes are combined to give your final personalized risk score.
+          </p>
+        </div>
+        <div className="mt-4 p-3 bg-white rounded-xl text-sm text-blue-600">
+          <strong>Note:</strong> This explanation updates automatically each time you complete a new assessment. The factors shown reflect YOUR specific health data.
+        </div>
       </div>
     </motion.div>
   );

@@ -15,7 +15,7 @@ import cloudinary from "./src/config/cloudinary.js";
 
 const app = express();
 
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "http://localhost:3002"], credentials: true }));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -47,7 +47,7 @@ app.listen(port, async () => {
     await cloudinary.api.resources({ max_results: 1 });
     console.log("Cloudinary Connected");
   } catch (error) {
-    console.log(error);
+    console.log("Connection error:", error.message || error);
     process.exit(1);
   }
 });
