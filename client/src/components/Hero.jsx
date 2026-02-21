@@ -1,0 +1,195 @@
+﻿// 
+
+
+
+
+import React from "react";
+
+export default function Hero() {
+  return (
+    <div className="min-h-screen bg-[#F5F1ED]">
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-8 lg:px-12 pt-16 pb-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          
+          {/* Left Content */}
+          <div className="space-y-6">
+            {/* Tags */}
+            <div className="flex flex-wrap gap-3 text-sm">
+              <span className="bg-[#E8DFF5] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
+                Banquet Hall
+              </span>
+              <span className="bg-[#DFD1E8] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
+                Catering
+              </span>
+              <span className="bg-[#E5D9F2] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
+                Event Planning
+              </span>
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-5xl lg:text-6xl font-bold text-[#4A3B5C] leading-tight">
+              Your Event is not a
+              <br />
+              Destination, but a
+              <br />
+              <span className="text-[#4A3B5C]">Process.</span>
+            </h1>
+
+            {/* Description */}
+            <p className="text-lg text-[#6B5B7C] leading-relaxed max-w-xl">
+              Our work has resulted in positive change. We have educated
+              millions about event planning and reduced barriers
+              to creating memorable celebrations and gatherings.
+            </p>
+
+            {/* CTA Section */}
+            <div className="flex items-center gap-6 flex-wrap">
+              <button className="bg-[#B8A4C9] hover:bg-[#A593B8] text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 shadow-sm">
+                Schedule Appointment
+              </button>
+              
+              <div className="flex items-center gap-3">
+                <div className="bg-[#E8DFF5] w-14 h-14 rounded-full flex items-center justify-center">
+                  <span className="text-[#6B5B7C] font-bold text-lg">95%</span>
+                </div>
+                <div className="text-sm">
+                  <p className="text-[#8B7B9C]">We have <span className="font-semibold text-[#6B5B7C]">Success</span></p>
+                  <p className="text-[#8B7B9C]">rate so far</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Content */}
+          <div className="relative">
+            <div className="relative">
+              {/* Stats Card - Top Right */}
+              <div className="absolute top-0 right-0 bg-[#E8DFF5] rounded-2xl shadow-lg p-6 w-60 z-10">
+                <h3 className="text-4xl font-bold text-[#4A3B5C] mb-2">10M+</h3>
+                <p className="text-sm text-[#6B5B7C] mb-4">
+                  Every year
+                  <br />
+                  helping people
+                  <br />
+                  around the world
+                </p>
+                <div className="flex gap-1 mb-2">
+                  <img 
+                    src="https://i.pravatar.cc/40?img=1" 
+                    alt="Customer" 
+                    className="w-10 h-10 rounded-full border-2 border-white"
+                  />
+                  <img 
+                    src="https://i.pravatar.cc/40?img=2" 
+                    alt="Customer" 
+                    className="w-10 h-10 rounded-full border-2 border-white -ml-3"
+                  />
+                  <img 
+                    src="https://i.pravatar.cc/40?img=3" 
+                    alt="Customer" 
+                    className="w-10 h-10 rounded-full border-2 border-white -ml-3"
+                  />
+                </div>
+                <div className="bg-[#D4C5E0] text-xs text-[#6B5B7C] px-3 py-1 rounded-full inline-block font-medium">
+                  Campaign
+                </div>
+              </div>
+
+              {/* Main Image */}
+              <div className="mt-12 ml-8 bg-[#DFD1E8] rounded-[3rem] overflow-hidden h-[450px] relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&q=80" 
+                  alt="Happy customer" 
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Plant Decoration - Top Left */}
+                <div className="absolute top-6 left-6 text-6xl opacity-70">
+                  🌿
+                </div>
+              </div>
+
+              {/* Chat Interface - Bottom */}
+              <div className="absolute bottom-0 left-0 bg-[#E8DFF5] rounded-2xl shadow-xl p-4 w-64">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-sm text-[#8B7B9C]">Chat now</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="https://i.pravatar.cc/40?img=9" 
+                    alt="Event Manager" 
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div>
+                    <p className="text-xs text-[#8B7B9C]">Hi, Event Manager</p>
+                    <p className="text-sm font-semibold text-[#4A3B5C]">Hello</p>
+                  </div>
+                  <button className="ml-auto text-[#8B7FCF]">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Second Section - Support */}
+      <section className="max-w-7xl mx-auto px-8 lg:px-12 py-20">
+        <div className="bg-[#D4C5E0] rounded-[3rem] overflow-hidden">
+          <div className="grid lg:grid-cols-2 gap-0 items-center">
+            
+            {/* Left Image */}
+            <div className="relative h-full min-h-[400px]">
+              <div className="absolute inset-0 bg-[#B8A4C9] rounded-br-[5rem]">
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" 
+                  alt="Happy client" 
+                  className="w-full h-full object-cover rounded-br-[5rem]"
+                />
+              </div>
+            </div>
+
+            {/* Right Content */}
+            <div className="p-12 lg:p-16 space-y-6 relative">
+              <h2 className="text-4xl lg:text-5xl font-bold text-[#4A3B5C] leading-tight">
+                Let's make <span className="font-normal">life Easier</span>
+                <br />
+                <span className="font-normal">and</span> Stressless
+              </h2>
+              
+              <p className="text-[#6B5B7C] text-lg leading-relaxed max-w-md">
+                Being able to be your true self is one of the strongest
+                components of good mental health.
+              </p>
+
+              <div className="pt-4">
+                <button className="bg-[#E8B4B8] hover:bg-[#D9A4A8] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border-2 border-[#D89CA0]">
+                  Find Support
+                </button>
+              </div>
+
+              <p className="text-[#6B5B7C] text-sm pt-2">
+                If you or someone you know is struggling,
+                <br />
+                you are not alone.
+              </p>
+
+              {/* Decorative Arrow */}
+              <div className="absolute bottom-12 right-12">
+                <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-6 h-6 text-[#4A3B5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

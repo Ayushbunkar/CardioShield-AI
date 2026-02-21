@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Cedarville+Cursive&family=Poppins:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --customFont: "Bonheur Royale", cursive, san-serif;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+.scrollbar-hide::-webkit-scrollbar{
+  display: none;
+}
