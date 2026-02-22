@@ -34,13 +34,6 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center gap-6 text-[#6B5B7C] font-medium">
           
           <Link 
-            to="/"
-            className="hover:text-[#8B7FCF] transition duration-200 hover:scale-105"
-          >
-            Home
-          </Link>
-
-          <Link 
             to="/ai" 
             className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] text-white rounded-lg hover:shadow-lg transition duration-200 hover:scale-105"
           >

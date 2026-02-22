@@ -10,6 +10,9 @@ import AdminPanel from "./pages/AdminPanel";
 import ContactUs from "./pages/ContactUs";
 import About from "./pages/About";
 import CardioAI from "./pages/CardioAI";
+import AIHistory from "./components/Customer/AIHistory";
+import Reports from "./pages/Reports";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   return (
@@ -27,6 +30,9 @@ const App = () => {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/about" element={<About />} />
           <Route path="/ai" element={<CardioAI />} />
+          <Route path="/ai-history" element={<AIHistory />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/profile" element={<ProfilePage />} />
           
           
         </Routes>
