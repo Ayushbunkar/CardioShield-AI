@@ -53,9 +53,7 @@ const CardioAI = () => {
     try {
       const health = await checkHealth();
       setBackendReady(health.model_loaded);
-      if (!health.model_loaded) {
-        toast.error('Model is loading, please wait...');
-      }
+      // Removed model loading toast
     } catch {
       setBackendReady(false);
     }
