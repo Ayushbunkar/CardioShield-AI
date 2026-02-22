@@ -30,8 +30,8 @@ const serverClient = axios.create({
 // =============================================================================
 
 const toInputArray = (p) => [
-  p.age, p.sex, p.cp, p.trestbps, p.chol, p.fbs,
-  p.restecg, p.thalach, p.exang, p.oldpeak, p.slope, p.ca, p.thal
+  p.age, p.gender, p.height, p.weight, p.ap_hi, p.ap_lo,
+  p.cholesterol, p.gluc, p.smoke, p.alco, p.active
 ];
 
 // =============================================================================
@@ -44,7 +44,10 @@ const toInputArray = (p) => [
  * @returns {Object} Prediction result with risk level and recommendations
  */
 export const predictRisk = async (patientData) => {
-  const { data } = await aiClient.post('/predict', { input: toInputArray(patientData) });
+  const { data } = await aiClient.post('/predict', { 
+    input: toInputArray(patientData),
+    patientData 
+  });
   
   return {
     prediction: data.prediction,
@@ -76,17 +79,18 @@ export const comprehensiveAssessment = async (patientData) => {
  * @returns {Object} Feature importance and risk interpretation
  */
 export const getExplanation = async (patientData) => {
-  const importance = calculateImportance(patientData);
-  const risks = identifyRisks(patientData);
+  const { data } = await aiClient.post('/explain', { patientData });
   
   return {
-    feature_importance: importance,
-    top_risk_factors: Object.entries(importance)
+    feature_importance: data.feature_importance,
+    feature_impacts: data.feature_impacts || [],
+    base_value: data.base_value || 0.497,
+    top_risk_factors: Object.entries(data.feature_importance)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([name, impact]) => ({ name, impact })),
-    interpretation: risks.length > 0
-      ? `Risk factors: ${risks.join(', ')}. Consult a healthcare provider.`
+    interpretation: data.risk_factors.length > 0 && data.risk_factors[0] !== 'No major risk factors identified'
+      ? `Risk factors: ${data.risk_factors.join(', ')}. Consult a healthcare provider.`
       : 'Health indicators are within normal ranges.'
   };
 };
@@ -175,17 +179,36 @@ function generateRecommendations(patient, result) {
   if (result.prediction === 1 || ['High', 'Very High'].includes(result.risk_level)) {
     recs.push('Schedule an appointment with a cardiologist immediately');
   }
-  if (patient.trestbps > 140) {
-    recs.push('Monitor blood pressure regularly');
+  if (patient.ap_hi > 140) {
+    recs.push('Monitor blood pressure regularly — systolic BP is elevated');
   }
-  if (patient.chol > 240) {
-    recs.push('Consider cholesterol-lowering dietary changes');
+  if (patient.ap_lo > 90) {
+    recs.push('Diastolic blood pressure is elevated — consult your doctor');
   }
-  if (patient.fbs === 1) {
-    recs.push('Manage blood sugar through diet and exercise');
+  if (patient.cholesterol >= 3) {
+    recs.push('Cholesterol is well above normal — consider dietary changes and medication');
+  } else if (patient.cholesterol === 2) {
+    recs.push('Cholesterol is above normal — monitor and adjust diet');
   }
-  if (patient.exang === 1) {
-    recs.push('Avoid strenuous exercise until cleared by doctor');
+  if (patient.gluc >= 3) {
+    recs.push('Glucose is well above normal — get tested for diabetes');
+  } else if (patient.gluc === 2) {
+    recs.push('Glucose is above normal — monitor blood sugar levels');
+  }
+  if (patient.smoke === 1) {
+    recs.push('Smoking significantly increases cardiovascular risk — consider cessation');
+  }
+  if (patient.alco === 1) {
+    recs.push('Alcohol consumption affects heart health — consider reducing intake');
+  }
+  if (patient.active === 0) {
+    recs.push('Physical inactivity increases risk — aim for 150 mins of exercise per week');
+  }
+  const bmi = patient.weight / ((patient.height / 100) ** 2);
+  if (bmi > 30) {
+    recs.push(`BMI (${bmi.toFixed(1)}) indicates obesity — weight management recommended`);
+  } else if (bmi > 25) {
+    recs.push(`BMI (${bmi.toFixed(1)}) indicates overweight — consider a healthy diet plan`);
   }
   
   return recs.length > 0 ? recs : [
@@ -196,31 +219,33 @@ function generateRecommendations(patient, result) {
 }
 
 function calculateImportance(p) {
+  const bmi = p.weight / ((p.height / 100) ** 2);
   return {
-    'Chest Pain': p.cp >= 3 ? 0.25 : 0.12,
-    'Exercise Angina': p.exang === 1 ? 0.10 : 0.03,
-    'Cholesterol': p.chol > 240 ? 0.09 : 0.04,
-    'ST Depression': p.oldpeak > 2 ? 0.08 : 0.03,
-    'Blood Pressure': p.trestbps > 140 ? 0.07 : 0.03,
-    'Age': p.age > 55 ? 0.06 : 0.03,
-    'Vessels': p.ca > 0 ? 0.06 : 0.02,
-    'Thalassemia': p.thal === 7 ? 0.05 : 0.02,
-    'Max Heart Rate': p.thalach < 120 ? 0.05 : 0.02,
-    'Blood Sugar': p.fbs === 1 ? 0.04 : 0.02,
-    'Sex': p.sex === 1 ? 0.04 : 0.02,
-    'ST Slope': p.slope === 3 ? 0.03 : 0.02,
-    'ECG': p.restecg > 0 ? 0.03 : 0.01
+    'Systolic BP': p.ap_hi > 140 ? 0.18 : 0.08,
+    'Age': p.age > 55 ? 0.15 : 0.06,
+    'Cholesterol': p.cholesterol >= 3 ? 0.14 : (p.cholesterol === 2 ? 0.09 : 0.04),
+    'Diastolic BP': p.ap_lo > 90 ? 0.12 : 0.05,
+    'Weight/BMI': bmi > 30 ? 0.10 : (bmi > 25 ? 0.07 : 0.03),
+    'Glucose': p.gluc >= 3 ? 0.10 : (p.gluc === 2 ? 0.06 : 0.03),
+    'Smoking': p.smoke === 1 ? 0.08 : 0.02,
+    'Physical Activity': p.active === 0 ? 0.07 : 0.02,
+    'Gender': p.gender === 2 ? 0.04 : 0.03,
+    'Alcohol': p.alco === 1 ? 0.05 : 0.02,
+    'Height': 0.02
   };
 }
 
 function identifyRisks(p) {
   const risks = [];
-  if (p.cp >= 3) risks.push('Significant chest pain');
-  if (p.exang === 1) risks.push('Exercise-induced angina');
-  if (p.chol > 240) risks.push('High cholesterol');
-  if (p.ca > 0) risks.push('Vessel abnormalities');
-  if (p.thal === 7) risks.push('Thalassemia defect');
-  if (p.oldpeak > 2) risks.push('ST depression');
+  if (p.ap_hi > 140) risks.push(`High systolic BP (${p.ap_hi} mmHg)`);
+  if (p.ap_lo > 90) risks.push(`High diastolic BP (${p.ap_lo} mmHg)`);
+  if (p.cholesterol >= 3) risks.push('Cholesterol well above normal');
+  if (p.gluc >= 3) risks.push('Glucose well above normal');
+  if (p.smoke === 1) risks.push('Current smoker');
+  if (p.active === 0) risks.push('Physically inactive');
+  if (p.age > 55) risks.push(`Age over 55 (${p.age})`);
+  const bmi = p.weight / ((p.height / 100) ** 2);
+  if (bmi > 30) risks.push(`BMI ${bmi.toFixed(1)} (Obese)`);
   return risks;
 }
 

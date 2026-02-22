@@ -2,44 +2,40 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, Heart, Droplets, Activity, AlertCircle, Calendar, 
-  Users, Search, Stethoscope, Zap, TrendingDown, ArrowUpRight,
-  Gauge, TestTube, HeartPulse, CircleDot
+  Users, Search, Stethoscope, Zap, Ruler, Weight,
+  Gauge, Wine, Cigarette, Dumbbell
 } from 'lucide-react';
 
 /**
- * PatientForm for UCI Heart Disease Prediction
+ * PatientForm for Cardiovascular Disease Prediction
  * 
- * Features (13 inputs):
- * 1. age       - Age in years
- * 2. sex       - Sex (0 = female, 1 = male)
- * 3. cp        - Chest pain type (1-4)
- * 4. trestbps  - Resting blood pressure (mm Hg)
- * 5. chol      - Serum cholesterol (mg/dl)
- * 6. fbs       - Fasting blood sugar > 120 mg/dl (0/1)
- * 7. restecg   - Resting ECG results (0-2)
- * 8. thalach   - Maximum heart rate achieved
- * 9. exang     - Exercise induced angina (0/1)
- * 10. oldpeak  - ST depression induced by exercise
- * 11. slope    - Slope of peak exercise ST segment (1-3)
- * 12. ca       - Number of major vessels colored by flouroscopy (0-3)
- * 13. thal     - Thalassemia (3/6/7)
+ * Features (11 inputs matching cardio_train.csv - 70,000 records):
+ * 1. age         - Age in years (converted to days for model)
+ * 2. gender      - Gender (1 = Female, 2 = Male)
+ * 3. height      - Height in cm
+ * 4. weight      - Weight in kg
+ * 5. ap_hi       - Systolic blood pressure
+ * 6. ap_lo       - Diastolic blood pressure
+ * 7. cholesterol - Cholesterol level (1: normal, 2: above normal, 3: well above normal)
+ * 8. gluc        - Glucose level (1: normal, 2: above normal, 3: well above normal)
+ * 9. smoke       - Smoking (0/1)
+ * 10. alco       - Alcohol intake (0/1)
+ * 11. active     - Physical activity (0/1)
  */
 
 const PatientForm = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
-    age: 55,
-    sex: 1,
-    cp: 1,
-    trestbps: 120,
-    chol: 200,
-    fbs: 0,
-    restecg: 0,
-    thalach: 150,
-    exang: 0,
-    oldpeak: 0,
-    slope: 2,
-    ca: 0,
-    thal: 3,
+    age: 50,
+    gender: 2,
+    height: 170,
+    weight: 70,
+    ap_hi: 120,
+    ap_lo: 80,
+    cholesterol: 1,
+    gluc: 1,
+    smoke: 0,
+    alco: 0,
+    active: 1,
   });
 
   const handleChange = (e) => {
@@ -55,35 +51,32 @@ const PatientForm = ({ onSubmit, isLoading }) => {
     onSubmit(formData);
   };
 
+  // BMI calculation
+  const getBMI = () => {
+    const heightM = formData.height / 100;
+    return (formData.weight / (heightM * heightM)).toFixed(1);
+  };
+  const bmi = getBMI();
+
+  const getBMIStatus = () => {
+    const b = parseFloat(bmi);
+    if (b < 18.5) return { label: 'Underweight', color: 'text-blue-600', bg: 'bg-blue-50' };
+    if (b < 25) return { label: 'Normal', color: 'text-green-600', bg: 'bg-green-50' };
+    if (b < 30) return { label: 'Overweight', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+    return { label: 'Obese', color: 'text-red-600', bg: 'bg-red-50' };
+  };
+  const bmiStatus = getBMIStatus();
+
   // Blood Pressure Status
   const getBPStatus = () => {
-    const bp = formData.trestbps;
-    if (bp < 120) return { label: 'Normal', color: 'text-green-600', bg: 'bg-green-50' };
-    if (bp < 130) return { label: 'Elevated', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    if (bp < 140) return { label: 'High (Stage 1)', color: 'text-orange-600', bg: 'bg-orange-50' };
+    const sys = formData.ap_hi;
+    const dia = formData.ap_lo;
+    if (sys < 120 && dia < 80) return { label: 'Normal', color: 'text-green-600', bg: 'bg-green-50' };
+    if (sys < 130 && dia < 80) return { label: 'Elevated', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+    if (sys < 140 || dia < 90) return { label: 'High (Stage 1)', color: 'text-orange-600', bg: 'bg-orange-50' };
     return { label: 'High (Stage 2)', color: 'text-red-600', bg: 'bg-red-50' };
   };
   const bpStatus = getBPStatus();
-
-  // Cholesterol Status
-  const getCholStatus = () => {
-    const chol = formData.chol;
-    if (chol < 200) return { label: 'Desirable', color: 'text-green-600', bg: 'bg-green-50' };
-    if (chol < 240) return { label: 'Borderline', color: 'text-yellow-600', bg: 'bg-yellow-50' };
-    return { label: 'High', color: 'text-red-600', bg: 'bg-red-50' };
-  };
-  const cholStatus = getCholStatus();
-
-  // Heart Rate Status
-  const getHRStatus = () => {
-    const hr = formData.thalach;
-    const maxHR = 220 - formData.age;
-    const percent = (hr / maxHR) * 100;
-    if (percent < 50) return { label: 'Low', color: 'text-blue-600' };
-    if (percent < 85) return { label: 'Normal', color: 'text-green-600' };
-    return { label: 'High', color: 'text-orange-600' };
-  };
-  const hrStatus = getHRStatus();
 
   const inputClass = "w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#8B7FCF] focus:border-transparent transition-all bg-white text-gray-700";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
@@ -103,10 +96,10 @@ const PatientForm = ({ onSubmit, isLoading }) => {
           <Heart className="w-8 h-8 text-white" />
         </div>
         <h3 className="text-2xl font-bold text-[#4A3B5C]">
-          Heart Disease Risk Assessment
+          Cardiovascular Disease Risk Assessment
         </h3>
         <p className="text-gray-500 text-sm mt-2">
-          Enter your clinical data for an AI-powered heart disease prediction based on the UCI Heart Disease dataset
+          Enter your health data for an AI-powered cardiovascular disease prediction — trained on 70,000 patient records
         </p>
       </div>
 
@@ -127,96 +120,115 @@ const PatientForm = ({ onSubmit, isLoading }) => {
               name="age" 
               value={formData.age} 
               onChange={handleChange}
-              min="20" 
+              min="18" 
               max="100" 
               className={inputClass} 
               placeholder="Enter your age" 
             />
-            <p className={hintClass}>Your age in years (29-77 in dataset)</p>
+            <p className={hintClass}>Your age in years (30–70 typical range)</p>
           </div>
 
-          {/* Sex */}
+          {/* Gender */}
           <div>
             <label className={labelClass}>
-              <Users className="w-4 h-4 inline mr-1" /> Biological Sex
+              <Users className="w-4 h-4 inline mr-1" /> Gender
             </label>
             <select 
-              name="sex" 
-              value={formData.sex} 
+              name="gender" 
+              value={formData.gender} 
               onChange={handleChange} 
               className={inputClass}
             >
-              <option value={0}>Female</option>
-              <option value={1}>Male</option>
+              <option value={1}>Female</option>
+              <option value={2}>Male</option>
             </select>
-            <p className={hintClass}>Biological sex at birth</p>
+            <p className={hintClass}>Biological sex</p>
           </div>
         </div>
       </div>
 
-      {/* Chest Pain Section */}
+      {/* Body Measurements Section */}
       <div className={sectionClass}>
         <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <Stethoscope className="w-4 h-4" />
-          Chest Pain Assessment
-        </h4>
-        <div>
-          <label className={labelClass}>
-            <Heart className="w-4 h-4 inline mr-1 text-red-500" /> Chest Pain Type
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-            {[
-              { value: 1, label: 'Typical Angina', desc: 'Classic chest pain during exertion' },
-              { value: 2, label: 'Atypical Angina', desc: 'Unusual chest discomfort' },
-              { value: 3, label: 'Non-Anginal Pain', desc: 'Chest pain not related to heart' },
-              { value: 4, label: 'Asymptomatic', desc: 'No chest pain symptoms' },
-            ].map((option) => (
-              <label 
-                key={option.value}
-                className={`flex items-start gap-3 cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                  formData.cp === option.value 
-                    ? 'border-[#8B7FCF] bg-[#8B7FCF]/10' 
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <input 
-                  type="radio" 
-                  name="cp" 
-                  value={option.value}
-                  checked={formData.cp === option.value}
-                  onChange={handleChange}
-                  className="mt-1 w-4 h-4 text-[#8B7FCF] focus:ring-[#8B7FCF]"
-                />
-                <div>
-                  <span className="font-medium text-gray-700">{option.label}</span>
-                  <p className="text-xs text-gray-500 mt-0.5">{option.desc}</p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Vital Signs Section */}
-      <div className={sectionClass}>
-        <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <Activity className="w-4 h-4" />
-          Vital Signs
+          <Ruler className="w-4 h-4" />
+          Body Measurements
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Resting Blood Pressure */}
+          {/* Height */}
           <div>
             <label className={labelClass}>
-              <Gauge className="w-4 h-4 inline mr-1" /> Resting Blood Pressure
+              <Ruler className="w-4 h-4 inline mr-1" /> Height
             </label>
             <div className="relative">
               <input 
                 type="number" 
-                name="trestbps" 
-                value={formData.trestbps} 
+                name="height" 
+                value={formData.height} 
                 onChange={handleChange}
-                min="90" 
+                min="100" 
+                max="220" 
+                className={inputClass} 
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">cm</span>
+            </div>
+            <p className={hintClass}>Height in centimeters</p>
+          </div>
+
+          {/* Weight */}
+          <div>
+            <label className={labelClass}>
+              <Weight className="w-4 h-4 inline mr-1" /> Weight
+            </label>
+            <div className="relative">
+              <input 
+                type="number" 
+                name="weight" 
+                value={formData.weight} 
+                onChange={handleChange}
+                min="30" 
                 max="200" 
+                step="0.5"
+                className={inputClass} 
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">kg</span>
+            </div>
+            <p className={hintClass}>Weight in kilograms</p>
+          </div>
+
+          {/* BMI (calculated, display only) */}
+          <div>
+            <label className={labelClass}>
+              <Activity className="w-4 h-4 inline mr-1" /> BMI (Calculated)
+            </label>
+            <div className={`px-4 py-3 rounded-xl border border-gray-200 ${bmiStatus.bg}`}>
+              <span className={`text-lg font-bold ${bmiStatus.color}`}>{bmi}</span>
+              <span className="text-gray-400 text-sm ml-2">kg/m²</span>
+            </div>
+            <p className={`text-xs mt-1 ${bmiStatus.color}`}>{bmiStatus.label}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Blood Pressure Section */}
+      <div className={sectionClass}>
+        <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
+          <Gauge className="w-4 h-4" />
+          Blood Pressure
+        </h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Systolic BP */}
+          <div>
+            <label className={labelClass}>
+              <Gauge className="w-4 h-4 inline mr-1" /> Systolic Blood Pressure
+            </label>
+            <div className="relative">
+              <input 
+                type="number" 
+                name="ap_hi" 
+                value={formData.ap_hi} 
+                onChange={handleChange}
+                min="80" 
+                max="240" 
                 className={inputClass} 
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">mmHg</span>
@@ -224,238 +236,186 @@ const PatientForm = ({ onSubmit, isLoading }) => {
             <p className={`text-xs mt-1 ${bpStatus.color}`}>{bpStatus.label}</p>
           </div>
 
-          {/* Max Heart Rate */}
+          {/* Diastolic BP */}
           <div>
             <label className={labelClass}>
-              <HeartPulse className="w-4 h-4 inline mr-1" /> Max Heart Rate
+              <Gauge className="w-4 h-4 inline mr-1" /> Diastolic Blood Pressure
             </label>
             <div className="relative">
               <input 
                 type="number" 
-                name="thalach" 
-                value={formData.thalach} 
+                name="ap_lo" 
+                value={formData.ap_lo} 
                 onChange={handleChange}
-                min="60" 
-                max="220" 
+                min="40" 
+                max="160" 
                 className={inputClass} 
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">bpm</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">mmHg</span>
             </div>
-            <p className={`text-xs mt-1 ${hrStatus.color}`}>
-              {hrStatus.label} ({Math.round((formData.thalach / (220 - formData.age)) * 100)}% of max)
-            </p>
-          </div>
-
-          {/* Serum Cholesterol */}
-          <div>
-            <label className={labelClass}>
-              <Droplets className="w-4 h-4 inline mr-1" /> Serum Cholesterol
-            </label>
-            <div className="relative">
-              <input 
-                type="number" 
-                name="chol" 
-                value={formData.chol} 
-                onChange={handleChange}
-                min="100" 
-                max="600" 
-                className={inputClass} 
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">mg/dl</span>
-            </div>
-            <p className={`text-xs mt-1 ${cholStatus.color}`}>{cholStatus.label}</p>
+            <p className={hintClass}>Diastolic blood pressure</p>
           </div>
         </div>
       </div>
 
-      {/* Blood Tests Section */}
+      {/* Lab Tests Section */}
       <div className={sectionClass}>
         <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <TestTube className="w-4 h-4" />
-          Blood Tests & ECG
+          <Stethoscope className="w-4 h-4" />
+          Lab Test Results
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Fasting Blood Sugar */}
+          {/* Cholesterol */}
           <div>
             <label className={labelClass}>
-              <Droplets className="w-4 h-4 inline mr-1" /> Fasting Blood Sugar
+              <Droplets className="w-4 h-4 inline mr-1" /> Cholesterol Level
             </label>
             <select 
-              name="fbs" 
-              value={formData.fbs} 
+              name="cholesterol" 
+              value={formData.cholesterol} 
               onChange={handleChange} 
               className={inputClass}
             >
-              <option value={0}>Normal (120 mg/dl or less)</option>
-              <option value={1}>High (more than 120 mg/dl)</option>
+              <option value={1}>Normal</option>
+              <option value={2}>Above Normal</option>
+              <option value={3}>Well Above Normal</option>
             </select>
-            <p className={hintClass}>Fasting blood sugar level</p>
+            <p className={hintClass}>Blood cholesterol level category</p>
           </div>
 
-          {/* Resting ECG */}
+          {/* Glucose */}
           <div>
             <label className={labelClass}>
-              <Activity className="w-4 h-4 inline mr-1" /> Resting ECG Results
+              <Droplets className="w-4 h-4 inline mr-1" /> Glucose Level
             </label>
             <select 
-              name="restecg" 
-              value={formData.restecg} 
+              name="gluc" 
+              value={formData.gluc} 
               onChange={handleChange} 
               className={inputClass}
             >
-              <option value={0}>Normal</option>
-              <option value={1}>ST-T Wave Abnormality</option>
-              <option value={2}>Left Ventricular Hypertrophy</option>
+              <option value={1}>Normal</option>
+              <option value={2}>Above Normal</option>
+              <option value={3}>Well Above Normal</option>
             </select>
-            <p className={hintClass}>Electrocardiography results at rest</p>
+            <p className={hintClass}>Blood glucose level category</p>
           </div>
         </div>
       </div>
 
-      {/* Exercise Test Section */}
+      {/* Lifestyle Section */}
       <div className={sectionClass}>
         <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
           <Zap className="w-4 h-4" />
-          Exercise Stress Test Results
+          Lifestyle Factors
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* Exercise Induced Angina */}
-          <div>
-            <label className={labelClass}>
-              <Heart className="w-4 h-4 inline mr-1 text-red-500" /> Exercise Induced Angina
-            </label>
-            <div className="flex gap-3 mt-2">
-              <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
-                formData.exang === 0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}>
-                <input 
-                  type="radio" 
-                  name="exang" 
-                  value={0}
-                  checked={formData.exang === 0}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-                <span className="font-medium">No</span>
-              </label>
-              <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
-                formData.exang === 1 ? 'border-red-400 bg-red-50 text-red-700' : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}>
-                <input 
-                  type="radio" 
-                  name="exang" 
-                  value={1}
-                  checked={formData.exang === 1}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-                <span className="font-medium">Yes</span>
-              </label>
-            </div>
-            <p className={hintClass}>Chest pain during exercise test</p>
-          </div>
 
-          {/* ST Depression (oldpeak) */}
-          <div>
-            <label className={labelClass}>
-              <TrendingDown className="w-4 h-4 inline mr-1" /> ST Depression (oldpeak)
-            </label>
-            <div className="relative">
+        {/* Smoking */}
+        <div className="mb-4">
+          <label className={labelClass}>
+            <Cigarette className="w-4 h-4 inline mr-1" /> Smoking
+          </label>
+          <div className="flex gap-3 mt-2">
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.smoke === 0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
               <input 
-                type="number" 
-                name="oldpeak" 
-                value={formData.oldpeak} 
+                type="radio" 
+                name="smoke" 
+                value={0}
+                checked={formData.smoke === 0}
                 onChange={handleChange}
-                min="0" 
-                max="6.5" 
-                step="0.1"
-                className={inputClass} 
+                className="hidden"
               />
-            </div>
-            <p className={hintClass}>ST depression induced by exercise relative to rest (0-6.2)</p>
+              <span className="font-medium">No</span>
+            </label>
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.smoke === 1 ? 'border-red-400 bg-red-50 text-red-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="smoke" 
+                value={1}
+                checked={formData.smoke === 1}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <span className="font-medium">Yes</span>
+            </label>
           </div>
+          <p className={hintClass}>Do you currently smoke?</p>
         </div>
 
-        {/* ST Slope */}
+        {/* Alcohol */}
+        <div className="mb-4">
+          <label className={labelClass}>
+            <Wine className="w-4 h-4 inline mr-1" /> Alcohol Intake
+          </label>
+          <div className="flex gap-3 mt-2">
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.alco === 0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="alco" 
+                value={0}
+                checked={formData.alco === 0}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <span className="font-medium">No</span>
+            </label>
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.alco === 1 ? 'border-orange-400 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="alco" 
+                value={1}
+                checked={formData.alco === 1}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <span className="font-medium">Yes</span>
+            </label>
+          </div>
+          <p className={hintClass}>Do you consume alcohol?</p>
+        </div>
+
+        {/* Physical Activity */}
         <div>
           <label className={labelClass}>
-            <ArrowUpRight className="w-4 h-4 inline mr-1" /> Slope of Peak Exercise ST Segment
+            <Dumbbell className="w-4 h-4 inline mr-1" /> Physical Activity
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-            {[
-              { value: 1, label: 'Upsloping', desc: 'Generally normal' },
-              { value: 2, label: 'Flat', desc: 'May indicate ischemia' },
-              { value: 3, label: 'Downsloping', desc: 'Higher risk indicator' },
-            ].map((option) => (
-              <label 
-                key={option.value}
-                className={`flex items-center gap-3 cursor-pointer p-3 rounded-xl border-2 transition-all ${
-                  formData.slope === option.value 
-                    ? 'border-[#8B7FCF] bg-[#8B7FCF]/10' 
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <input 
-                  type="radio" 
-                  name="slope" 
-                  value={option.value}
-                  checked={formData.slope === option.value}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-[#8B7FCF] focus:ring-[#8B7FCF]"
-                />
-                <div>
-                  <span className="font-medium text-gray-700">{option.label}</span>
-                  <p className="text-xs text-gray-500">{option.desc}</p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Angiography Results Section */}
-      <div className={sectionClass}>
-        <h4 className="text-sm font-semibold text-[#8B7FCF] uppercase tracking-wide mb-4 flex items-center gap-2">
-          <CircleDot className="w-4 h-4" />
-          Cardiac Catheterization
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Number of Major Vessels */}
-          <div>
-            <label className={labelClass}>
-              <CircleDot className="w-4 h-4 inline mr-1" /> Number of Major Vessels Colored
+          <div className="flex gap-3 mt-2">
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.active === 0 ? 'border-red-400 bg-red-50 text-red-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="active" 
+                value={0}
+                checked={formData.active === 0}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <span className="font-medium">Inactive</span>
             </label>
-            <select 
-              name="ca" 
-              value={formData.ca} 
-              onChange={handleChange} 
-              className={inputClass}
-            >
-              <option value={0}>0 - No vessels affected</option>
-              <option value={1}>1 - One vessel affected</option>
-              <option value={2}>2 - Two vessels affected</option>
-              <option value={3}>3 - Three vessels affected</option>
-            </select>
-            <p className={hintClass}>Number of major vessels (0-3) colored by flouroscopy</p>
-          </div>
-
-          {/* Thalassemia */}
-          <div>
-            <label className={labelClass}>
-              <Droplets className="w-4 h-4 inline mr-1" /> Thalassemia (Thallium Stress Test)
+            <label className={`flex-1 flex items-center justify-center gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all ${
+              formData.active === 1 ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="active" 
+                value={1}
+                checked={formData.active === 1}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <span className="font-medium">Active</span>
             </label>
-            <select 
-              name="thal" 
-              value={formData.thal} 
-              onChange={handleChange} 
-              className={inputClass}
-            >
-              <option value={3}>Normal</option>
-              <option value={6}>Fixed Defect</option>
-              <option value={7}>Reversible Defect</option>
-            </select>
-            <p className={hintClass}>Thallium stress test result</p>
           </div>
+          <p className={hintClass}>Do you engage in regular physical activity?</p>
         </div>
       </div>
 
@@ -473,11 +433,11 @@ const PatientForm = ({ onSubmit, isLoading }) => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Analyzing Heart Disease Risk...
+            Analyzing Cardiovascular Risk...
           </span>
         ) : (
           <span className="flex items-center justify-center gap-2">
-            <Search className="w-5 h-5" /> Predict Heart Disease Risk
+            <Search className="w-5 h-5" /> Predict Cardiovascular Disease Risk
           </span>
         )}
       </motion.button>
@@ -487,7 +447,7 @@ const PatientForm = ({ onSubmit, isLoading }) => {
         <p className="text-amber-800 text-xs flex items-start gap-2">
           <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <span>
-            <strong>Medical Disclaimer:</strong> This AI prediction is based on the UCI Heart Disease dataset and is for educational purposes only. 
+            <strong>Medical Disclaimer:</strong> This AI prediction is trained on 70,000 cardiovascular patient records and is for educational purposes only. 
             It should not replace professional medical diagnosis. Always consult with a qualified healthcare provider for medical advice.
           </span>
         </p>

@@ -52,7 +52,7 @@ const CardioAI = () => {
   const checkBackendHealth = async () => {
     try {
       const health = await checkHealth();
-      setBackendReady(health.model_loaded);
+      setBackendReady(health.status === 'healthy');
       // Removed model loading toast
     } catch {
       setBackendReady(false);

@@ -15,7 +15,7 @@ const ResultDisplay = ({ result, patientData }) => {
           text: 'text-green-600', 
           light: 'bg-green-50',
           border: 'border-green-200',
-          message: 'Great news! Your heart disease risk is low. Keep up the healthy lifestyle!'
+          message: 'Great news! Your cardiovascular disease risk is low. Keep up the healthy lifestyle!'
         };
       case 'Moderate': 
         return { 
@@ -49,44 +49,40 @@ const ResultDisplay = ({ result, patientData }) => {
 
   // Blood pressure category
   const getBPCategory = () => {
-    const bp = patientData.trestbps;
-    if (bp < 120) return { label: 'Normal', color: 'text-green-600' };
-    if (bp < 130) return { label: 'Elevated', color: 'text-yellow-600' };
-    if (bp < 140) return { label: 'High (Stage 1)', color: 'text-orange-600' };
+    const sys = patientData.ap_hi || 120;
+    const dia = patientData.ap_lo || 80;
+    if (sys < 120 && dia < 80) return { label: 'Normal', color: 'text-green-600' };
+    if (sys < 130 && dia < 80) return { label: 'Elevated', color: 'text-yellow-600' };
+    if (sys < 140 || dia < 90) return { label: 'High (Stage 1)', color: 'text-orange-600' };
     return { label: 'High (Stage 2)', color: 'text-red-600' };
   };
   const bpInfo = getBPCategory();
 
   // Cholesterol category
-  const getCholCategory = () => {
-    const chol = patientData.chol;
-    if (chol < 200) return { label: 'Desirable', color: 'text-green-600' };
-    if (chol < 240) return { label: 'Borderline', color: 'text-yellow-600' };
-    return { label: 'High', color: 'text-red-600' };
+  const getCholLabel = () => {
+    const chol = patientData.cholesterol || 1;
+    if (chol === 1) return { label: 'Normal', color: 'text-green-600' };
+    if (chol === 2) return { label: 'Above Normal', color: 'text-yellow-600' };
+    return { label: 'Well Above Normal', color: 'text-red-600' };
   };
-  const cholInfo = getCholCategory();
+  const cholInfo = getCholLabel();
 
-  // Heart Rate Status
-  const getHRCategory = () => {
-    const hr = patientData.thalach;
-    const maxHR = 220 - patientData.age;
-    const percent = (hr / maxHR) * 100;
-    if (percent < 50) return { label: 'Low', color: 'text-blue-600' };
-    if (percent < 85) return { label: 'Normal', color: 'text-green-600' };
-    return { label: 'High', color: 'text-orange-600' };
+  // Glucose category
+  const getGlucLabel = () => {
+    const gluc = patientData.gluc || 1;
+    if (gluc === 1) return { label: 'Normal', color: 'text-green-600' };
+    if (gluc === 2) return { label: 'Above Normal', color: 'text-yellow-600' };
+    return { label: 'Well Above Normal', color: 'text-red-600' };
   };
-  const hrInfo = getHRCategory();
+  const glucInfo = getGlucLabel();
 
-  // Chest pain type label
-  const getChestPainLabel = () => {
-    switch(patientData.cp) {
-      case 1: return 'Typical Angina';
-      case 2: return 'Atypical Angina';
-      case 3: return 'Non-Anginal';
-      case 4: return 'Asymptomatic';
-      default: return 'Unknown';
-    }
+  // BMI
+  const getBMI = () => {
+    const h = patientData.height || 170;
+    const w = patientData.weight || 70;
+    return (w / ((h / 100) ** 2)).toFixed(1);
   };
+  const bmi = getBMI();
 
   return (
     <motion.div
@@ -172,41 +168,41 @@ const ResultDisplay = ({ result, patientData }) => {
             <p className="font-bold text-lg text-gray-700">{patientData.age} <span className="text-sm font-normal">years</span></p>
           </div>
           <div className="bg-white rounded-lg p-3 text-center">
+            <span className="text-gray-500 text-xs block mb-1">Gender</span>
+            <p className="font-bold text-lg text-gray-700">{patientData.gender === 2 ? 'Male' : 'Female'}</p>
+          </div>
+          <div className="bg-white rounded-lg p-3 text-center">
             <span className="text-gray-500 text-xs block mb-1">Blood Pressure</span>
-            <p className="font-bold text-lg text-gray-700">{patientData.trestbps} <span className="text-sm font-normal">mmHg</span></p>
+            <p className="font-bold text-lg text-gray-700">{patientData.ap_hi}/{patientData.ap_lo} <span className="text-sm font-normal">mmHg</span></p>
             <span className={`text-xs ${bpInfo.color}`}>{bpInfo.label}</span>
           </div>
           <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">Cholesterol</span>
-            <p className="font-bold text-lg text-gray-700">{patientData.chol} <span className="text-sm font-normal">mg/dl</span></p>
-            <span className={`text-xs ${cholInfo.color}`}>{cholInfo.label}</span>
-          </div>
-          <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">Max Heart Rate</span>
-            <p className="font-bold text-lg text-gray-700">{patientData.thalach} <span className="text-sm font-normal">bpm</span></p>
-            <span className={`text-xs ${hrInfo.color}`}>{hrInfo.label}</span>
+            <span className="text-gray-500 text-xs block mb-1">BMI</span>
+            <p className="font-bold text-lg text-gray-700">{bmi} <span className="text-sm font-normal">kg/m²</span></p>
           </div>
         </div>
         
-        {/* Additional clinical info */}
+        {/* Additional info */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">Chest Pain</span>
-            <p className="font-bold text-sm text-gray-700">{getChestPainLabel()}</p>
+            <span className="text-gray-500 text-xs block mb-1">Cholesterol</span>
+            <p className={`font-bold text-sm ${cholInfo.color}`}>{cholInfo.label}</p>
           </div>
           <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">Exercise Angina</span>
-            <p className={`font-bold text-sm ${patientData.exang === 1 ? 'text-red-600' : 'text-green-600'}`}>
-              {patientData.exang === 1 ? 'Yes' : 'No'}
+            <span className="text-gray-500 text-xs block mb-1">Glucose</span>
+            <p className={`font-bold text-sm ${glucInfo.color}`}>{glucInfo.label}</p>
+          </div>
+          <div className="bg-white rounded-lg p-3 text-center">
+            <span className="text-gray-500 text-xs block mb-1">Smoking</span>
+            <p className={`font-bold text-sm ${patientData.smoke === 1 ? 'text-red-600' : 'text-green-600'}`}>
+              {patientData.smoke === 1 ? 'Yes' : 'No'}
             </p>
           </div>
           <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">ST Depression</span>
-            <p className="font-bold text-lg text-gray-700">{patientData.oldpeak}</p>
-          </div>
-          <div className="bg-white rounded-lg p-3 text-center">
-            <span className="text-gray-500 text-xs block mb-1">Vessels Affected</span>
-            <p className={`font-bold text-lg ${patientData.ca > 0 ? 'text-orange-600' : 'text-green-600'}`}>{patientData.ca}</p>
+            <span className="text-gray-500 text-xs block mb-1">Active</span>
+            <p className={`font-bold text-sm ${patientData.active === 1 ? 'text-green-600' : 'text-red-600'}`}>
+              {patientData.active === 1 ? 'Yes' : 'No'}
+            </p>
           </div>
         </div>
       </div>
@@ -239,7 +235,7 @@ const ResultDisplay = ({ result, patientData }) => {
       {/* Disclaimer */}
       <p className="text-gray-400 text-xs text-center mt-6 flex items-center justify-center gap-1">
         <Info className="w-3 h-3" />
-        This AI prediction is for informational purposes only and should not replace professional medical advice.
+        This AI prediction is trained on 70,000 records and is for informational purposes only. It should not replace professional medical advice.
       </p>
     </motion.div>
   );

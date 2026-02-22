@@ -1,113 +1,121 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Brain, TrendingUp, TrendingDown, AlertCircle, CheckCircle, Info, Heart, Activity, Stethoscope, Beaker, Zap, Calendar, Scale, Cigarette, BarChart2, Droplets, Ruler, Wine, Dumbbell, User, Users, Search, Lightbulb } from 'lucide-react';
+import { Brain, TrendingUp, TrendingDown, AlertCircle, CheckCircle, Info, Heart, Activity, Stethoscope, Zap, Calendar, Scale, Cigarette, BarChart2, Droplets, Ruler, Wine, Dumbbell, User, Users, Search, Lightbulb } from 'lucide-react';
 
-// Human-readable feature names and descriptions for UCI Heart Disease dataset
+// Human-readable feature names and descriptions for cardiovascular dataset (70K records)
 const featureInfo = {
-  'Chest Pain Type': { 
-    name: 'Chest Pain Type', 
-    desc: 'Type of chest pain experienced (1=Typical Angina, 2=Atypical, 3=Non-Anginal, 4=Asymptomatic)'
-  },
-  'Exercise Angina': { 
-    name: 'Exercise Induced Angina', 
-    desc: 'Whether you experience chest pain during exercise'
-  },
-  'Cholesterol': { 
-    name: 'Serum Cholesterol', 
-    desc: 'Your cholesterol level in mg/dl'
-  },
-  'Sex': { 
-    name: 'Sex', 
-    desc: 'Your biological sex (Male/Female)'
-  },
-  'Thalassemia': { 
-    name: 'Thalassemia', 
-    desc: 'Thallium stress test result (Normal, Fixed Defect, Reversible Defect)'
-  },
-  'ST Depression': { 
-    name: 'ST Depression (Oldpeak)', 
-    desc: 'ST depression induced by exercise relative to rest'
-  },
-  'Vessels Colored': { 
-    name: 'Major Vessels Colored', 
-    desc: 'Number of major vessels (0-3) colored by flouroscopy'
-  },
-  'Max Heart Rate': { 
-    name: 'Maximum Heart Rate', 
-    desc: 'Maximum heart rate achieved during exercise test'
-  },
   'Age': { 
     name: 'Age', 
-    desc: 'Your age in years'
+    desc: 'Age in years — cardiovascular risk increases with age'
   },
-  'Blood Pressure': { 
-    name: 'Resting Blood Pressure', 
-    desc: 'Resting blood pressure in mm Hg'
+  'Gender': { 
+    name: 'Gender', 
+    desc: 'Biological sex (1 = Female, 2 = Male)'
   },
-  'Blood Sugar': { 
-    name: 'Fasting Blood Sugar', 
-    desc: 'Whether fasting blood sugar > 120 mg/dl'
+  'Height': { 
+    name: 'Height', 
+    desc: 'Height in centimeters'
   },
-  'ST Slope': { 
-    name: 'ST Slope', 
-    desc: 'Slope of peak exercise ST segment (Upsloping, Flat, Downsloping)'
+  'Weight': { 
+    name: 'Weight / BMI', 
+    desc: 'Weight in kg — used to compute BMI'
   },
-  'ECG Result': { 
-    name: 'Resting ECG', 
-    desc: 'Resting electrocardiographic results'
+  'Systolic BP': { 
+    name: 'Systolic Blood Pressure', 
+    desc: 'Upper blood pressure reading (mmHg). >140 is hypertension.'
   },
-  'cp': { 
-    name: 'Chest Pain Type', 
-    desc: 'Type of chest pain (1=Typical Angina, 2=Atypical, 3=Non-Anginal, 4=Asymptomatic)'
+  'Diastolic BP': { 
+    name: 'Diastolic Blood Pressure', 
+    desc: 'Lower blood pressure reading (mmHg). >90 is hypertension.'
   },
-  'trestbps': { 
-    name: 'Resting Blood Pressure', 
-    desc: 'Resting blood pressure in mm Hg'
+  'Cholesterol': { 
+    name: 'Cholesterol Level', 
+    desc: 'Blood cholesterol (1: normal, 2: above normal, 3: well above normal)'
   },
-  'chol': { 
-    name: 'Serum Cholesterol', 
-    desc: 'Cholesterol level in mg/dl'
+  'Glucose': { 
+    name: 'Glucose Level', 
+    desc: 'Blood glucose (1: normal, 2: above normal, 3: well above normal)'
   },
-  'thalach': { 
-    name: 'Max Heart Rate', 
-    desc: 'Maximum heart rate achieved'
+  'Smoking': { 
+    name: 'Smoking Status', 
+    desc: 'Whether you currently smoke — major cardiovascular risk factor'
   },
-  'exang': { 
-    name: 'Exercise Angina', 
-    desc: 'Exercise induced angina (Yes/No)'
+  'Alcohol': { 
+    name: 'Alcohol Intake', 
+    desc: 'Whether you consume alcohol regularly'
   },
-  'oldpeak': { 
-    name: 'ST Depression', 
-    desc: 'ST depression induced by exercise'
+  'Physical Activity': { 
+    name: 'Physical Activity', 
+    desc: 'Whether you engage in regular physical activity'
   },
-  'ca': { 
-    name: 'Vessels Colored', 
-    desc: 'Number of major vessels colored by flouroscopy'
+  'Age (Years)': {
+    name: 'Age in Years',
+    desc: 'Age converted from days to years for better model accuracy'
   },
-  'thal': { 
-    name: 'Thalassemia', 
-    desc: 'Thallium stress test result'
+  'BMI': {
+    name: 'Body Mass Index',
+    desc: 'Calculated from weight and height — key obesity indicator'
   },
-  'slope': { 
-    name: 'ST Slope', 
-    desc: 'Slope of peak exercise ST segment'
+  'Pulse Pressure': {
+    name: 'Pulse Pressure',
+    desc: 'Difference between systolic and diastolic BP — arterial stiffness indicator'
   },
-  'fbs': { 
-    name: 'Fasting Blood Sugar', 
-    desc: 'Fasting blood sugar > 120 mg/dl'
+  'Mean Arterial Pressure': {
+    name: 'Mean Arterial Pressure',
+    desc: 'Average BP during cardiac cycle — organ perfusion indicator'
   },
-  'restecg': { 
-    name: 'Resting ECG', 
-    desc: 'Resting electrocardiographic results'
+  'Age-BP Interaction': {
+    name: 'Age × Blood Pressure',
+    desc: 'Combined effect of age and high blood pressure on risk'
   },
-  'age': { 
-    name: 'Age', 
-    desc: 'Age in years'
+  'Metabolic Risk': {
+    name: 'Metabolic Risk Score',
+    desc: 'Combined cholesterol and glucose risk level'
   },
-  'sex': { 
-    name: 'Sex', 
-    desc: 'Biological sex'
+  'Lifestyle Risk': {
+    name: 'Lifestyle Risk Score',
+    desc: 'Combined smoking, alcohol, and inactivity risk'
+  },
+  'BMI Category': {
+    name: 'BMI Category',
+    desc: 'Weight classification (underweight / normal / overweight / obese)'
+  },
+  'BP Category': {
+    name: 'BP Category',
+    desc: 'Blood pressure classification (normal / elevated / high / very high)'
+  },
+  'Age Category': {
+    name: 'Age Risk Group',
+    desc: 'Age bracket for cardiovascular risk stratification'
+  },
+  'Age-Chol Interaction': {
+    name: 'Age × Cholesterol',
+    desc: 'Combined effect of aging and high cholesterol on cardiovascular risk'
+  },
+  'BMI-BP Interaction': {
+    name: 'BMI × Blood Pressure',
+    desc: 'Combined effect of obesity and high blood pressure'
+  },
+  'BMI-Chol Interaction': {
+    name: 'BMI × Cholesterol',
+    desc: 'Combined effect of obesity and high cholesterol'
+  },
+  'Overall Risk': {
+    name: 'Overall Risk Score',
+    desc: 'Composite score combining metabolic and lifestyle risk factors'
+  },
+  'Systolic BP²': {
+    name: 'Systolic BP (Squared)',
+    desc: 'Non-linear effect of very high systolic blood pressure'
+  },
+  'BMI²': {
+    name: 'BMI (Squared)',
+    desc: 'Non-linear effect of extreme BMI values on risk'
+  },
+  'Age²': {
+    name: 'Age (Squared)',
+    desc: 'Non-linear effect of advancing age on cardiovascular risk'
   },
 };
 
@@ -336,7 +344,7 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
         </h4>
         <div className="text-blue-700 space-y-2">
           <p>
-            <strong>Step 1:</strong> The AI starts with an average baseline risk of <strong>{(explanation.base_value * 100).toFixed(1)}%</strong> (typical population risk).
+            <strong>Step 1:</strong> The AI starts with an average baseline risk of <strong>{((explanation.base_value || 0.497) * 100).toFixed(1)}%</strong> (typical population risk from 70,000 patient records).
           </p>
           <p>
             <strong>Step 2:</strong> Each of your health values either <span className="text-red-600 font-semibold">increases</span> or <span className="text-green-600 font-semibold">decreases</span> this baseline.
