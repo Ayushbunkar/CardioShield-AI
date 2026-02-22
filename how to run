@@ -1,0 +1,23 @@
+# Backend
+cd ai-backend
+python app.py
+
+# Frontend
+cd client
+npm run dev
+
+# Server
+cd server
+npm run dev
+
+
+
+CardioShield-AI/
+├── ai-backend/          # Python Flask API (port 5001)
+│   ├── app.py           # ~250 lines, clean & readable
+│   ├── requirements.txt # 7 dependencies
+│   └── models/          # LightGBM model
+├── client/              # React frontend (port 3000)
+│   └── src/services/cardioApi.js  # ~180 lines
+└── server/              # Node.js API (port 4500)
+    └── index.js         # ~90 lines
