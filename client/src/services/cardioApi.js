@@ -1,256 +1,227 @@
+/**
+ * CardioShield AI - API Service
+ * ==============================
+ * Client API for heart disease prediction and user management.
+ */
+
 import axios from 'axios';
 
-const API_BASE = '/api';
-const SERVER_BASE = 'http://localhost:4500';
+// =============================================================================
+// API CLIENTS
+// =============================================================================
 
-const api = axios.create({
-  baseURL: API_BASE,
+const AI_API = '/api';
+const SERVER_API = 'http://localhost:4500';
+
+const aiClient = axios.create({
+  baseURL: AI_API,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 });
 
-const serverApi = axios.create({
-  baseURL: SERVER_BASE,
+const serverClient = axios.create({
+  baseURL: SERVER_API,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
-// Feature order for UCI Heart Disease model (13 features)
-// [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
+// =============================================================================
+// HELPER: Convert form data to model input array
+// =============================================================================
 
-// Patient prediction - formats data for Flask API
+const toInputArray = (p) => [
+  p.age, p.sex, p.cp, p.trestbps, p.chol, p.fbs,
+  p.restecg, p.thalach, p.exang, p.oldpeak, p.slope, p.ca, p.thal
+];
+
+// =============================================================================
+// AI PREDICTION APIs
+// =============================================================================
+
+/**
+ * Quick prediction using LightGBM model.
+ * @param {Object} patientData - Patient form data
+ * @returns {Object} Prediction result with risk level and recommendations
+ */
 export const predictRisk = async (patientData) => {
-  // Convert form data to input array format expected by Flask API
-  const inputArray = [
-    patientData.age,         // 0: age
-    patientData.sex,         // 1: sex (0=female, 1=male)
-    patientData.cp,          // 2: chest pain type (1-4)
-    patientData.trestbps,    // 3: resting blood pressure
-    patientData.chol,        // 4: serum cholesterol
-    patientData.fbs,         // 5: fasting blood sugar > 120 (0/1)
-    patientData.restecg,     // 6: resting ECG results (0-2)
-    patientData.thalach,     // 7: max heart rate achieved
-    patientData.exang,       // 8: exercise induced angina (0/1)
-    patientData.oldpeak,     // 9: ST depression
-    patientData.slope,       // 10: slope of ST segment (1-3)
-    patientData.ca,          // 11: number of vessels (0-3)
-    patientData.thal         // 12: thalassemia (3/6/7)
-  ];
+  const { data } = await aiClient.post('/predict', { input: toInputArray(patientData) });
   
-  const response = await api.post('/predict', { input: inputArray });
-  
-  // Transform response to match expected format
-  const data = response.data;
   return {
     prediction: data.prediction,
     risk_score: data.probability.disease,
     risk_level: data.risk_level,
     confidence: data.confidence,
     probability: data.probability,
+    feature_importance: data.feature_importance,
     recommendations: generateRecommendations(patientData, data)
   };
 };
 
-// Generate recommendations based on patient data and risk
-const generateRecommendations = (patientData, result) => {
-  const recommendations = [];
-  
-  if (result.prediction === 1 || result.risk_level === 'High' || result.risk_level === 'Very High') {
-    recommendations.push('Schedule an appointment with a cardiologist immediately');
-  }
-  
-  if (patientData.trestbps > 140) {
-    recommendations.push('Monitor blood pressure regularly - consider medication consultation');
-  }
-  
-  if (patientData.chol > 240) {
-    recommendations.push('Consider cholesterol-lowering medication and dietary changes');
-  }
-  
-  if (patientData.fbs === 1) {
-    recommendations.push('Manage blood sugar levels through diet and exercise');
-  }
-  
-  if (patientData.exang === 1) {
-    recommendations.push('Avoid strenuous exercise until cleared by a doctor');
-  }
-  
-  if (patientData.thalach < 100) {
-    recommendations.push('Low maximum heart rate detected - discuss with your doctor');
-  }
-  
-  if (recommendations.length === 0) {
-    recommendations.push('Maintain a healthy lifestyle with regular exercise');
-    recommendations.push('Continue regular health checkups');
-    recommendations.push('Follow a heart-healthy diet rich in fruits and vegetables');
-  }
-  
-  return recommendations;
+/**
+ * Full AI assessment with detailed analysis.
+ * @param {Object} patientData - Patient form data
+ * @returns {Object} Complete assessment with risk factors and recommendations
+ */
+export const comprehensiveAssessment = async (patientData) => {
+  const { data } = await aiClient.post('/assess', {
+    input: toInputArray(patientData),
+    patientData
+  });
+  return data;
 };
 
-// Get explanation (simplified for new model)
+/**
+ * Get feature importance explanation.
+ * @param {Object} patientData - Patient form data
+ * @returns {Object} Feature importance and risk interpretation
+ */
 export const getExplanation = async (patientData) => {
-  // Return feature importance based on known model weights
-  const featureImportance = {
-    'Chest Pain Type': patientData.cp >= 3 ? 0.29 : 0.15,
-    'Exercise Angina': patientData.exang === 1 ? 0.10 : 0.02,
-    'Cholesterol': patientData.chol > 240 ? 0.08 : 0.04,
-    'Sex': patientData.sex === 1 ? 0.06 : 0.03,
-    'Thalassemia': patientData.thal === 7 ? 0.07 : 0.03,
-    'ST Depression': patientData.oldpeak > 2 ? 0.08 : 0.03,
-    'Vessels Colored': patientData.ca > 0 ? 0.06 : 0.02,
-    'Max Heart Rate': patientData.thalach < 120 ? 0.05 : 0.02,
-    'Age': patientData.age > 55 ? 0.05 : 0.02,
-    'Blood Pressure': patientData.trestbps > 140 ? 0.04 : 0.02,
-    'Blood Sugar': patientData.fbs === 1 ? 0.03 : 0.01,
-    'ST Slope': patientData.slope === 3 ? 0.04 : 0.02,
-    'ECG Result': patientData.restecg > 0 ? 0.03 : 0.01,
-  };
+  const importance = calculateImportance(patientData);
+  const risks = identifyRisks(patientData);
   
   return {
-    feature_importance: featureImportance,
-    shap_values: Object.values(featureImportance),
-    top_risk_factors: Object.entries(featureImportance)
+    feature_importance: importance,
+    top_risk_factors: Object.entries(importance)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map(([name, value]) => ({ name, impact: value })),
-    interpretation: generateInterpretation(patientData, featureImportance)
+      .map(([name, impact]) => ({ name, impact })),
+    interpretation: risks.length > 0
+      ? `Risk factors: ${risks.join(', ')}. Consult a healthcare provider.`
+      : 'Health indicators are within normal ranges.'
   };
 };
 
-const generateInterpretation = (patientData, importance) => {
-  const factors = [];
-  
-  if (patientData.cp >= 3) factors.push('Significant chest pain type');
-  if (patientData.exang === 1) factors.push('Exercise-induced angina');
-  if (patientData.chol > 240) factors.push('High cholesterol levels');
-  if (patientData.ca > 0) factors.push('Major vessels showing abnormalities');
-  if (patientData.thal === 7) factors.push('Reversible thalassemia defect');
-  if (patientData.oldpeak > 2) factors.push('Significant ST depression');
-  
-  if (factors.length === 0) {
-    return 'Your health indicators are within normal ranges. Continue maintaining a healthy lifestyle.';
-  }
-  
-  return `Key risk factors identified: ${factors.join(', ')}. Please consult with a healthcare provider.`;
-};
+/** Get model metrics */
+export const getMetrics = async () => (await aiClient.get('/metrics')).data;
 
-// Get model metrics
-export const getMetrics = async () => {
-  const response = await api.get('/metrics');
-  return response.data;
-};
+/** Get fairness analysis */
+export const getFairness = async () => (await aiClient.get('/fairness')).data;
 
-// Get fairness analysis
-export const getFairness = async () => {
-  const response = await api.get('/fairness');
-  return response.data;
-};
+/** Health check */
+export const checkHealth = async () => (await aiClient.get('/health')).data;
 
-// Health check
-export const checkHealth = async () => {
-  const response = await api.get('/health');
-  return response.data;
-};
+// =============================================================================
+// USER ASSESSMENT APIs
+// =============================================================================
 
-// ============ User Assessment APIs ============
+export const saveAssessment = async (data) => 
+  (await serverClient.post('/assessment/save', data)).data;
 
-// Save assessment to user's history
-export const saveAssessment = async (assessmentData) => {
-  const response = await serverApi.post('/assessment/save', assessmentData);
-  return response.data;
-};
+export const getAssessmentHistory = async (page = 1, limit = 10) =>
+  (await serverClient.get(`/assessment/history?page=${page}&limit=${limit}`)).data;
 
-// Get user's assessment history
-export const getAssessmentHistory = async (page = 1, limit = 10) => {
-  const response = await serverApi.get(`/assessment/history?page=${page}&limit=${limit}`);
-  return response.data;
-};
+export const getLatestAssessment = async () =>
+  (await serverClient.get('/assessment/latest')).data;
 
-// Get user's latest assessment
-export const getLatestAssessment = async () => {
-  const response = await serverApi.get('/assessment/latest');
-  return response.data;
-};
+export const getUserStats = async () =>
+  (await serverClient.get('/assessment/stats')).data;
 
-// Get user's stats
-export const getUserStats = async () => {
-  const response = await serverApi.get('/assessment/stats');
-  return response.data;
-};
+export const getUserMessages = async () =>
+  (await serverClient.get('/assessment/messages')).data;
 
-// Get user's messages
-export const getUserMessages = async () => {
-  const response = await serverApi.get('/assessment/messages');
-  return response.data;
-};
+export const markMessageAsRead = async (id) =>
+  (await serverClient.put(`/assessment/messages/${id}/read`)).data;
 
-// Mark message as read
-export const markMessageAsRead = async (messageId) => {
-  const response = await serverApi.put(`/assessment/messages/${messageId}/read`);
-  return response.data;
-};
+// =============================================================================
+// ADMIN APIs
+// =============================================================================
 
-// ============ Admin AI APIs ============
+export const getAIDashboardStats = async () =>
+  (await serverClient.get('/admin/ai/dashboard')).data;
 
-// Get admin dashboard stats
-export const getAIDashboardStats = async () => {
-  const response = await serverApi.get('/admin/ai/dashboard');
-  return response.data;
-};
+export const getAllAssessments = async (page = 1, limit = 20) =>
+  (await serverClient.get(`/admin/ai/assessments?page=${page}&limit=${limit}`)).data;
 
-// Get all assessments
-export const getAllAssessments = async (page = 1, limit = 20) => {
-  const response = await serverApi.get(`/admin/ai/assessments?page=${page}&limit=${limit}`);
-  return response.data;
-};
+export const getHighRiskUsers = async () =>
+  (await serverClient.get('/admin/ai/high-risk')).data;
 
-// Get high risk users
-export const getHighRiskUsers = async () => {
-  const response = await serverApi.get('/admin/ai/high-risk');
-  return response.data;
-};
+export const getUserAssessmentHistory = async (userId) =>
+  (await serverClient.get(`/admin/ai/user/${userId}/history`)).data;
 
-// Get user's assessment history (admin)
-export const getUserAssessmentHistory = async (userId) => {
-  const response = await serverApi.get(`/admin/ai/user/${userId}/history`);
-  return response.data;
-};
+export const sendMessageToUser = async (data) =>
+  (await serverClient.post('/admin/ai/message', data)).data;
 
-// Send message to user
-export const sendMessageToUser = async (messageData) => {
-  const response = await serverApi.post('/admin/ai/message', messageData);
-  return response.data;
-};
+export const getAdminMessages = async () =>
+  (await serverClient.get('/admin/ai/messages')).data;
 
-// Get all admin messages
-export const getAdminMessages = async () => {
-  const response = await serverApi.get('/admin/ai/messages');
-  return response.data;
-};
+// =============================================================================
+// GUEST USAGE TRACKING
+// =============================================================================
 
-// ============ Guest Usage Tracking ============
+const GUEST_KEY = 'cardio_guest_usage';
+const MAX_GUEST = 3;
 
-const GUEST_USAGE_KEY = 'cardio_guest_usage';
-const MAX_GUEST_ATTEMPTS = 3;
-
-export const getGuestUsageCount = () => {
-  const usage = localStorage.getItem(GUEST_USAGE_KEY);
-  return usage ? parseInt(usage, 10) : 0;
-};
+export const getGuestUsageCount = () => 
+  parseInt(localStorage.getItem(GUEST_KEY) || '0', 10);
 
 export const incrementGuestUsage = () => {
-  const current = getGuestUsageCount();
-  localStorage.setItem(GUEST_USAGE_KEY, (current + 1).toString());
-  return current + 1;
+  const count = getGuestUsageCount() + 1;
+  localStorage.setItem(GUEST_KEY, count.toString());
+  return count;
 };
 
-export const canGuestUse = () => {
-  return getGuestUsageCount() < MAX_GUEST_ATTEMPTS;
-};
+export const canGuestUse = () => getGuestUsageCount() < MAX_GUEST;
 
-export const getRemainingGuestAttempts = () => {
-  return Math.max(0, MAX_GUEST_ATTEMPTS - getGuestUsageCount());
-};
+export const getRemainingGuestAttempts = () => 
+  Math.max(0, MAX_GUEST - getGuestUsageCount());
 
-export default api;
+// =============================================================================
+// HELPERS (Internal)
+// =============================================================================
+
+function generateRecommendations(patient, result) {
+  const recs = [];
+  
+  if (result.prediction === 1 || ['High', 'Very High'].includes(result.risk_level)) {
+    recs.push('Schedule an appointment with a cardiologist immediately');
+  }
+  if (patient.trestbps > 140) {
+    recs.push('Monitor blood pressure regularly');
+  }
+  if (patient.chol > 240) {
+    recs.push('Consider cholesterol-lowering dietary changes');
+  }
+  if (patient.fbs === 1) {
+    recs.push('Manage blood sugar through diet and exercise');
+  }
+  if (patient.exang === 1) {
+    recs.push('Avoid strenuous exercise until cleared by doctor');
+  }
+  
+  return recs.length > 0 ? recs : [
+    'Maintain a healthy lifestyle with regular exercise',
+    'Continue regular health checkups',
+    'Follow a heart-healthy diet'
+  ];
+}
+
+function calculateImportance(p) {
+  return {
+    'Chest Pain': p.cp >= 3 ? 0.25 : 0.12,
+    'Exercise Angina': p.exang === 1 ? 0.10 : 0.03,
+    'Cholesterol': p.chol > 240 ? 0.09 : 0.04,
+    'ST Depression': p.oldpeak > 2 ? 0.08 : 0.03,
+    'Blood Pressure': p.trestbps > 140 ? 0.07 : 0.03,
+    'Age': p.age > 55 ? 0.06 : 0.03,
+    'Vessels': p.ca > 0 ? 0.06 : 0.02,
+    'Thalassemia': p.thal === 7 ? 0.05 : 0.02,
+    'Max Heart Rate': p.thalach < 120 ? 0.05 : 0.02,
+    'Blood Sugar': p.fbs === 1 ? 0.04 : 0.02,
+    'Sex': p.sex === 1 ? 0.04 : 0.02,
+    'ST Slope': p.slope === 3 ? 0.03 : 0.02,
+    'ECG': p.restecg > 0 ? 0.03 : 0.01
+  };
+}
+
+function identifyRisks(p) {
+  const risks = [];
+  if (p.cp >= 3) risks.push('Significant chest pain');
+  if (p.exang === 1) risks.push('Exercise-induced angina');
+  if (p.chol > 240) risks.push('High cholesterol');
+  if (p.ca > 0) risks.push('Vessel abnormalities');
+  if (p.thal === 7) risks.push('Thalassemia defect');
+  if (p.oldpeak > 2) risks.push('ST depression');
+  return risks;
+}
+
+export default aiClient;
