@@ -102,12 +102,6 @@ const CustomerDashboard = () => {
                 <li>
                   <Link to="/ai-history" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Assessment History</Link>
                 </li>
-                <li>
-                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Profile</Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Contact</Link>
-                </li>
               </ul>
             </nav>
 
