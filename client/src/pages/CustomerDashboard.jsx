@@ -130,43 +130,40 @@ const CustomerDashboard = () => {
             </div>
           </header>
 
-          <div className="grid grid-cols-2 gap-4">
-            <section className="bg-white rounded-2xl p-4">
+          <div className="grid grid-cols-2 gap-4 items-stretch">
+            <section className="bg-white rounded-2xl p-4 h-full flex flex-col">
               <h3 className="font-semibold text-gray-800 mb-3">Overview</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
+              <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col justify-between">
                   <div className="text-sm text-gray-500">Total Assessments</div>
                   <div className="text-2xl font-bold text-purple-800">{loading ? '—' : (stats?.totalAssessments ?? 0)}</div>
                 </div>
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
+                <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col justify-between">
                   <div className="text-sm text-gray-500">Avg Risk Score</div>
                   <div className="text-2xl font-bold text-purple-800">{loading ? '—' : (stats?.avgRiskScore ? `${(stats.avgRiskScore*100).toFixed(0)}%` : '—')}</div>
                 </div>
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
+                <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col justify-between">
                   <div className="text-sm text-gray-500">High Risk Alerts</div>
                   <div className="text-2xl font-bold text-purple-800">{loading ? '—' : (stats?.highRiskCount ?? 0)}</div>
                 </div>
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
+                <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col justify-between">
                   <div className="text-sm text-gray-500">Unread Messages</div>
                   <div className="text-2xl font-bold text-purple-800">{loading ? '—' : messages.filter(m=>!m.isRead).length}</div>
                 </div>
               </div>
             </section>
 
-            <section className="bg-white rounded-2xl p-4">
+            <section className="bg-white rounded-2xl p-4 h-full flex flex-col">
               <h3 className="font-semibold text-gray-800 mb-3">Latest Assessment</h3>
               {loading ? (
-                <div className="py-10 text-center">Loading...</div>
+                <div className="py-10 flex-1 flex items-center justify-center text-center">Loading...</div>
               ) : assessments.length === 0 ? (
-                <div className="py-8 text-center text-gray-500">No assessments yet. Start one at the AI page.</div>
+                <div className="py-8 flex-1 flex items-center justify-center text-center text-gray-500">No assessments yet. Start one at the AI page.</div>
               ) : (
-                <div className="p-4 border rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <div className="text-sm text-gray-500">{new Date(assessments[0].createdAt || assessments[0].date || Date.now()).toLocaleDateString()}</div>
-                      <div className="text-lg font-semibold text-purple-800">{assessments[0].riskLevel || assessments[0].risk_level || 'N/A'} Risk</div>
-                    </div>
-                    <div className="text-sm text-gray-600">Score: {assessments[0].riskScore ? `${(assessments[0].riskScore*100).toFixed(0)}%` : (assessments[0].risk_score ? `${(assessments[0].risk_score*100).toFixed(0)}%` : 'N/A')}</div>
+                <div className="p-4 border rounded-lg flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="text-sm text-gray-500">{new Date(assessments[0].createdAt || assessments[0].date || Date.now()).toLocaleDateString()}</div>
+                    <div className="text-lg font-semibold text-purple-800">{assessments[0].riskLevel || assessments[0].risk_level || 'N/A'} Risk</div>
                   </div>
                   <div className="text-sm text-gray-600">{assessments[0].summary || assessments[0].note || 'No details available.'}</div>
                   <div className="mt-4 text-right">
@@ -177,15 +174,15 @@ const CustomerDashboard = () => {
             </section>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <section className="bg-white rounded-2xl p-4">
+          <div className="grid grid-cols-2 gap-4 mt-4 items-stretch">
+            <section className="bg-white rounded-2xl p-4 h-full flex flex-col">
               <h3 className="font-semibold text-gray-800 mb-3">Recent Assessments</h3>
               {loading ? (
-                <div className="py-8 text-center">Loading...</div>
+                <div className="py-8 flex-1 flex items-center justify-center">Loading...</div>
               ) : assessments.length === 0 ? (
-                <div className="py-6 text-center text-gray-500">No recent assessments</div>
+                <div className="py-6 flex-1 flex items-center justify-center text-gray-500">No recent assessments</div>
               ) : (
-                <ul className="space-y-3">
+                <ul className="space-y-3 flex-1 overflow-auto">
                   {assessments.slice(0,4).map((a, i) => (
                     <li key={a._id || i} className="p-3 border rounded-lg flex items-center justify-between">
                       <div>
@@ -199,12 +196,12 @@ const CustomerDashboard = () => {
               )}
             </section>
 
-            <section className="bg-white rounded-2xl p-4">
+            <section className="bg-white rounded-2xl p-4 h-full flex flex-col">
               <h3 className="font-semibold text-gray-800 mb-3">Reports</h3>
               {loading ? (
-                <div className="py-6 text-center">Loading reports...</div>
+                <div className="py-6 flex-1 flex items-center justify-center">Loading reports...</div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 flex-1 overflow-auto">
                   {(assessments.slice(0,3).length === 0) ? (
                     <div className="text-sm text-gray-500">No reports available.</div>
                   ) : (
@@ -226,15 +223,15 @@ const CustomerDashboard = () => {
 
         {/* Right column */}
         <aside className="col-span-3">
-          <div className="flex flex-col gap-4">
-            <div className="bg-white rounded-2xl p-4 flex flex-col items-center">
+          <div className="flex flex-col gap-4 h-full">
+            <div className="bg-white rounded-2xl p-4 flex flex-col items-center h-48">
               <ProgressRing
                 progress={Math.min(100, Math.round((stats?.avgRiskScore ?? 0) * 100))}
                 label="Avg Risk"
               />
             </div>
 
-            <div className="bg-white rounded-2xl p-4 flex flex-col items-center">
+            <div className="bg-white rounded-2xl p-4 flex flex-col items-center h-48">
               <ProgressRing
                 progress={(() => {
                   const total = stats?.totalAssessments || assessments.length || 0;
@@ -245,8 +242,8 @@ const CustomerDashboard = () => {
               />
             </div>
 
-            <div className="bg-white rounded-2xl p-4">
-              <div className="flex items-start justify-between">
+            <div className="bg-white rounded-2xl p-4 h-48 flex items-center">
+              <div className="flex items-start justify-between w-full">
                 <div>
                   <div className="text-sm text-gray-500">Reports</div>
                   <div className="text-2xl font-bold text-purple-800">{loading ? '—' : (stats?.totalAssessments ?? assessments.length)}</div>
