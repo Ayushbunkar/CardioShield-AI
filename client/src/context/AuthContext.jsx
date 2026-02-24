@@ -14,6 +14,19 @@ export const AuthProvider = (props) => {
     setIsAdmin(user?.role === "Admin");
   }, [user]);
 
+  // persist user to sessionStorage so the dashboard can read it after refresh
+  useEffect(() => {
+    if (user) {
+      try {
+        sessionStorage.setItem("EventUser", JSON.stringify(user));
+      } catch (e) {
+        console.warn("Could not persist user to sessionStorage", e);
+      }
+    } else {
+      sessionStorage.removeItem("EventUser");
+    }
+  }, [user]);
+
   const value = {
     user,
     isLogin,

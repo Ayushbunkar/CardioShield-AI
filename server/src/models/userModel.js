@@ -36,6 +36,19 @@ const userSchema = mongoose.Schema(
       enum: ["Bride", "Groom", "both", "N/A"],
       required: true,
     },
+    age: {
+      type: Number,
+      default: null,
+    },
+    familyHistory: {
+      type: String,
+      default: "",
+    },
+    smokingStatus: {
+      type: String,
+      enum: ["Never", "Former", "Current", "Unknown", "N/A"],
+      default: "N/A",
+    },
     occupation: {
       type: String,
       default: " N/A",

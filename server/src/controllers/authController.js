@@ -106,6 +106,9 @@ export const UpdateUser = async (req, res, next) => {
       state,
       district,
       representing,
+      age,
+      familyHistory,
+      smokingStatus,
     } = req.body;
 
     if (!currentUser) {
@@ -140,6 +143,9 @@ export const UpdateUser = async (req, res, next) => {
         state,
         district,
         representing,
+        age,
+        familyHistory,
+        smokingStatus,
         photo: picture || currentUser.photo,
       },
       { new: true }

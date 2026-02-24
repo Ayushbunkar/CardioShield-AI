@@ -43,7 +43,7 @@ function ProgressRing({ size = 96, stroke = 8, progress = 60, label = "" }) {
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
-  const { isLogin, isAdmin } = useAuth();
+  const { isLogin, isAdmin, user, setUser, setIsLogin, setIsAdmin } = useAuth();
 
   useEffect(() => {
     if (!isLogin || isAdmin) navigate("/login");
@@ -84,10 +84,16 @@ const CustomerDashboard = () => {
         <aside className="col-span-3 bg-[#efe6f2] rounded-2xl p-6">
           <div className="flex flex-col items-start gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-purple-300 flex items-center justify-center text-white font-semibold">S</div>
+              <div className="w-14 h-14 rounded-full bg-purple-300 flex items-center justify-center text-white font-semibold">
+                {(() => {
+                  const name = user?.fullName || user?.name || "U";
+                  const parts = name.split(" ");
+                  return (parts[0]?.[0] || "U") + (parts[1]?.[0] || "");
+                })()}
+              </div>
               <div>
-                <div className="text-sm font-semibold">Sophia Tompson</div>
-                <div className="text-xs text-gray-600">Student</div>
+                <div className="text-sm font-semibold">{user?.fullName || "User"}</div>
+                <div className="text-xs text-gray-600">{user?.email || user?.phone || "-"}</div>
               </div>
             </div>
 
@@ -102,17 +108,31 @@ const CustomerDashboard = () => {
                 <li>
                   <Link to="/ai-history" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Assessment History</Link>
                 </li>
+                <li>
+                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Profile</Link>
+                </li>
               </ul>
             </nav>
 
-            <button className="mt-auto w-full py-2 rounded-lg bg-white text-purple-700 font-semibold">Log out</button>
+            <button
+              onClick={() => {
+                setUser(null);
+                setIsLogin(false);
+                setIsAdmin(false);
+                try { sessionStorage.removeItem("EventUser"); } catch (e) {}
+                navigate("/login");
+              }}
+              className="mt-auto w-full py-2 rounded-lg bg-white text-purple-700 font-semibold"
+            >
+              Log out
+            </button>
           </div>
         </aside>
 
         {/* Main content */}
         <main className="col-span-6 bg-transparent">
           <header className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-purple-900">HELLO, SOPHIA!</h1>
+            <h1 className="text-2xl font-bold text-purple-900">HELLO, {user?.fullName?.split(" ")?.[0]?.toUpperCase() || "USER"}!</h1>
             <div className="flex items-center gap-4">
               <div className="relative">
                 <input
@@ -120,7 +140,7 @@ const CustomerDashboard = () => {
                   placeholder="Search"
                 />
               </div>
-              <div className="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center text-white">ST</div>
+              <div className="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center text-white">{(user?.fullName || 'U')[0]}</div>
             </div>
           </header>
 
