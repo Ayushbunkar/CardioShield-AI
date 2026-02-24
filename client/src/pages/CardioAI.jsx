@@ -155,52 +155,26 @@ const CardioAI = () => {
       {/* Login Prompt Modal */}
       {showLoginPrompt && <LoginPromptModal />}
 
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] text-white py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between flex-wrap gap-4"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-2xl">
-                <Heart className="w-10 h-10" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold">CardioShield AI</h1>
-                <p className="text-white/80 mt-1">Advanced Cardiovascular Risk Prediction System</p>
-              </div>
-            </div>
-
-            {/* User Status / Guest Counter */}
-            <div className="flex items-center gap-4">
-              {!isLogin && (
-                <div className="bg-white/20 px-4 py-2 rounded-xl">
-                  <p className="text-sm">
-                    <span className="font-bold">{guestAttempts}</span> free attempts remaining
-                  </p>
-                  <Link to="/login" className="text-white/80 text-xs hover:text-white underline">
-                    Login for unlimited access
-                  </Link>
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Backend Status */}
-          {backendReady === false && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 flex items-center gap-2 text-yellow-200"
-            >
-              <AlertCircle className="w-5 h-5" />
-              <span>Backend not connected. Start the server.</span>
-            </motion.div>
-          )}
+      {/* User Status / Guest Counter - Compact */}
+      {!isLogin && (
+        <div className="bg-[#8B7FCF] text-white px-6 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm">
+            <Heart className="w-4 h-4" />
+            <span className="font-semibold">{guestAttempts}</span> free attempts remaining
+          </div>
+          <Link to="/login" className="text-white/80 text-xs hover:text-white underline">
+            Login for unlimited access
+          </Link>
         </div>
-      </div>
+      )}
+
+      {/* Backend Status */}
+      {backendReady === false && (
+        <div className="bg-yellow-500 text-yellow-900 px-6 py-2 flex items-center gap-2 text-sm">
+          <AlertCircle className="w-4 h-4" />
+          <span>Backend not connected. Start the server.</span>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-200">

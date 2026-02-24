@@ -58,11 +58,11 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Get In Touch</h4>
+            <h4 className="text-lg font-semibold pb-10 mb-4">Get In Touch</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2 text-gray-300">
                 <FaEnvelope />
-                <span>support@cardioshield.ai</span>
+                <span>CardioShieldAi@gmail.com</span>
               </li>
               <li className="text-gray-300">
                 Secure & HIPAA Compliant

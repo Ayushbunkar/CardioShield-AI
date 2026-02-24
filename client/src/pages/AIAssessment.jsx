@@ -77,25 +77,6 @@ const AIAssessment = () => {
   return (
     <DashboardLayout activeNav="ai-assessment">
       <div className="p-4 max-w-[1600px] mx-auto">
-        {/* Header Row */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">AI Heart Risk Assessment</h1>
-              <p className="text-xs text-gray-500">LightGBM • 70,000+ records</p>
-            </div>
-          </div>
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${backendReady ? 'bg-emerald-100' : 'bg-red-100'}`}>
-            <div className={`w-2 h-2 rounded-full ${backendReady ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-            <span className={`text-xs font-medium ${backendReady ? 'text-emerald-700' : 'text-red-700'}`}>
-              {backendReady ? 'Online' : 'Offline'}
-            </span>
-          </div>
-        </div>
-
         {/* Compact Horizontal Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4">
           <div className="flex flex-wrap items-end gap-3">

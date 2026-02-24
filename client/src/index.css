@@ -5,6 +5,16 @@
   --customFont: "Bonheur Royale", cursive, san-serif;
 }
 
+/* Hide scrollbars globally */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
