@@ -61,14 +61,14 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F1ED] relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(139,127,207,0.15),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(236,72,153,0.1),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(139,127,207,0.1),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(184,164,201,0.1),transparent_50%)]" />
       
       {/* Floating Shapes */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-[#E8DFF5]/50 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#DFD1E8]/50 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-16">
         {/* Header */}
@@ -78,11 +78,11 @@ const ContactUs = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400">Touch</span>
+          <h1 className="text-4xl md:text-6xl font-bold text-[#4A3B5C] mb-4">
+            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B7FCF] to-[#B8A4C9]">Touch</span>
           </h1>
           
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-[#6B5B7C] text-lg max-w-2xl mx-auto">
             Partnership inquiries, technical support, or just want to say hello? 
             We're here to help protect hearts together.
           </p>
@@ -98,10 +98,10 @@ const ContactUs = () => {
             className="lg:col-span-2 space-y-8"
           >
             <div>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Let's build something <span className="text-violet-400">amazing</span> together
+              <h2 className="text-2xl font-bold text-[#4A3B5C] mb-4">
+                Let's build something <span className="text-[#8B7FCF]">amazing</span> together
               </h2>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-[#6B5B7C] leading-relaxed">
                 CardioShield AI is committed to making cardiovascular screening accessible globally. 
                 Whether you're a healthcare provider, researcher, or government organization, 
                 we're excited to collaborate.
@@ -109,8 +109,8 @@ const ContactUs = () => {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-violet-400" />
+              <h3 className="text-lg font-semibold text-[#4A3B5C] flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#8B7FCF]" />
                 What we can help with
               </h3>
               
@@ -122,20 +122,20 @@ const ContactUs = () => {
                 "Custom model calibration for populations"
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-300 text-sm">{item}</span>
+                  <CheckCircle className="w-5 h-5 text-[#8B7FCF] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#6B5B7C] text-sm">{item}</span>
                 </div>
               ))}
             </div>
 
             {/* Trust Badge */}
-            <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-violet-500/10 to-pink-500/10 rounded-xl border border-violet-500/20">
-              <div className="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-violet-400" />
+            <div className="flex items-center gap-4 p-4 bg-[#E8DFF5] rounded-xl border border-[#D4C5E0]">
+              <div className="w-12 h-12 rounded-full bg-[#DFD1E8] flex items-center justify-center">
+                <Shield className="w-6 h-6 text-[#8B7FCF]" />
               </div>
               <div>
-                <p className="text-white font-medium">Secure & Confidential</p>
-                <p className="text-gray-400 text-sm">Your data is protected with enterprise-grade security</p>
+                <p className="text-[#4A3B5C] font-medium">Secure & Confidential</p>
+                <p className="text-[#6B5B7C] text-sm">Your data is protected with enterprise-grade security</p>
               </div>
             </div>
           </motion.div>
@@ -147,9 +147,9 @@ const ContactUs = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-3"
           >
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 relative overflow-hidden">
+            <div className="bg-white border border-[#E8DFF5] rounded-3xl p-8 relative overflow-hidden shadow-lg">
               {/* Form Glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#E8DFF5]/50 rounded-full blur-3xl" />
               
               {sent ? (
                 /* Success State */
@@ -158,11 +158,11 @@ const ContactUs = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   className="relative z-10 text-center py-12"
                 >
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-[#8B7FCF] to-[#B8A4C9] flex items-center justify-center">
                     <CheckCircle className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
-                  <p className="text-gray-400">We'll get back to you within 24 hours.</p>
+                  <h3 className="text-2xl font-bold text-[#4A3B5C] mb-2">Message Sent!</h3>
+                  <p className="text-[#6B5B7C]">We'll get back to you within 24 hours.</p>
                 </motion.div>
               ) : (
                 /* Form */
@@ -212,8 +212,8 @@ const ContactUs = () => {
                   </div>
 
                   <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                      <MessageSquare className="w-4 h-4 text-violet-400" />
+                    <label className="flex items-center gap-2 text-sm font-medium text-[#4A3B5C] mb-2">
+                      <MessageSquare className="w-4 h-4 text-[#8B7FCF]" />
                       Message
                     </label>
                     <textarea
@@ -223,7 +223,7 @@ const ContactUs = () => {
                       onChange={handleChange}
                       required
                       placeholder="Tell us about your inquiry, project, or how we can help..."
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all resize-none"
+                      className="w-full px-4 py-3 bg-[#F5F1ED] border border-[#E8DFF5] rounded-xl text-[#4A3B5C] placeholder-[#8B7B9C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] focus:border-transparent transition-all resize-none"
                     />
                   </div>
 
@@ -232,7 +232,7 @@ const ContactUs = () => {
                     disabled={loading}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-[#8B7FCF] to-[#B8A4C9] hover:from-[#9D8FD9] hover:to-[#C4B0D5] text-white font-semibold rounded-xl shadow-lg shadow-[#8B7FCF]/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {loading ? (
                       <>
@@ -247,7 +247,7 @@ const ContactUs = () => {
                     )}
                   </motion.button>
 
-                  <p className="text-center text-gray-500 text-xs flex items-center justify-center gap-2">
+                  <p className="text-center text-[#8B7B9C] text-xs flex items-center justify-center gap-2">
                     <Clock className="w-3 h-3" />
                     We typically respond within 24 hours
                   </p>
@@ -264,8 +264,8 @@ const ContactUs = () => {
 // Reusable Input Field Component
 const InputField = ({ icon: Icon, label, name, type = "text", value, onChange, placeholder, required }) => (
   <div>
-    <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-      <Icon className="w-4 h-4 text-violet-400" />
+    <label className="flex items-center gap-2 text-sm font-medium text-[#4A3B5C] mb-2">
+      <Icon className="w-4 h-4 text-[#8B7FCF]" />
       {label}
     </label>
     <input
@@ -275,7 +275,7 @@ const InputField = ({ icon: Icon, label, name, type = "text", value, onChange, p
       onChange={onChange}
       required={required}
       placeholder={placeholder}
-      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+      className="w-full px-4 py-3 bg-[#F5F1ED] border border-[#E8DFF5] rounded-xl text-[#4A3B5C] placeholder-[#8B7B9C] focus:outline-none focus:ring-2 focus:ring-[#8B7FCF] focus:border-transparent transition-all"
     />
   </div>
 );

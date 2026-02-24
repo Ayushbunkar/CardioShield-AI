@@ -199,15 +199,15 @@ const CardioAI = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-5">
         <AnimatePresence mode="wait">
           {activeTab === 'assessment' && (
             <motion.div
               key="assessment"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="grid lg:grid-cols-2 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid lg:grid-cols-2 gap-6" style={{ minHeight: 'calc(100vh - 200px)' }}
             >
               <PatientForm onSubmit={handleSubmit} isLoading={isLoading} />
               <ResultDisplay result={result} patientData={patientData} />
@@ -249,15 +249,6 @@ const CardioAI = () => {
         </AnimatePresence>
       </div>
 
-      {/* Footer */}
-      <div className="bg-white border-t border-gray-100 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-6 text-center text-gray-500 text-sm">
-          <p>
-            CardioShield AI uses machine learning to assess cardiovascular risk. 
-            This tool is for educational purposes and should not replace professional medical advice.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

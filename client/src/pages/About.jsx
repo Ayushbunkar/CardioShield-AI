@@ -10,9 +10,9 @@ const cards = [
     id: 1,
     title: "Executive Summary",
     icon: Heart,
-    color: "from-violet-500 to-purple-600",
-    bgColor: "bg-violet-50",
-    borderColor: "border-violet-200",
+    color: "from-[#B8A4C9] to-[#C4B0D5]",
+    bgColor: "bg-[#F8F3FC]",
+    borderColor: "border-[#EDE5F5]",
     content: {
       description: "CardioShield AI is an explainable, low-cost, deployable AI platform designed for early risk prediction of cardiovascular diseases (CVD) — specifically heart attacks and strokes — in underserved and resource-constrained populations.",
       points: [
@@ -29,9 +29,9 @@ const cards = [
     id: 2,
     title: "Product Vision",
     icon: Brain,
-    color: "from-pink-500 to-rose-600",
-    bgColor: "bg-pink-50",
-    borderColor: "border-pink-200",
+    color: "from-[#9D8FD9] to-[#A89BE0]",
+    bgColor: "bg-[#F5EFFC]",
+    borderColor: "border-[#E8DFF5]",
     content: {
       description: "Our vision is to democratize cardiovascular health screening through accessible AI technology.",
       points: [
@@ -48,9 +48,9 @@ const cards = [
     id: 3,
     title: "Target Users",
     icon: Users,
-    color: "from-amber-500 to-orange-600",
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-200",
+    color: "from-[#7B6B8F] to-[#8B7FCF]",
+    bgColor: "bg-[#F0E8F8]",
+    borderColor: "border-[#E5D9F2]",
     content: {
       description: "Designed for healthcare providers serving underserved communities.",
       points: [
@@ -67,9 +67,9 @@ const cards = [
     id: 4,
     title: "System Architecture",
     icon: Cpu,
-    color: "from-emerald-500 to-teal-600",
-    bgColor: "bg-emerald-50",
-    borderColor: "border-emerald-200",
+    color: "from-[#5A4A6B] to-[#6B5B7C]",
+    bgColor: "bg-[#EDE5F5]",
+    borderColor: "border-[#DFD1E8]",
     content: {
       description: "CardioShield AI consists of two major components for comprehensive risk assessment.",
       points: [
@@ -86,9 +86,9 @@ const cards = [
     id: 5,
     title: "Our Promise",
     icon: Shield,
-    color: "from-blue-500 to-indigo-600",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200",
+    color: "from-[#3D2F4D] to-[#4A3B5C]",
+    bgColor: "bg-[#E8E0F0]",
+    borderColor: "border-[#D4C5E0]",
     content: {
       description: "We are committed to ethical, transparent, and equitable AI in healthcare.",
       points: [
@@ -165,15 +165,15 @@ const About = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 min-h-screen">
+    <div className="bg-[#F5F1ED] min-h-screen">
       {/* Hero Section */}
       <div className="pt-20 pb-8 relative overflow-hidden">
         <div className="absolute inset-0 ]" />
         <div className="text-center z-10 px-6 relative">
-          <h1 className="text-5xl md:text-5xl  font-bold text-white mb-4">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400">CardioShield AI</span>
+          <h1 className="text-5xl md:text-5xl  font-bold text-[#4A3B5C] mb-4">
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B7FCF] to-[#B8A4C9]">CardioShield AI</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-[#6B5B7C] max-w-2xl mx-auto">
             AI-Powered Early Cardiovascular Risk Stratification Platform
           </p>
         </div>
@@ -225,8 +225,8 @@ const About = () => {
                       ))}
                     </ul>
 
-                    <div className={`p-4 rounded-xl bg-gradient-to-r ${card.color} bg-opacity-10 border ${card.borderColor}`}>
-                      <p className="text-gray-700 font-medium text-sm italic">
+                    <div className={`p-4 rounded-xl bg-gradient-to-r ${card.color} border ${card.borderColor}`}>
+                      <p className="text-white font-medium text-sm italic">
                         "{card.content.footer}"
                       </p>
                     </div>
