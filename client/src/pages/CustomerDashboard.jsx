@@ -102,14 +102,14 @@ const CustomerDashboard = () => {
                 <li>
                   <Link to="/" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Home</Link>
                 </li>
+                 <li>
+                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Profile</Link>
+                </li>
                 <li>
                   <Link to="/ai" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">AI Assessment</Link>
                 </li>
                 <li>
                   <Link to="/ai-history" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Assessment History</Link>
-                </li>
-                <li>
-                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-white">Profile</Link>
                 </li>
               </ul>
             </nav>
@@ -237,7 +237,7 @@ const CustomerDashboard = () => {
 
         {/* Right column */}
         <aside className="col-span-3">
-          <div className="flex flex-col gap-4 h-full">
+          <div className="flex flex-col gap-3">
             <div className="bg-white rounded-2xl p-4 flex flex-col items-center h-48">
               <ProgressRing
                 progress={Math.min(100, Math.round((stats?.avgRiskScore ?? 0) * 100))}
@@ -255,20 +255,23 @@ const CustomerDashboard = () => {
                 label="High Risk Rate"
               />
             </div>
-
-            <div className="bg-white rounded-2xl p-4 h-48 flex items-center">
-              <div className="flex items-start justify-between w-full">
-                <div>
-                  <div className="text-sm text-gray-500">Reports</div>
-                  <div className="text-2xl font-bold text-purple-800">{loading ? '—' : (stats?.totalAssessments ?? assessments.length)}</div>
-                </div>
-                <div className="mt-2">
-                  <Link to="/reports" className="px-3 py-2 bg-purple-700 text-white rounded-lg text-sm">Open</Link>
-                </div>
-              </div>
-            </div>
           </div>
         </aside>
+
+        {/* Reports section - aligned with main content */}
+        <div className="col-start-4 col-span-9 mt-1">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-1">Reports</h3>
+                <p className="text-sm text-gray-500">Total: {loading ? '—' : (stats?.totalAssessments ?? assessments.length)} reports available</p>
+              </div>
+              <Link to="/reports" className="px-6 py-2 bg-purple-700 text-white rounded-lg text-sm hover:bg-purple-800 transition">
+                Open Reports
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
