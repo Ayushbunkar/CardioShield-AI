@@ -11,7 +11,7 @@ const seedAdmin = async () => {
   const adminPassword = await bcrypt.hash("Admin@123", 10);
   const AdminUser = {
     fullName: "Admin User",
-    email: "admin@mywebsite.com",
+    email: "admin@gmail.com",
     password: adminPassword,
     phone: "9431897901",
     photo: "https://placehold.co/600x400?text=A",

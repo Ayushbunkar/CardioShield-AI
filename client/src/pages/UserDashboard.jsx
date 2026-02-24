@@ -53,7 +53,6 @@ const UserDashboard = () => {
   const [stats, setStats] = useState(null);
   const [assessments, setAssessments] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -62,17 +61,13 @@ const UserDashboard = () => {
       try {
         const [hRes, sRes, mRes] = await Promise.all([
           getAssessmentHistory(1, 5).catch(() => ({ data: [] })),
-          getUserStats().catch(() => ({ data: { stats: {} } })),
-          getUserMessages().catch(() => ({ data: [], unreadCount: 0 }))
+          getUserStats().catch(() => ({})),
+          getUserMessages().catch(() => ({ data: [] }))
         ]);
 
-        // assessments: { data: [...], pagination }
-        setAssessments(hRes?.data || []);
-        // stats: { data: { stats: {...}, riskDistribution } }
-        setStats(sRes?.data?.stats || sRes?.data || {});
-        // messages: { data: [...], unreadCount }
-        setMessages(mRes?.data || []);
-        setUnreadCount(mRes?.unreadCount || 0);
+        setAssessments(hRes.data || hRes || []);
+        setStats(sRes.data || sRes || {});
+        setMessages(mRes.data || mRes || []);
       } catch (err) {
         console.error("Dashboard load error:", err);
       } finally {
@@ -167,7 +162,7 @@ const UserDashboard = () => {
                 </div>
                 <div className="bg-white rounded-lg p-4 shadow-sm border h-full flex flex-col justify-between">
                   <div className="text-sm text-gray-500">Unread Messages</div>
-                  <div className="text-2xl font-bold text-purple-800">{loading ? '—' : unreadCount}</div>
+                  <div className="text-2xl font-bold text-purple-800">{loading ? '—' : messages.filter(m=>!m.isRead).length}</div>
                 </div>
               </div>
             </section>
@@ -184,11 +179,7 @@ const UserDashboard = () => {
                     <div className="text-sm text-gray-500">{new Date(assessments[0].createdAt || assessments[0].date || Date.now()).toLocaleDateString()}</div>
                     <div className="text-lg font-semibold text-purple-800">{assessments[0].riskLevel || assessments[0].risk_level || 'N/A'} Risk</div>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {assessments[0].recommendations?.length > 0 
-                      ? assessments[0].recommendations[0] 
-                      : `Risk Score: ${(assessments[0].riskScore * 100).toFixed(0)}% | Confidence: ${(assessments[0].confidence * 100).toFixed(0)}%`}
-                  </div>
+                  <div className="text-sm text-gray-600">{assessments[0].summary || assessments[0].note || 'No details available.'}</div>
                   <div className="mt-4 text-right">
                     <Link to="/ai-history" className="text-purple-700 font-medium">View history &rarr;</Link>
                   </div>
@@ -209,15 +200,10 @@ const UserDashboard = () => {
                   {assessments.slice(0,4).map((a, i) => (
                     <li key={a._id || i} className="p-3 border rounded-lg flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-sm">Risk Score: {((a.riskScore || 0) * 100).toFixed(0)}%</div>
+                        <div className="font-medium text-sm">{a.title || `Assessment ${i+1}`}</div>
                         <div className="text-xs text-gray-500">{new Date(a.createdAt || a.date || Date.now()).toLocaleDateString()}</div>
                       </div>
-                      <div className={`text-sm font-medium px-2 py-0.5 rounded ${
-                        (a.riskLevel || '') === 'Low' ? 'bg-green-100 text-green-700' :
-                        (a.riskLevel || '') === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                        (a.riskLevel || '') === 'High' ? 'bg-orange-100 text-orange-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>{a.riskLevel || 'N/A'}</div>
+                      <div className="text-sm text-purple-700">{a.riskLevel || a.risk_level || 'N/A'}</div>
                     </li>
                   ))}
                 </ul>
@@ -236,10 +222,10 @@ const UserDashboard = () => {
                     assessments.slice(0,3).map((r, i) => (
                       <div key={r._id || i} className="p-3 border rounded-lg flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-sm">{r.riskLevel} Risk Report</div>
+                          <div className="font-medium text-sm">{r.title || `Report ${i + 1}`}</div>
                           <div className="text-xs text-gray-500">{new Date(r.createdAt || r.date || Date.now()).toLocaleDateString()}</div>
                         </div>
-                        <Link to={`/ai-history`} className="text-purple-700 text-sm font-medium">View</Link>
+                        <Link to="/reports" className="text-purple-700 text-sm font-medium">View</Link>
                       </div>
                     ))
                   )}

@@ -1,212 +1,110 @@
-// import React from "react";
-// import {
-//   FaTachometerAlt,
-//   FaBoxes,
-//   FaUsers,
-//   FaCalendarCheck,
-//   FaQuestionCircle,
-//   FaCommentDots,
-//   FaSignOutAlt,
-// } from "react-icons/fa";
-// import { FaTent } from "react-icons/fa6";
-// import { GiCook } from "react-icons/gi";
-// import api from "../../config/api";
-// import { useNavigate } from "react-router-dom";
-// import { useAuth } from "../../context/AuthContext";
-
-// const Sidebar = ({ active, setActive }) => {
-//   const { setUser, setIsLogin, setIsAdmin } = useAuth();
-//   const navigate = useNavigate();
-
-//   const handleLogout = async () => {
-//     const res = await api.get("/auth/logout");
-//     setUser("");
-//     sessionStorage.removeItem("EventUser");
-//     setIsLogin(false);
-//     setIsAdmin(false);
-//     navigate("/");
-//   };
-
-//   return (
-//     <>
-//       <div className="w-100 bg-gradient-to-b from-[#fbe8d3] to-[#fff3e0] border-r border-[#c49b63] min-h-[87vh] p-6 flex flex-col justify-between shadow-xl">
-//         <div>
-//           <div className="border-b-2 border-[#c49b63] pb-4 h-fit text-center">
-//             <span className="text-2xl font-bold text-[#8b1f1f] font-serif">
-//               Admin Dashboard
-//             </span>
-//           </div>
-
-//           <div className="py-6 px-2">
-//             <ul className="grid gap-3 h-130 overflow-y-auto scrollbar-hide">
-//               {[
-//                 { key: "overview", label: "Overview", icon: <FaTachometerAlt className="text-xl" /> },
-//                 { key: "banquetHall", label: "Banquet Hall", icon: <FaTent className="text-xl" /> },
-//                 { key: "cateringService", label: "Catering Service", icon: <GiCook className="text-xl" /> },
-//                 { key: "customers", label: "Customers", icon: <FaUsers className="text-xl" /> },
-//                 { key: "bookings", label: "Bookings", icon: <FaCalendarCheck className="text-xl" /> },
-//                 { key: "cusQueries", label: "Customer Queries", icon: <FaQuestionCircle className="text-xl" /> },
-//                 { key: "cusFeedback", label: "Customer Feedback", icon: <FaCommentDots className="text-xl" /> },
-//               ].map((item) => (
-//                 <li
-//                   key={item.key}
-//                   className={`flex items-center gap-3 border border-[#c49b63] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#fce7d3] hover:text-[#8b1f1f] hover:shadow-md hover:scale-105 ${
-//                     active === item.key
-//                       ? "bg-[#fce7d3] text-[#8b1f1f] shadow-md scale-105"
-//                       : ""
-//                   }`}
-//                   onClick={() => setActive(item.key)}
-//                 >
-//                   {item.icon} {item.label}
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
-//         </div>
-
-//         <div>
-//           <button
-//             className="text-lg text-[#8b1f1f] font-semibold w-full border-2 border-[#c49b63] p-4 rounded-xl flex gap-3 items-center justify-center hover:bg-[#8b1f1f] hover:text-white hover:border-[#8b1f1f] transition-all duration-300 hover:shadow-lg bg-[#fce7d3]"
-//             onClick={handleLogout}
-//           >
-//             Logout <FaSignOutAlt className="text-xl" />
-//           </button>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Sidebar;
-
-
 import React from "react";
 import {
-  FaTachometerAlt,
-  FaBoxes,
-  FaUsers,
-  FaCalendarCheck,
-  FaQuestionCircle,
-  FaCommentDots,
-  FaSignOutAlt,
-  FaHeartbeat,
-} from "react-icons/fa";
-import { FaTent } from "react-icons/fa6";
-import { GiCook } from "react-icons/gi";
-import api from "../../config/api";
-import { useNavigate } from "react-router-dom";
+  LayoutDashboard,
+  Users,
+  Activity,
+  Brain,
+  BarChart3,
+  MessageSquare,
+  Settings,
+  LogOut,
+  HeartPulse,
+  Shield,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const navItems = [
+  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "users", label: "Users", icon: Users },
+  { id: "assessments", label: "Assessments", icon: Activity },
+  { id: "aiMonitoring", label: "AI Monitoring", icon: Brain },
+  { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "queries", label: "Contact Queries", icon: MessageSquare },
+  { id: "settings", label: "Settings", icon: Settings },
+];
 
 const Sidebar = ({ active, setActive }) => {
-  const { setUser, setIsLogin, setIsAdmin } = useAuth();
+  const { user, setUser, setIsLogin, setIsAdmin } = useAuth();
   const navigate = useNavigate();
+
   const handleLogout = async () => {
-    const res = await api.get("/auth/logout");
+    try {
+      await axios.post(
+        "http://localhost:4500/auth/logout",
+        {},
+        { withCredentials: true }
+      );
+    } catch {
+      /* ignore */
+    }
     setUser("");
-    sessionStorage.removeItem("EventUser");
     setIsLogin(false);
     setIsAdmin(false);
-    navigate("/");
+    sessionStorage.removeItem("EventUser");
+    navigate("/login");
   };
 
   return (
-    <>
-      <div className="w-100 bg-gradient-to-b from-[#F5F1ED] to-white border-r border-[#E8DFF5] min-h-[87vh] p-4 flex flex-col justify-between shadow-lg">
-        <div>
-          <div className="border-b-2 border-[#E8DFF5] pb-4 h-fit text-center">
-            <span className="text-2xl font-bold text-[#4A3B5C] font-serif">
-              Admin Dashboard
-            </span>
+    <aside className="w-64 h-[calc(100vh-56px)] fixed top-[56px] left-0 bg-[#0f0a1a] border-r border-purple-900/30 flex flex-col justify-between z-40">
+      {/* Logo */}
+      <div>
+        <div className="flex items-center gap-2 px-5 py-5 border-b border-purple-900/30">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <HeartPulse size={20} className="text-white" />
           </div>
+          <div>
+            <h1 className="text-white font-bold text-sm leading-tight">
+              CardioShield
+            </h1>
+            <p className="text-purple-400 text-[10px]">Admin Dashboard</p>
+          </div>
+        </div>
 
-          <div className="py-4 px-2">
-            <ul className="grid gap-3 h-100 overflow-y-auto scrollbar-hide">
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "overview" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
+        {/* Nav Items */}
+        <nav className="mt-4 px-3 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = active === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActive(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
                 }`}
-                onClick={() => setActive("overview")}
               >
-                <FaTachometerAlt className="text-xl" /> Overview
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "aiHealth" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("aiHealth")}
-              >
-                <FaHeartbeat className="text-xl" /> AI Health
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "banquetHall" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("banquetHall")}
-              >
-                <FaTent className="text-xl" /> Banquet Hall
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "cateringService" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("cateringService")}
-              >
-                <GiCook className="text-xl" /> Catering Service
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "customers" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("customers")}
-              >
-                <FaUsers className="text-xl" /> Customers
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "bookings" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("bookings")}
-              >
-                <FaCalendarCheck className="text-xl" /> Bookings
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "cusQueries" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("cusQueries")}
-              >
-                <FaQuestionCircle className="text-xl" /> Customer Queries
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-[#E8DFF5] p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-[#8B7FCF] hover:text-white hover:shadow-md hover:scale-105 ${
-                  active === "cusFeedback" &&
-                  "bg-[#8B7FCF] text-white shadow-md scale-105"
-                }`}
-                onClick={() => setActive("cusFeedback")}
-              >
-                <FaCommentDots className="text-xl" /> Customer Feedback
-              </li>
-            </ul>
+                <Icon size={18} />
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Bottom User / Logout */}
+      <div className="px-3 pb-2">
+        <div className="border-t border-purple-900/30 pt-2 mb-1">
+          <div className="flex items-center gap-3 px-3 mb-1">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+              {user?.fullName?.charAt(0) || "A"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium truncate">
+                {user?.fullName || "Admin"}
+              </p>
+              <p className="text-gray-500 text-[10px] truncate">
+                {user?.email || "admin@cardioshield.ai"}
+              </p>
+            </div>
           </div>
         </div>
-        <div>
-          <button
-            className="text-lg text-[#4A3B5C] font-semibold w-full border-2 border-[#E8DFF5] p-4 rounded-xl flex gap-3 items-center justify-center hover:bg-[#B8A4C9] hover:text-white hover:border-[#B8A4C9] transition-all duration-300 hover:shadow-lg bg-white"
-            onClick={handleLogout}
-          >
-            Logout
-            <FaSignOutAlt className="text-xl" />
-          </button>
-        </div>
+        
       </div>
-    </>
+    </aside>
   );
 };
 

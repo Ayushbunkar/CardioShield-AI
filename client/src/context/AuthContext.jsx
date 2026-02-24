@@ -14,7 +14,7 @@ export const AuthProvider = (props) => {
     setIsAdmin(user?.role === "Admin");
   }, [user]);
 
-  // persist user to sessionStorage so the dashboard can read it after refresh
+  // Persist user to sessionStorage so state survives page refresh
   useEffect(() => {
     if (user) {
       try {

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import RiskAssessment from "../models/riskAssessmentModel.js";
 import AdminMessage from "../models/adminMessageModel.js";
 import User from "../models/userModel.js";
@@ -80,7 +81,7 @@ export const getLatestAssessment = async (req, res, next) => {
 // Get user's risk statistics
 export const getUserStats = async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const userId = new mongoose.Types.ObjectId(req.user._id);
 
     const stats = await RiskAssessment.aggregate([
       { $match: { user: userId } },

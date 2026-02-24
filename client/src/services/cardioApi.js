@@ -133,8 +133,11 @@ export const markMessageAsRead = async (id) =>
 export const getAIDashboardStats = async () =>
   (await serverClient.get('/admin/ai/dashboard')).data;
 
-export const getAllAssessments = async (page = 1, limit = 20) =>
-  (await serverClient.get(`/admin/ai/assessments?page=${page}&limit=${limit}`)).data;
+export const getAllAssessments = async (page = 1, limit = 20, riskLevel) => {
+  let url = `/admin/ai/assessments?page=${page}&limit=${limit}`;
+  if (riskLevel && riskLevel !== 'all') url += `&riskLevel=${riskLevel}`;
+  return (await serverClient.get(url)).data;
+};
 
 export const getHighRiskUsers = async () =>
   (await serverClient.get('/admin/ai/high-risk')).data;
@@ -147,6 +150,30 @@ export const sendMessageToUser = async (data) =>
 
 export const getAdminMessages = async () =>
   (await serverClient.get('/admin/ai/messages')).data;
+
+// User management
+export const getAdminAllUsers = async (params = {}) => {
+  const q = new URLSearchParams(params).toString();
+  return (await serverClient.get(`/admin/users?${q}`)).data;
+};
+
+export const toggleUserStatus = async (userId) =>
+  (await serverClient.put(`/admin/users/${userId}/toggle`)).data;
+
+export const deleteUserByAdmin = async (userId) =>
+  (await serverClient.delete(`/admin/users/${userId}`)).data;
+
+// Analytics
+export const getAdminAnalytics = async () =>
+  (await serverClient.get('/admin/analytics')).data;
+
+// Export
+export const exportAssessmentsCSV = () =>
+  `${SERVER_API}/admin/ai/assessments/export`;
+
+// AI Backend direct
+export const getAIMetrics = async () => (await aiClient.get('/metrics')).data;
+export const getAIHealth = async () => (await aiClient.get('/health')).data;
 
 // =============================================================================
 // GUEST USAGE TRACKING
