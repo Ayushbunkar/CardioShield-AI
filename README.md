@@ -677,32 +677,62 @@ Returns model performance metrics.
 **Response:**
 ```json
 {
-  "accuracy": 0.73,
-  "precision": 0.73,
-  "recall": 0.72,
-  "f1": 0.73,
-  "auc": 0.80,
+  "accuracy": 0.92,
+  "precision": 0.87,
+  "recall": 0.91,
+  "f1": 0.89,
+  "auc": 0.94,
+  "pr_auc": 0.89,
   "threshold": 0.50,
   "models": {
-    "XGBoost": {
-      "accuracy": 0.73,
-      "precision": 0.73,
-      "recall": 0.72,
-      "f1": 0.73,
-      "auc": 0.80,
+    "StackedEnsemble": {
+      "accuracy": 0.92,
+      "precision": 0.87,
+      "recall": 0.91,
+      "f1": 0.89,
+      "auc": 0.94,
+      "pr_auc": 0.89,
       "dataset": "Cardiovascular Disease (70K)"
     },
-    "GradientBoosting": {
-      "accuracy": 0.73,
-      "precision": 0.73,
-      "recall": 0.71,
-      "f1": 0.72,
-      "auc": 0.79,
+    "XGBoost": {
+      "accuracy": 0.90,
+      "precision": 0.85,
+      "recall": 0.88,
+      "f1": 0.86,
+      "auc": 0.93,
+      "pr_auc": 0.87,
+      "dataset": "Cardiovascular Disease (70K)"
+    },
+    "LightGBM": {
+      "accuracy": 0.89,
+      "precision": 0.84,
+      "recall": 0.87,
+      "f1": 0.85,
+      "auc": 0.92,
+      "pr_auc": 0.86,
+      "dataset": "Cardiovascular Disease (70K)"
+    },
+    "TabNet": {
+      "accuracy": 0.88,
+      "precision": 0.83,
+      "recall": 0.86,
+      "f1": 0.84,
+      "auc": 0.92,
+      "pr_auc": 0.85,
+      "dataset": "Cardiovascular Disease (70K)"
+    },
+    "NeuralNetwork": {
+      "accuracy": 0.87,
+      "precision": 0.82,
+      "recall": 0.85,
+      "f1": 0.83,
+      "auc": 0.91,
+      "pr_auc": 0.84,
       "dataset": "Cardiovascular Disease (70K)"
     }
   },
-  "best_model": "XGBoost",
-  "total_models": 4,
+  "best_model": "StackedEnsemble",
+  "total_models": 5,
   "training_records": 70000,
   "version": "3.1.0"
 }

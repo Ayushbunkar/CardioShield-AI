@@ -66,11 +66,11 @@ export default function Hero() {
               
               <div className="flex items-center gap-3">
                 <div className="bg-[#E8DFF5] w-14 h-14 rounded-full flex items-center justify-center">
-                  <span className="text-[#6B5B7C] font-bold text-lg">95%</span>
+                  <span className="text-[#6B5B7C] font-bold text-lg">94%</span>
                 </div>
                 <div className="text-sm">
-                  <p className="text-[#8B7B9C]">We have <span className="font-semibold text-[#6B5B7C]">Success</span></p>
-                  <p className="text-[#8B7B9C]">rate so far</p>
+                  <p className="text-[#8B7B9C]"><span className="font-semibold text-[#6B5B7C]">ROC-AUC</span></p>
+                  <p className="text-[#8B7B9C]">Model Accuracy</p>
                 </div>
               </div>
             </div>

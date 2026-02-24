@@ -48,10 +48,10 @@ const MetricsCharts = () => {
   }
 
   const metricCards = [
-    { name: 'AUC-ROC', value: metrics.auc, icon: Target, color: '#8B7FCF', description: 'Area Under Curve' },
-    { name: 'F1 Score', value: metrics.f1, icon: BarChart2, color: '#22C55E', description: 'Harmonic Mean of P&R' },
-    { name: 'Precision', value: metrics.precision, icon: TrendingUp, color: '#3B82F6', description: 'True Positive Rate' },
-    { name: 'Recall', value: metrics.recall, icon: Activity, color: '#F59E0B', description: 'Sensitivity' },
+    { name: 'AUC-ROC', value: metrics.auc, icon: Target, color: '#8B7FCF', description: 'Area Under Curve', threshold: 0.92 },
+    { name: 'Recall', value: metrics.recall, icon: Activity, color: '#22C55E', description: 'Sensitivity (Critical)', threshold: 0.85, critical: true },
+    { name: 'Precision', value: metrics.precision, icon: TrendingUp, color: '#3B82F6', description: 'Positive Predictive Value', threshold: 0.80 },
+    { name: 'F1 Score', value: metrics.f1, icon: BarChart2, color: '#F59E0B', description: 'Harmonic Mean of P&R', threshold: 0.80 },
   ];
 
   const radialData = metricCards.map((m, idx) => ({
@@ -76,7 +76,7 @@ const MetricsCharts = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+            className={`bg-white rounded-2xl shadow-lg p-6 border ${metric.critical ? 'border-green-300 ring-2 ring-green-100' : 'border-gray-100'}`}
           >
             <div className="flex items-center justify-between mb-4">
               <metric.icon className="w-8 h-8" style={{ color: metric.color }} />
@@ -87,8 +87,17 @@ const MetricsCharts = () => {
                 {Math.round(metric.value * 100)}%
               </span>
             </div>
-            <h4 className="font-semibold text-gray-700">{metric.name}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="font-semibold text-gray-700">{metric.name}</h4>
+              {metric.critical && <span className="text-[10px] bg-green-500 text-white px-1.5 py-0.5 rounded">PRIORITY</span>}
+            </div>
             <p className="text-sm text-gray-500">{metric.description}</p>
+            {metric.value >= metric.threshold && (
+              <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                Meets threshold
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
