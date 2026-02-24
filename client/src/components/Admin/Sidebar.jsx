@@ -10,9 +10,10 @@ import {
   LogOut,
   HeartPulse,
   Shield,
+  Stethoscope,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const navItems = [
@@ -82,6 +83,15 @@ const Sidebar = ({ active, setActive }) => {
               </button>
             );
           })}
+          
+          {/* AI Assessment Link - Separate Route */}
+          <Link
+            to="/admin/ai-assessment"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-purple-500/30"
+          >
+            <Stethoscope size={18} />
+            AI Assessment
+          </Link>
         </nav>
       </div>
 
@@ -103,6 +113,13 @@ const Sidebar = ({ active, setActive }) => {
           </div>
         </div>
         
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-red-400 hover:text-white hover:bg-red-500/20 border border-red-500/30"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
       </div>
     </aside>
   );

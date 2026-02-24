@@ -61,12 +61,13 @@ const UserDashboard = () => {
       try {
         const [hRes, sRes, mRes] = await Promise.all([
           getAssessmentHistory(1, 5).catch(() => ({ data: [] })),
-          getUserStats().catch(() => ({})),
-          getUserMessages().catch(() => ({ data: [] }))
+          getUserStats().catch(() => ({ data: { stats: {} } })),
+          getUserMessages().catch(() => ({ data: [], unreadCount: 0 }))
         ]);
 
         setAssessments(hRes.data || hRes || []);
-        setStats(sRes.data || sRes || {});
+        // Stats are nested: { data: { stats: {...}, riskDistribution } }
+        setStats(sRes?.data?.stats || sRes?.data || {});
         setMessages(mRes.data || mRes || []);
       } catch (err) {
         console.error("Dashboard load error:", err);
@@ -179,7 +180,11 @@ const UserDashboard = () => {
                     <div className="text-sm text-gray-500">{new Date(assessments[0].createdAt || assessments[0].date || Date.now()).toLocaleDateString()}</div>
                     <div className="text-lg font-semibold text-purple-800">{assessments[0].riskLevel || assessments[0].risk_level || 'N/A'} Risk</div>
                   </div>
-                  <div className="text-sm text-gray-600">{assessments[0].summary || assessments[0].note || 'No details available.'}</div>
+                  <div className="text-sm text-gray-600">
+                    {assessments[0].recommendations?.length > 0 
+                      ? assessments[0].recommendations[0] 
+                      : `Risk Score: ${((assessments[0].riskScore || 0) * 100).toFixed(0)}% | Confidence: ${((assessments[0].confidence || 0) * 100).toFixed(0)}%`}
+                  </div>
                   <div className="mt-4 text-right">
                     <Link to="/ai-history" className="text-purple-700 font-medium">View history &rarr;</Link>
                   </div>
@@ -200,10 +205,15 @@ const UserDashboard = () => {
                   {assessments.slice(0,4).map((a, i) => (
                     <li key={a._id || i} className="p-3 border rounded-lg flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-sm">{a.title || `Assessment ${i+1}`}</div>
+                        <div className="font-medium text-sm">Risk Score: {((a.riskScore || 0) * 100).toFixed(0)}%</div>
                         <div className="text-xs text-gray-500">{new Date(a.createdAt || a.date || Date.now()).toLocaleDateString()}</div>
                       </div>
-                      <div className="text-sm text-purple-700">{a.riskLevel || a.risk_level || 'N/A'}</div>
+                      <div className={`text-sm font-medium px-2 py-0.5 rounded ${
+                        a.riskLevel === 'Low' ? 'bg-green-100 text-green-700' :
+                        a.riskLevel === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                        a.riskLevel === 'High' ? 'bg-orange-100 text-orange-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>{a.riskLevel || 'N/A'}</div>
                     </li>
                   ))}
                 </ul>
@@ -222,10 +232,10 @@ const UserDashboard = () => {
                     assessments.slice(0,3).map((r, i) => (
                       <div key={r._id || i} className="p-3 border rounded-lg flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-sm">{r.title || `Report ${i + 1}`}</div>
+                          <div className="font-medium text-sm">{r.riskLevel} Risk Report</div>
                           <div className="text-xs text-gray-500">{new Date(r.createdAt || r.date || Date.now()).toLocaleDateString()}</div>
                         </div>
-                        <Link to="/reports" className="text-purple-700 text-sm font-medium">View</Link>
+                        <Link to="/ai-history" className="text-purple-700 text-sm font-medium">View</Link>
                       </div>
                     ))
                   )}
