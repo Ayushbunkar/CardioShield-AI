@@ -19,13 +19,13 @@ export default function Hero() {
             {/* Tags */}
             <div className="flex flex-wrap gap-3 text-sm">
               <span className="bg-[#E8DFF5] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
-                Banquet Hall
+                Risk Screening
               </span>
               <span className="bg-[#DFD1E8] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
-                Catering
+                AI Prediction
               </span>
               <span className="bg-[#E5D9F2] text-[#6B5B7C] px-4 py-2 rounded-full font-medium">
-                Event Planning
+                Clinical Dashboard
               </span>
             </div>
 
