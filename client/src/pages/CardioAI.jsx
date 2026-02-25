@@ -28,7 +28,6 @@ const CardioAI = () => {
   const [explanation, setExplanation] = useState(null);
   const [patientData, setPatientData] = useState(null);
   const [backendReady, setBackendReady] = useState(null);
-  const [backendWaking, setBackendWaking] = useState(false);
   const [guestAttempts, setGuestAttempts] = useState(getRemainingGuestAttempts());
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
@@ -52,25 +51,14 @@ const CardioAI = () => {
     }
   }, [isLogin]);
 
-  const checkBackendHealth = async (retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-      try {
-        if (i > 0) setBackendWaking(true);
-        const health = await checkHealth();
-        if (health.status === 'healthy') {
-          setBackendReady(true);
-          setBackendWaking(false);
-          return;
-        }
-      } catch {
-        // Wait before retry (Render free tier cold start ~30s)
-        if (i < retries - 1) {
-          await new Promise(r => setTimeout(r, 10000));
-        }
-      }
+  const checkBackendHealth = async () => {
+    try {
+      const health = await checkHealth();
+      setBackendReady(health.status === 'healthy');
+      // Removed model loading toast
+    } catch {
+      setBackendReady(false);
     }
-    setBackendReady(false);
-    setBackendWaking(false);
   };
 
   const handleSubmit = async (data) => {
@@ -186,17 +174,10 @@ const CardioAI = () => {
       )}
 
       {/* Backend Status */}
-      {backendWaking && (
-        <div className="bg-blue-500 text-white px-6 py-2 flex items-center gap-2 text-sm">
-          <AlertCircle className="w-4 h-4 animate-spin" />
-          <span>AI backend is waking up (free tier cold start). Please wait ~30s...</span>
-        </div>
-      )}
-      {backendReady === false && !backendWaking && (
+      {backendReady === false && (
         <div className="bg-yellow-500 text-yellow-900 px-6 py-2 flex items-center gap-2 text-sm">
           <AlertCircle className="w-4 h-4" />
-          <span>Backend not connected. It may take a moment to start.</span>
-          <button onClick={() => checkBackendHealth()} className="ml-2 underline font-medium">Retry</button>
+          <span>Backend not connected. Start the server.</span>
         </div>
       )}
 

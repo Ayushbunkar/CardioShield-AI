@@ -19,15 +19,10 @@ Endpoints:
 """
 
 import os
-import sys
+import json
 import traceback
 from datetime import datetime
-from typing import Dict, List, Any
-
-# Fix Windows console encoding (cp1252 can't handle Unicode symbols)
-if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+from typing import Dict, List, Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -40,6 +35,9 @@ from flask.json.provider import DefaultJSONProvider
 from governance import (
     validate_consent,
     get_disclaimers,
+    hash_input,
+    minimize_data,
+    anonymize_patient_data,
     log_prediction,
     log_explanation_request,
     log_fairness_audit,
@@ -48,12 +46,14 @@ from governance import (
     get_governance_report,
     cleanup_old_logs,
     MANDATORY_DISCLAIMER,
+    REQUIRED_PREDICTION_FIELDS,
     MODEL_VERSION,
 )
 from explainability_engine import (
     compute_shap_explanation,
     generate_plain_explanation,
     compute_global_shap_summary,
+    FEATURE_DISPLAY,
 )
 from fairness_engine import precompute_fairness, precompute_mitigation
 
@@ -110,12 +110,9 @@ class NumpyJSONProvider(DefaultJSONProvider):
 app = Flask(__name__)
 app.json_provider_class = NumpyJSONProvider
 app.json = NumpyJSONProvider(app)
-
-# CORS: allow configured origins (comma-separated) or localhost defaults
-_cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173")
 CORS(
     app,
-    origins=[o.strip() for o in _cors_origins.split(",") if o.strip()],
+    origins=["http://localhost:3000", "http://localhost:5173"],
     supports_credentials=True,
 )
 
@@ -151,9 +148,8 @@ class ModelManager:
         path = os.path.join(MODELS_DIR, filename)
         if os.path.exists(path):
             model = joblib.load(path)
-            print(f"    [OK] {name} loaded")
+            print(f"    ✓ {name} loaded")
             return model
-        print(f"    [--] {name} not found")
         return None
 
     def load_all(self) -> None:
@@ -490,8 +486,6 @@ def predict():
             "risk_score": round(prob_disease * 100, 1),
             "confidence": round(float(max(probs)), 4),
             "feature_importance": get_feature_importance(Models.xgboost),
-            "recommendations": get_recommendations(patient, risk_level),
-            "risk_factors": get_risk_factors(patient),
             "model_type": "XGBoost",
             "dataset": DATASET_INFO,
             "disclaimer": disclaimers["disclaimer"],
@@ -990,18 +984,14 @@ def audit_cleanup():
 # MAIN
 # =============================================================================
 
-# Pre-load models when the module is imported (gunicorn workers call this)
-Models.load_all()
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5001))
-    debug = os.environ.get("FLASK_ENV", "development") == "development"
-
     print("\n" + "=" * 60)
     print("  CARDIOSHIELD AI - Cardiovascular Disease Prediction")
     print("  Trained on 70,000 patient records (cardio_train.csv)")
     print("  Governance: GDPR-compliant | Audit Logging | Consent")
     print("=" * 60)
+
+    Models.load_all()
 
     print("\n[Endpoints]")
     endpoints = [
@@ -1013,7 +1003,7 @@ if __name__ == "__main__":
     for ep in endpoints:
         print(f"  {ep}")
 
-    print(f"\n[Server] http://localhost:{port}")
+    print(f"\n[Server] http://localhost:5001")
     print("=" * 60 + "\n")
 
-    app.run(host="0.0.0.0", port=port, debug=debug, use_reloader=False)
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
