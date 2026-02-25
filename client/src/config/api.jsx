@@ -20,4 +20,17 @@ const api = axios.create({
   timeout: 60000,
 });
 
+// Intercept network/CORS errors and provide clear messages
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!error.response) {
+      // Network error or CORS block — no response from server
+      console.error("[API] Network error — server may be starting up or CORS not configured:", error.message);
+      error.message = "Server is starting up. Please wait 30s and try again.";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
