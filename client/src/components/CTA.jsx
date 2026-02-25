@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Heart } from 'lucide-react';
+import { ArrowRight, Heart } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -115,44 +115,19 @@ const CTA = () => {
             Join thousands of healthcare providers using CardioShield.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Primary Button */}
+          {/* CTA Buttons (primary only) */}
+          <div className="flex items-center justify-center">
             <Link
               to="/register"
               className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-[#4A3B5C] font-semibold rounded-xl shadow-2xl hover:shadow-white/20 transition-all duration-300 overflow-hidden"
             >
-              {/* Ripple effect */}
               <span className="absolute inset-0 bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
               <span className="relative z-10">Get Started</span>
               <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
-
-            {/* Secondary Button */}
-            <Link
-              to="/cardio-ai"
-              className="group relative inline-flex items-center gap-2 px-8 py-4 bg-transparent text-white font-semibold rounded-xl border-2 border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-300"
-            >
-              <Play className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <span>Try Demo</span>
-            </Link>
           </div>
 
-          {/* Trust indicators */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-white/60 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400" />
-              <span>HIPAA Ready</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400" />
-              <span>SOC 2 Compliant</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400" />
-              <span>24/7 Support</span>
-            </div>
-          </div>
+          {/* Trust indicators removed per request */}
         </div>
       </div>
     </section>

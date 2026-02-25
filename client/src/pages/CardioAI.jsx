@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Brain, Scale, BarChart2, AlertCircle, Lock, LogIn } from 'lucide-react';
+import { Heart, Brain, Scale, BarChart2, AlertCircle, Lock, LogIn, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PatientForm from '../components/AI/PatientForm';
 import ResultDisplay from '../components/AI/ResultDisplay';
 import ExplainabilityTab from '../components/AI/ExplainabilityTab';
 import FairnessTab from '../components/AI/FairnessTab';
 import MetricsCharts from '../components/AI/MetricsCharts';
+import GovernanceTab from '../components/AI/GovernanceTab';
 import { 
   predictRisk, 
   getExplanation, 
@@ -35,6 +36,7 @@ const CardioAI = () => {
     { id: 'explainability', label: 'Explainability', icon: Brain },
     { id: 'fairness', label: 'Fairness', icon: Scale },
     { id: 'metrics', label: 'Model Metrics', icon: BarChart2 },
+    { id: 'governance', label: 'Governance', icon: Shield },
   ];
 
   useEffect(() => {
@@ -89,6 +91,9 @@ const CardioAI = () => {
             prediction: predResult.prediction,
             confidence: predResult.confidence,
             recommendations: predResult.recommendations,
+            disclaimer: predResult.disclaimer || '',
+            escalation: predResult.escalation || null,
+            modelVersion: predResult.model_version || '',
           });
           toast.success('Assessment saved to your history!');
         } catch (saveError) {
@@ -244,6 +249,17 @@ const CardioAI = () => {
               exit={{ opacity: 0, x: 20 }}
             >
               <MetricsCharts />
+            </motion.div>
+          )}
+
+          {activeTab === 'governance' && (
+            <motion.div
+              key="governance"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+            >
+              <GovernanceTab />
             </motion.div>
           )}
         </AnimatePresence>

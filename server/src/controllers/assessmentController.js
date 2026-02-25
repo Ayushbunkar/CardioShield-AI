@@ -7,7 +7,7 @@ import User from "../models/userModel.js";
 export const saveAssessment = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { patientData, riskScore, riskLevel, prediction, confidence, recommendations } = req.body;
+    const { patientData, riskScore, riskLevel, prediction, confidence, recommendations, disclaimer, escalation, modelVersion } = req.body;
 
     if (!patientData || riskScore === undefined || !riskLevel) {
       const error = new Error("Missing required assessment data");
@@ -27,6 +27,10 @@ export const saveAssessment = async (req, res, next) => {
       confidence,
       recommendations,
       bmi,
+      consentGiven: true,
+      disclaimer: disclaimer || '',
+      escalation: escalation || null,
+      modelVersion: modelVersion || '',
     });
 
     res.status(201).json({

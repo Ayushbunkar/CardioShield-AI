@@ -99,7 +99,7 @@ const HowItWorks = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-[#F5F1ED] to-white relative overflow-hidden">
+    <section ref={sectionRef} className=" bg-gradient-to-b from-[#F5F1ED] to-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-[#8B7FCF]/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#E8DFF5]/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
@@ -107,9 +107,7 @@ const HowItWorks = () => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Section Header */}
         <div ref={titleRef} className="text-center mb-20">
-          <span className="inline-block px-4 py-2 bg-[#8B7FCF]/10 text-[#8B7FCF] text-sm font-semibold rounded-full mb-4">
-            Simple Process
-          </span>
+         
           <h2 className="text-4xl md:text-5xl font-bold text-[#4A3B5C] mb-6">
             How It Works
           </h2>

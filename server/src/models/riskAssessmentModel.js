@@ -20,7 +20,13 @@ const riskAssessmentSchema = mongoose.Schema(
       smoke: { type: Number, required: true },
       alco: { type: Number, required: true },
       active: { type: Number, required: true },
+      family_history: { type: Number, default: 0 },
     },
+    // Consent & governance
+    consentGiven: { type: Boolean, default: false },
+    disclaimer: { type: String },
+    escalation: { type: String, default: null },
+    modelVersion: { type: String },
     // AI prediction results
     riskScore: { type: Number, required: true },
     riskLevel: {

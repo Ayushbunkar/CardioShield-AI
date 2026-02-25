@@ -28,10 +28,12 @@ import AssessmentRouter from "./src/routes/assessmentRoutes.js";
 const PORT = process.env.PORT || 4500;
 const AI_BACKEND = process.env.AI_BACKEND_URL || "http://localhost:5001";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:5173",
-  "http://localhost:3000"
-];
+// CORS: use CORS_ORIGINS env var in production, localhost defaults in dev
+const ALLOWED_ORIGINS = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map(o => o.trim())
+  : ["http://localhost:5173", "http://localhost:3000"];
+
+const IS_PROD = process.env.NODE_ENV === "production";
 
 // =============================================================================
 // APP SETUP
@@ -85,14 +87,20 @@ app.use((err, req, res, next) => {
 app.listen(PORT, async () => {
   console.log(`\n[Server] http://localhost:${PORT}`);
   console.log(`[AI Backend] ${AI_BACKEND}`);
+  console.log(`[Environment] ${IS_PROD ? "production" : "development"}`);
   
   try {
     await connectDB();
-    await cloudinary.api.resources({ max_results: 1 });
     console.log("[DB] Connected");
+  } catch (err) {
+    console.error("[DB Error]", err.message);
+    process.exit(1);
+  }
+
+  try {
+    await cloudinary.api.resources({ max_results: 1 });
     console.log("[Cloudinary] Connected\n");
   } catch (err) {
-    console.error("[Error]", err.message);
-    process.exit(1);
+    console.warn("[Cloudinary] Not configured (optional)\n");
   }
 });

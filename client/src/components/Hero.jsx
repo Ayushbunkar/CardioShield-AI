@@ -6,6 +6,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaHeartbeat } from "react-icons/fa";
+import dashboardImg from "../images/dashboard.png";
 
 export default function Hero() {
   return (
@@ -133,17 +134,17 @@ export default function Hero() {
       </section>
 
       {/* Second Section - Support */}
-      <section className="max-w-7xl mx-auto px-8 lg:px-12 py-20">
+      <section className="max-w-7xl mx-auto px-8 lg:px-12 py-35">
         <div className="bg-[#D4C5E0] rounded-[3rem] overflow-hidden">
           <div className="grid lg:grid-cols-2 gap-0 items-center">
             
             {/* Left Image */}
-            <div className="relative h-full min-h-[400px]">
-              <div className="absolute inset-0 bg-[#B8A4C9] rounded-br-[5rem]">
+            <div className="relative h-full min-h-[400px] flex items-center justify-center p-6">
+              <div className="w-full h-full bg-gradient-to-br from-[#B8A4C9] to-[#9D8FD9] rounded-br-[5rem] overflow-hidden shadow-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" 
-                  alt="Happy client" 
-                  className="w-full h-full object-cover rounded-br-[5rem]"
+                  src={dashboardImg} 
+                  alt="CardioShield Dashboard" 
+                  className="w-full h-full object-contain p-4 drop-shadow-lg"
                 />
               </div>
             </div>
@@ -151,34 +152,32 @@ export default function Hero() {
             {/* Right Content */}
             <div className="p-12 lg:p-16 space-y-6 relative">
               <h2 className="text-4xl lg:text-5xl font-bold text-[#4A3B5C] leading-tight">
-                Let's make <span className="font-normal">life Easier</span>
+                Let's make <span className="font-normal">Heart Health</span>
                 <br />
-                <span className="font-normal">and</span> Stressless
+                <span className="font-normal">Simple &</span> Accessible
               </h2>
               
               <p className="text-[#6B5B7C] text-lg leading-relaxed max-w-md">
-                Being able to be your true self is one of the strongest
-                components of good mental health.
+                Early detection is key to preventing cardiovascular diseases.
+                Our AI-powered platform makes heart health screening accessible to everyone.
               </p>
 
               <div className="pt-4">
-                <button className="bg-[#E8B4B8] hover:bg-[#D9A4A8] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border-2 border-[#D89CA0]">
+                <Link to="/ai" className="inline-block bg-[#8B7FCF] hover:bg-[#7A6DBE] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg border-2 border-[#9D8FD9]">
                   Start Assessment
-                </button>
+                </Link>
               </div>
 
               <p className="text-[#6B5B7C] text-sm pt-2">
-                If you or someone you know is struggling,
+                Take control of your heart health today.
                 <br />
-                you are not alone.
+                Prevention starts with awareness.
               </p>
 
-              {/* Decorative Arrow */}
+              {/* Decorative Heart Icon */}
               <div className="absolute bottom-12 right-12">
                 <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-[#4A3B5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  <FaHeartbeat className="w-6 h-6 text-[#8B7FCF]" />
                 </div>
               </div>
             </div>

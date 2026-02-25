@@ -1,13 +1,13 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "this is a event planner Backend.",
+  "description": "CardioShield AI - Express API Gateway",
   "license": "ISC",
   "author": "Raj",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "seed:admin": "node ./src/seeders/adminSeeder.js"
   },

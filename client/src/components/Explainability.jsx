@@ -85,18 +85,15 @@ const Explainability = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-white to-[#F5F1ED] relative overflow-hidden">
+    <section ref={sectionRef} className="py-14 bg-gradient-to-b from-white to-[#F5F1ED] relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-1/4 left-0 w-80 h-80 bg-[#8B7FCF]/5 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#E8DFF5]/30 rounded-full blur-3xl" />
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section Header */}
-        <div ref={titleRef} className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#8B7FCF]/10 text-[#8B7FCF] text-sm font-semibold rounded-full mb-4">
-            <Eye className="w-4 h-4" />
-            AI Transparency
-          </span>
+        <div ref={titleRef} className="text-center mb-8">
+         
           <h2 className="text-4xl md:text-5xl font-bold text-[#4A3B5C] mb-6">
             Explainability Preview
           </h2>
@@ -131,7 +128,7 @@ const Explainability = () => {
           </div>
 
           {/* SHAP Bars */}
-          <div className="p-8 space-y-4">
+          <div className="p-6 space-y-3">
             {shapFeatures.map((feature, index) => (
               <div
                 key={feature.name}
@@ -204,7 +201,7 @@ const Explainability = () => {
           </div>
 
           {/* Card Footer */}
-          <div className="bg-[#F5F1ED]/50 px-8 py-4 border-t border-[#E8DFF5]">
+          <div className="bg-[#F5F1ED]/50 px-6 py-3 border-t border-[#E8DFF5]">
             <p className="text-sm text-[#6B5B7C] flex items-center gap-2">
               <Info className="w-4 h-4 text-[#8B7FCF]" />
               SHAP (SHapley Additive exPlanations) values show each feature's contribution to the prediction

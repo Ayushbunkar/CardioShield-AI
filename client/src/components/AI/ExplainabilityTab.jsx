@@ -146,7 +146,7 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
     );
   }
 
-  const { feature_impacts, feature_importance } = explanation;
+  const { feature_impacts, feature_importance, plain_explanation, top_3_risk_drivers, shap, narrative, disclaimer } = explanation;
 
   // Sort feature importance for bar chart with human-readable names
   const importanceData = Object.entries(feature_importance)
@@ -168,6 +168,110 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      {/* SHAP Narrative & Top Risk Drivers */}
+      {(plain_explanation || narrative || top_3_risk_drivers) && (
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
+          <h3 className="text-lg font-semibold text-[#4A3B5C] mb-4 flex items-center gap-2">
+            <Brain className="w-5 h-5 text-[#8B7FCF]" />
+            AI Explanation in Plain Language
+            {shap?.method && <span className="ml-auto bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full font-medium">{shap.method}</span>}
+          </h3>
+          
+          {/* Narrative */}
+          {(narrative || plain_explanation?.summary) && (
+            <div className="p-4 bg-purple-50 rounded-xl mb-4">
+              <p className="text-sm text-purple-800 leading-relaxed">{narrative || plain_explanation?.summary}</p>
+            </div>
+          )}
+
+          {/* Top 3 Risk Drivers */}
+          {top_3_risk_drivers && top_3_risk_drivers.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Top Risk Drivers</p>
+              <div className="grid grid-cols-3 gap-3">
+                {top_3_risk_drivers.map((d, i) => {
+                  const label = typeof d === 'string' ? d : d.feature || d.feature_key || '';
+                  const impact = d.impact || d.magnitude || d.shap_value;
+                  return (
+                    <div key={i} className="p-3 bg-red-50 rounded-xl border border-red-100 text-center">
+                      <span className="text-2xl font-bold text-red-600">#{i + 1}</span>
+                      <p className="text-sm font-semibold text-red-700 mt-1">{label}</p>
+                      {impact != null && <p className="text-xs text-red-500 mt-0.5">+{(Math.abs(impact) * 100).toFixed(1)}% risk</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Plain-language risk/protective factors */}
+          {plain_explanation?.risk_factors && plain_explanation.risk_factors.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs font-semibold text-red-500 mb-1">Risk Factors</p>
+              <div className="space-y-2">
+                {plain_explanation.risk_factors.map((r, i) => {
+                  const text = typeof r === 'string' ? r : r.explanation || r.feature || JSON.stringify(r);
+                  const solutions = typeof r === 'object' ? (r.solutions || []) : [];
+                  return (
+                    <div key={i}>
+                      <p className="text-sm text-red-700 flex items-start gap-1.5">
+                        <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                        {text}
+                      </p>
+                      {solutions.length > 0 && (
+                        <div className="ml-5 mt-1.5 p-2.5 bg-amber-50/70 rounded-lg border border-amber-200">
+                          <p className="text-[10px] font-bold text-amber-600 mb-1 uppercase tracking-wide">Solutions</p>
+                          <ul className="space-y-1">
+                            {solutions.map((s, si) => (
+                              <li key={si} className="text-xs text-teal-700 flex items-start gap-1.5">
+                                <span className="flex-shrink-0 mt-0.5 w-4 h-4 rounded-full bg-teal-500 text-white flex items-center justify-center text-[9px] font-bold">{si + 1}</span>
+                                <span>{s}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {plain_explanation?.protective_factors && plain_explanation.protective_factors.length > 0 && (
+            <div className="mt-3">
+              <p className="text-xs font-semibold text-green-500 mb-1">Protective Factors</p>
+              <div className="space-y-2">
+                {plain_explanation.protective_factors.map((p, i) => {
+                  const text = typeof p === 'string' ? p : p.explanation || p.feature || JSON.stringify(p);
+                  const tips = typeof p === 'object' ? (p.tips || []) : [];
+                  return (
+                    <div key={i}>
+                      <p className="text-sm text-green-700 flex items-start gap-1.5">
+                        <CheckCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                        {text}
+                      </p>
+                      {tips.length > 0 && (
+                        <div className="ml-5 mt-1.5 p-2.5 bg-indigo-50/70 rounded-lg border border-indigo-200">
+                          <p className="text-[10px] font-bold text-indigo-600 mb-1 uppercase tracking-wide">Tips</p>
+                          <ul className="space-y-1">
+                            {tips.map((t, ti) => (
+                              <li key={ti} className="text-xs text-indigo-700 flex items-start gap-1.5">
+                                <span className="flex-shrink-0 mt-0.5 w-4 h-4 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[9px] font-bold">{ti + 1}</span>
+                                <span>{t}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Summary Banner */}
       <div className="bg-gradient-to-r from-[#8B7FCF] to-[#6B5B9A] rounded-2xl p-6 text-white">
         <div className="flex items-start gap-4">
@@ -220,7 +324,23 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
                     </span>
                   </div>
                   <p className="text-red-700 text-sm mb-1">{impact.description}</p>
-                  <p className="text-red-600/70 text-xs">{getFeatureDesc(impact.feature)}</p>
+                  <p className="text-red-600/70 text-xs mb-2">{getFeatureDesc(impact.feature)}</p>
+                  {/* Actionable Solutions */}
+                  {impact.solutions && impact.solutions.length > 0 && (
+                    <div className="mt-3 p-3.5 bg-gradient-to-br from-amber-50 via-sky-50 to-teal-50 rounded-xl border border-amber-200 shadow-sm">
+                      <p className="text-xs font-extrabold text-amber-700 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Lightbulb className="w-4 h-4 text-amber-500" /> Recommended Actions
+                      </p>
+                      <ul className="space-y-1.5">
+                        {impact.solutions.map((s, si) => (
+                          <li key={si} className="text-[13px] text-teal-800 flex items-start gap-2 leading-snug">
+                            <span className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-teal-500 text-white flex items-center justify-center text-[10px] font-bold">{si + 1}</span>
+                            <span>{s}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -256,7 +376,23 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
                     </span>
                   </div>
                   <p className="text-green-700 text-sm mb-1">{impact.description}</p>
-                  <p className="text-green-600/70 text-xs">{getFeatureDesc(impact.feature)}</p>
+                  <p className="text-green-600/70 text-xs mb-2">{getFeatureDesc(impact.feature)}</p>
+                  {/* Tips to keep it up */}
+                  {impact.solutions && impact.solutions.length > 0 && (
+                    <div className="mt-3 p-3.5 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 rounded-xl border border-indigo-200 shadow-sm">
+                      <p className="text-xs font-extrabold text-indigo-700 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Lightbulb className="w-4 h-4 text-indigo-500" /> Keep It Up — Great Habits
+                      </p>
+                      <ul className="space-y-1.5">
+                        {impact.solutions.map((s, si) => (
+                          <li key={si} className="text-[13px] text-indigo-800 flex items-start gap-2 leading-snug">
+                            <span className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-bold">{si + 1}</span>
+                            <span>{s}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -357,6 +493,13 @@ const ExplainabilityTab = ({ explanation, isLoading }) => {
           <strong>Note:</strong> This explanation updates automatically each time you complete a new assessment. The factors shown reflect YOUR specific health data.
         </div>
       </div>
+      {/* Disclaimer */}
+      {disclaimer && (
+        <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-start gap-2">
+          <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] text-gray-500 leading-relaxed">{disclaimer}</p>
+        </div>
+      )}
     </motion.div>
   );
 };

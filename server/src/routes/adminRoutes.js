@@ -14,6 +14,7 @@ import {
   getAnalytics,
   exportAssessmentsCSV,
 } from "../controllers/aiAdminController.js";
+import AuditLog from "../models/auditLogModel.js";
 
 const router = express.Router();
 
@@ -37,5 +38,20 @@ router.delete("/users/:userId", Protect, isAdmin, deleteUserByAdmin);
 
 // Analytics
 router.get("/analytics", Protect, isAdmin, getAnalytics);
+
+// Audit Logs (server-side MongoDB)
+router.get("/audit-logs", Protect, isAdmin, async (req, res) => {
+  try {
+    const { limit = 50, page = 1, action } = req.query;
+    const filter = action ? { action } : {};
+    const logs = await AuditLog.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .populate("userId", "fullName email");
+    const total = await AuditLog.countDocuments(filter);
+    res.json({ data: logs, pagination: { total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) } });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
 
 export default router;

@@ -100,9 +100,7 @@ const Features = () => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Section Header */}
         <div ref={titleRef} className="text-center mb-16">
-          <span className="inline-block px-4 py-2 bg-[#8B7FCF]/10 text-[#8B7FCF] text-sm font-semibold rounded-full mb-4">
-            Platform Capabilities
-          </span>
+         
           <h2 className="text-4xl md:text-5xl font-bold text-[#4A3B5C] mb-6">
             Key Features
           </h2>
