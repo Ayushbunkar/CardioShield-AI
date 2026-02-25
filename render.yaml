@@ -75,12 +75,6 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_SERVER_URL
-        fromService:
-          name: cardioshield-server
-          type: web
-          property: host
+        sync: false                  # Set to Express URL: https://cardioshield-server.onrender.com
       - key: VITE_AI_API_URL
-        fromService:
-          name: cardioshield-ai
-          type: web
-          property: host
+        sync: false                  # Set to Flask URL: https://cardioshield-ai.onrender.com

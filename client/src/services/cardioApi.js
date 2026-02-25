@@ -18,29 +18,40 @@ import axios from 'axios';
 // =============================================================================
 
 /**
+ * Ensure URL has https:// prefix.
+ * Render's `host` property returns just the hostname (no scheme).
+ */
+const ensureHttps = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `https://${url}`;
+};
+
+/**
  * AI Flask backend client.
  * In dev: Vite proxies /api → http://localhost:5001 (see vite.config.js)
  * In prod: Set VITE_AI_API_URL to the deployed Flask URL.
  */
-const AI_API = import.meta.env.VITE_AI_API_URL || '/api';
+const AI_API = ensureHttps(import.meta.env.VITE_AI_API_URL) || '/api';
 
 /**
  * Express backend client (auth, users, assessments, admin).
  * In dev: Direct to http://localhost:4500
  * In prod: Set VITE_SERVER_URL to the deployed Express URL.
  */
-const SERVER_API = import.meta.env.VITE_SERVER_URL || 'http://localhost:4500';
+const SERVER_API = ensureHttps(import.meta.env.VITE_SERVER_URL) || 'http://localhost:4500';
 
 const aiClient = axios.create({
   baseURL: AI_API,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30000,
+  timeout: 60000, // 60s for Render free tier cold starts
 });
 
 const serverClient = axios.create({
   baseURL: SERVER_API,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
+  timeout: 60000,
 });
 
 // =============================================================================
