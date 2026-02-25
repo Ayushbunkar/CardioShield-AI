@@ -7,6 +7,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaHeartbeat } from "react-icons/fa";
 import dashboardImg from "../images/dashboard.png";
+import heartImg from "../images/heart.png";
 
 export default function Hero() {
   return (
@@ -81,53 +82,14 @@ export default function Hero() {
           <div className="relative">
             <div className="relative">
               {/* Symmetric Top Cards */}
-              <div className="absolute top-6 left-6 bg-[#E8DFF5] rounded-2xl shadow-lg p-6 w-60 z-10">
-                <h3 className="text-3xl font-bold text-[#4A3B5C] mb-2">10M+</h3>
-                <p className="text-sm text-[#6B5B7C] mb-4">
-                  Every year
-                  <br />
-                  helping people
-                  <br />
-                  around the world
-                </p>
-                <div className="flex gap-1 mb-2">
-                  <img src="https://i.pravatar.cc/40?img=1" alt="Customer" className="w-10 h-10 rounded-full border-2 border-white" />
-                  <img src="https://i.pravatar.cc/40?img=2" alt="Customer" className="w-10 h-10 rounded-full border-2 border-white -ml-3" />
-                  <img src="https://i.pravatar.cc/40?img=3" alt="Customer" className="w-10 h-10 rounded-full border-2 border-white -ml-3" />
-                </div>
-                <div className="bg-[#D4C5E0] text-xs text-[#6B5B7C] px-3 py-1 rounded-full inline-block font-medium">Campaign</div>
-              </div>
+             
 
-              <div className="absolute top-6 right-6 bg-[#E8DFF5] rounded-2xl shadow-lg p-6 w-60 z-10">
-                <h3 className="text-3xl font-bold text-[#4A3B5C] mb-2">Overview</h3>
-                <p className="text-sm text-[#6B5B7C] mb-4">Quick stats and latest updates to keep you informed.</p>
-                <div className="bg-[#D4C5E0] text-xs text-[#6B5B7C] px-3 py-1 rounded-full inline-block font-medium">Reports</div>
-              </div>
 
               {/* Main Image (Centered) */}
               <div className="mt-12 bg-[#DFD1E8] rounded-[3rem] overflow-hidden h-[450px] relative mx-auto max-w-[520px]">
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&q=80" alt="Happy customer" className="w-full h-full object-cover" />
-                <div className="absolute top-6 left-6 text-6xl opacity-70">🌿</div>
+                <img src={heartImg} alt="Heart Health" className="w-full h-full object-cover" />
               </div>
 
-              {/* Chat Interface - Bottom Right for symmetry */}
-              <div className="absolute bottom-6 right-6 bg-[#E8DFF5] rounded-2xl shadow-xl p-4 w-64">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-sm text-[#8B7B9C]">Chat now</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <img src="https://i.pravatar.cc/40?img=9" alt="Event Manager" className="w-10 h-10 rounded-full" />
-                  <div>
-                    <p className="text-xs text-[#8B7B9C]">Hi, Event Manager</p>
-                    <p className="text-sm font-semibold text-[#4A3B5C]">Hello</p>
-                  </div>
-                  <button className="ml-auto text-[#8B7FCF]">
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
