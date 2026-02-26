@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserMd, FaUserPlus } from "react-icons/fa";
-import { Heart, LayoutDashboard, LogOut, User } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, User, Activity } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
@@ -21,13 +21,15 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold">
-              <span className="text-[#8B7FCF]">Cardio</span>
-              <span className="text-[#4A3B5C]">Shield AI</span>
-            </span>
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="relative w-9 h-9 bg-gradient-to-br from-[#8B7FCF] to-[#6B5B9A] rounded-lg flex items-center justify-center shadow-md">
+            <Heart className="w-4.5 h-4.5 text-white fill-white" />
+            <Activity className="w-3 h-3 text-white absolute bottom-0.5 right-0.5 opacity-80" />
           </div>
+          <span className="text-2xl font-bold">
+            <span className="text-[#8B7FCF]">Cardio</span>
+            <span className="text-[#4A3B5C]">Shield AI</span>
+          </span>
         </Link>
 
         {/* Navigation Links */}

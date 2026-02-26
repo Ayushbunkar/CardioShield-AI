@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, CheckCircle, Activity, Clock, Lightbulb, FileText, MapPin, X, Navigation, Check, XIcon, TrendingUp, Minus, CircleAlert, Info } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Activity, Clock, Lightbulb, FileText, MapPin, X, Navigation, Check, XIcon, TrendingUp, Minus, ShieldAlert, Info } from 'lucide-react';
 import { RiskResultPage } from '../Location';
 
 const ResultDisplay = ({ result, patientData }) => {
@@ -31,6 +31,7 @@ const ResultDisplay = ({ result, patientData }) => {
       {/* Escalation Alert */}
       {escalation && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-3 bg-red-600 text-white rounded-xl flex items-center gap-3">
+          <ShieldAlert className="w-6 h-6 flex-shrink-0" />
           <div>
             <p className="font-bold text-sm">Urgent: Immediate Action Required</p>
             <p className="text-xs text-white/90">{escalation}</p>
