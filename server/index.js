@@ -41,23 +41,10 @@ const IS_PROD = process.env.NODE_ENV === "production";
 
 const app = express();
 
-// Middleware
+// CORS must come first for preflight requests
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
-app.use(express.json());
-app.use(cookieParser());
-app.use(morgan("dev"));
 
-// =============================================================================
-// ROUTES
-// =============================================================================
-
-app.use("/auth", AuthRouter);
-app.use("/user", UserRouter);
-app.use("/public", PublicRouter);
-app.use("/admin", AdminRouter);
-app.use("/assessment", AssessmentRouter);
-
-// AI Backend Proxy
+// AI Backend Proxy — must be BEFORE express.json() so body isn't consumed
 app.use("/ai", createProxyMiddleware({
   target: AI_BACKEND,
   changeOrigin: true,
@@ -72,6 +59,21 @@ app.use("/ai", createProxyMiddleware({
     res.status(503).json({ error: "AI backend unavailable" });
   }
 }));
+
+// Middleware (after proxy so body isn't consumed before forwarding)
+app.use(express.json());
+app.use(cookieParser());
+app.use(morgan("dev"));
+
+// =============================================================================
+// ROUTES
+// =============================================================================
+
+app.use("/auth", AuthRouter);
+app.use("/user", UserRouter);
+app.use("/public", PublicRouter);
+app.use("/admin", AdminRouter);
+app.use("/assessment", AssessmentRouter);
 
 // Health check
 app.get("/", (req, res) => res.json({ status: "ok", service: "CardioShield API" }));

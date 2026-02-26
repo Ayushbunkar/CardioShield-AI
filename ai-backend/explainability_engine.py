@@ -458,7 +458,7 @@ def generate_plain_explanation(
         "protective_factors": protective_explanations,
         "disclaimer": "This is a cardiovascular risk estimation tool. It is not a medical diagnosis. Always consult a qualified healthcare professional.",
         "escalation": (
-            "⚠️ HIGH RISK DETECTED: Consult a cardiologist immediately."
+            "HIGH RISK DETECTED: Consult a cardiologist immediately."
             if risk_score >= 0.70
             else None
         ),

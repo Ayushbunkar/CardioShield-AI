@@ -34,7 +34,7 @@ MANDATORY_DISCLAIMER = (
 )
 
 HIGH_RISK_ESCALATION = (
-    "⚠️ HIGH RISK DETECTED (>70%): "
+    "HIGH RISK DETECTED (>70%): "
     "Consult a cardiologist immediately. This tool indicates elevated cardiovascular risk "
     "that warrants urgent medical evaluation."
 )
