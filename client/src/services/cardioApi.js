@@ -10,8 +10,8 @@ import axios from 'axios';
 // API CLIENTS
 // =============================================================================
 
-const AI_API = '/api';
-const SERVER_API = 'http://localhost:4500';
+const AI_API = import.meta.env.VITE_AI_API_URL || '/api';
+const SERVER_API = import.meta.env.VITE_SERVER_URL || 'http://localhost:4500';
 
 const aiClient = axios.create({
   baseURL: AI_API,

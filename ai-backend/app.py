@@ -110,9 +110,15 @@ class NumpyJSONProvider(DefaultJSONProvider):
 app = Flask(__name__)
 app.json_provider_class = NumpyJSONProvider
 app.json = NumpyJSONProvider(app)
+
+ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ORIGINS",
+    "http://localhost:3000,http://localhost:5173"
+).split(",")
+
 CORS(
     app,
-    origins=["http://localhost:3000", "http://localhost:5173"],
+    origins=[o.strip() for o in ALLOWED_ORIGINS],
     supports_credentials=True,
 )
 
@@ -1003,7 +1009,7 @@ if __name__ == "__main__":
     for ep in endpoints:
         print(f"  {ep}")
 
-    print(f"\n[Server] http://localhost:5001")
+    print(f"\n[Server] http://localhost:{os.environ.get('PORT', 5001)}")
     print("=" * 60 + "\n")
 
-    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5001)), debug=False, use_reloader=False)
