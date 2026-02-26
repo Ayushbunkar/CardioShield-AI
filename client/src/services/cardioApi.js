@@ -10,13 +10,16 @@ import axios from 'axios';
 // API CLIENTS
 // =============================================================================
 
-const AI_API = import.meta.env.VITE_AI_API_URL || '/api';
+// In production, all AI calls go through the Express proxy (/ai → Flask backend)
+// This avoids CORS issues since client only talks to one server
 const SERVER_API = import.meta.env.VITE_SERVER_URL || 'http://localhost:4500';
+const AI_API = import.meta.env.VITE_AI_API_URL || `${SERVER_API}/ai`;
 
 const aiClient = axios.create({
   baseURL: AI_API,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30000,
+  timeout: 60000,
+  withCredentials: true,
 });
 
 const serverClient = axios.create({

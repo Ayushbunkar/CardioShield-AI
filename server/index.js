@@ -61,6 +61,8 @@ app.use("/assessment", AssessmentRouter);
 app.use("/ai", createProxyMiddleware({
   target: AI_BACKEND,
   changeOrigin: true,
+  timeout: 120000,          // 2 min — Render free tier can be slow to wake
+  proxyTimeout: 120000,
   pathRewrite: { "^/ai": "" },
   onProxyReq: (proxyReq, req) => {
     console.log(`[AI] ${req.method} ${req.path}`);
