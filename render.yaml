@@ -39,23 +39,19 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://ayushbunkar100:Ayush_Bunkar_2005@ayushkadatabase.uogh5vj.mongodb.net/CardioShieldAi?retryWrites=true&w=majority&appName=CardioShieldAI
       - key: JWT_SECRET
-        sync: false
+        value: cardioshield_jwt_secret_key_2024
       - key: AI_BACKEND_URL
-        sync: false
+        sync: false    # Set to your AI backend Render URL after it deploys
       - key: CORS_ORIGINS
-        sync: false
-      - key: GMAIL_USER
-        sync: false
-      - key: GMAIL_PASSCODE
-        sync: false
+        sync: false    # Set to your client Render URL after it deploys
       - key: CLOUDINARY_CLOUD_NAME
-        sync: false
+        value: dx7ztr9i3
       - key: CLOUDINARY_API_KEY
-        sync: false
+        value: "313846931262354"
       - key: CLOUDINARY_API_SECRET
-        sync: false
+        value: f1TAhJDmQ9FWAu9HTnWacMy9Rn0
 
   # ─────────────────────────────────────────────
   # 3. React Frontend (Static Site)
