@@ -9,8 +9,7 @@ import FairnessTab from '../components/AI/FairnessTab';
 import MetricsCharts from '../components/AI/MetricsCharts';
 import GovernanceTab from '../components/AI/GovernanceTab';
 import { 
-  predictRisk, 
-  getExplanation, 
+  predictFull, 
   checkHealth,
   saveAssessment,
   canGuestUse,
@@ -75,10 +74,9 @@ const CardioAI = () => {
     setPatientData(data);
     
     try {
-      const predResult = await predictRisk(data);
+      // Single API call — predict + explain combined for speed
+      const { result: predResult, explanation: explainResult } = await predictFull(data);
       setResult(predResult);
-      
-      const explainResult = await getExplanation(data);
       setExplanation(explainResult);
       
       // If user is logged in, save the assessment

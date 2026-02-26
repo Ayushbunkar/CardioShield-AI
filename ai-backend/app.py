@@ -447,7 +447,6 @@ def health():
 def predict():
     """Quick prediction with consent validation and audit logging."""
     try:
-        Models.load_all()
         if not Models.xgboost:
             return jsonify({"error": "XGBoost model not loaded"}), 500
 
@@ -519,8 +518,6 @@ def assess():
                 "error": consent_result["message"],
                 "consent_required": True,
             }), 403
-
-        Models.load_all()
 
         height, weight = patient.get("height", 170), patient.get("weight", 70)
         bmi = round(calculate_bmi(height, weight), 1) if height > 0 else "N/A"
@@ -695,7 +692,6 @@ def metrics():
 def fairness():
     """Real fairness audit computed on the dataset."""
     try:
-        Models.load_all()
         result = precompute_fairness()
         if "error" in result:
             return _static_fairness_fallback()
@@ -775,7 +771,6 @@ def _static_fairness_fallback():
 def fairness_mitigation():
     """Run bias mitigation and return before/after comparison."""
     try:
-        Models.load_all()
         result = precompute_mitigation()
         if "error" in result:
             return jsonify({"error": result["error"]}), 500
@@ -789,7 +784,6 @@ def fairness_mitigation():
 def explain():
     """Feature explanation with SHAP integration and plain-language summary."""
     try:
-        Models.load_all()
         data = request.get_json()
         patient = data.get("patientData", data)
 
@@ -947,9 +941,99 @@ def _build_feature_impacts(patient: Dict, importance: Dict) -> List[Dict]:
 def explain_global():
     """Global SHAP feature importance summary."""
     try:
-        Models.load_all()
         result = compute_global_shap_summary()
         return jsonify(result)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+# =============================================================================
+# COMBINED PREDICT + EXPLAIN (SINGLE ROUND-TRIP)
+# =============================================================================
+
+
+@app.route("/predict-full", methods=["POST"])
+def predict_full():
+    """Combined prediction + explanation in a single call for speed."""
+    try:
+        if not Models.xgboost:
+            return jsonify({"error": "XGBoost model not loaded"}), 500
+
+        data = request.get_json()
+        patient = data.get("patientData", data)
+        raw_input = data.get("input", [])
+        consent = data.get("consent", True)
+
+        # Consent validation
+        consent_result = validate_consent(consent)
+        if not consent_result["valid"]:
+            return jsonify({
+                "error": consent_result["message"],
+                "consent_required": True,
+            }), 403
+
+        # Prepare input
+        X = prepare_input_array(raw_input) if len(raw_input) == 11 else prepare_input(patient)
+        feature_names = Models.feature_names or list(X.columns)
+        X_scaled = scale_features(X)
+
+        # ── Prediction ──
+        pred = int(Models.xgboost.predict(X_scaled)[0])
+        probs = Models.xgboost.predict_proba(X_scaled)[0]
+        prob_disease = float(probs[1])
+        risk_level = get_risk_level(prob_disease)
+        disclaimers = get_disclaimers(prob_disease)
+        importance = get_feature_importance(Models.xgboost)
+
+        # ── SHAP explanation (uses cached explainer — fast) ──
+        shap_result = compute_shap_explanation(
+            Models.xgboost, X.values, feature_names, Models.scaler,
+        )
+
+        # ── Plain-language explanation ──
+        contributions = shap_result.get("feature_contributions", [])
+        plain = generate_plain_explanation(patient, prob_disease, contributions)
+
+        # ── Feature impacts with solutions ──
+        feature_impacts = _build_feature_impacts(patient, importance)
+
+        # ── Audit ──
+        log_prediction(
+            patient if not raw_input else {"input_array": True},
+            prob_disease, risk_level, "XGBoost", consent,
+        )
+        log_explanation_request(patient)
+
+        return jsonify({
+            # prediction data
+            "prediction": pred,
+            "probability": {
+                "disease": round(prob_disease, 4),
+                "no_disease": round(float(probs[0]), 4),
+            },
+            "risk_level": risk_level,
+            "risk_score": round(prob_disease * 100, 1),
+            "confidence": round(float(max(probs)), 4),
+            "feature_importance": importance,
+            "model_type": "XGBoost",
+            "dataset": DATASET_INFO,
+            "disclaimer": disclaimers["disclaimer"],
+            "escalation": disclaimers["escalation"],
+            "urgency": disclaimers["urgency"],
+            "model_version": MODEL_VERSION,
+            # explanation data
+            "feature_impacts": feature_impacts,
+            "shap": shap_result,
+            "plain_explanation": plain,
+            "base_value": shap_result.get("base_value", 0.497),
+            "risk_factors": plain.get("risk_drivers", []),
+            "protective_factors": plain.get("protective_factors", []),
+            "narrative": plain.get("narrative", ""),
+            "top_features": list(importance.keys())[:5],
+            "top_3_risk_drivers": shap_result.get("top_3_risk_drivers", []),
+        })
+
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
@@ -999,12 +1083,18 @@ if __name__ == "__main__":
 
     Models.load_all()
 
+    # Pre-warm SHAP explainer so first request is fast
+    if Models.xgboost:
+        from explainability_engine import get_or_create_explainer
+        get_or_create_explainer(Models.xgboost, Models.scaler)
+        print("[SHAP] Explainer pre-warmed at startup")
+
     print("\n[Endpoints]")
     endpoints = [
-        "/predict", "/assess", "/metrics", "/fairness",
-        "/fairness/mitigation", "/health", "/explain",
-        "/explain/global", "/governance", "/audit/logs",
-        "/audit/summary",
+        "/predict", "/predict-full", "/assess", "/metrics",
+        "/fairness", "/fairness/mitigation", "/health",
+        "/explain", "/explain/global", "/governance",
+        "/audit/logs", "/audit/summary",
     ]
     for ep in endpoints:
         print(f"  {ep}")

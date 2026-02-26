@@ -112,6 +112,56 @@ export const getExplanation = async (patientData) => {
   };
 };
 
+/**
+ * Combined predict + explain in a single round-trip (fast path).
+ * Returns { result, explanation } matching the shapes of predictRisk / getExplanation.
+ */
+export const predictFull = async (patientData) => {
+  const { data } = await aiClient.post('/predict-full', {
+    input: toInputArray(patientData),
+    patientData,
+    consent: true,
+  });
+
+  const result = {
+    prediction: data.prediction,
+    risk_score: data.probability.disease,
+    risk_level: data.risk_level,
+    confidence: data.confidence,
+    probability: data.probability,
+    feature_importance: data.feature_importance,
+    recommendations: generateRecommendations(patientData, data),
+    disclaimer: data.disclaimer,
+    escalation: data.escalation,
+    urgency: data.urgency,
+    model_version: data.model_version,
+  };
+
+  const explanation = {
+    feature_importance: data.feature_importance,
+    feature_impacts: data.feature_impacts || [],
+    base_value: data.base_value || 0.497,
+    shap: data.shap || null,
+    plain_explanation: data.plain_explanation || null,
+    narrative: data.narrative || '',
+    risk_drivers: data.risk_factors || [],
+    protective_factors: data.protective_factors || [],
+    top_3_risk_drivers: data.top_3_risk_drivers || [],
+    top_risk_factors: Object.entries(data.feature_importance)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, impact]) => ({ name, impact })),
+    interpretation: data.narrative || (
+      data.risk_factors?.length > 0
+        ? `Risk factors: ${data.risk_factors.map(r => r.explanation || r).join(', ')}. Consult a healthcare provider.`
+        : 'Health indicators are within normal ranges.'
+    ),
+    disclaimer: data.disclaimer,
+  };
+
+  return { result, explanation };
+};
+
 /** Get model metrics */
 export const getMetrics = async () => (await aiClient.get('/metrics')).data;
 

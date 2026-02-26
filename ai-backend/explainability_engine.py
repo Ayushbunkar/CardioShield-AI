@@ -234,6 +234,30 @@ def _try_load_shap():
         return None
 
 
+# ── Cached SHAP Explainer (created once, reused) ────────────────────────────
+_cached_explainer = None
+_cached_explainer_model_id = None
+
+
+def get_or_create_explainer(model, scaler=None, background_data=None):
+    """Return a cached SHAP TreeExplainer, creating it only once."""
+    global _cached_explainer, _cached_explainer_model_id
+    model_id = id(model)
+    if _cached_explainer is not None and _cached_explainer_model_id == model_id:
+        return _cached_explainer
+    shap = _try_load_shap()
+    if shap is None:
+        return None
+    try:
+        _cached_explainer = shap.TreeExplainer(model)
+        _cached_explainer_model_id = model_id
+        print("[SHAP] TreeExplainer cached")
+        return _cached_explainer
+    except Exception as e:
+        print(f"[SHAP] Failed to create explainer: {e}")
+        return None
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SHAP-BASED EXPLANATION
 # ─────────────────────────────────────────────────────────────────────────────
@@ -253,18 +277,11 @@ def compute_shap_explanation(
     Falls back to model feature_importances_ if SHAP is unavailable.
     """
     X_scaled = scaler.transform(X_instance) if scaler is not None else X_instance
-    shap = _try_load_shap()
 
-    if shap is not None:
-        try:
-            # Use TreeExplainer for tree-based models
-            if hasattr(model, 'get_booster') or hasattr(model, 'feature_importances_'):
-                if background_data is not None:
-                    bg = scaler.transform(background_data[:100]) if scaler is not None else background_data[:100]
-                    explainer = shap.TreeExplainer(model, bg)
-                else:
-                    explainer = shap.TreeExplainer(model)
-
+    if hasattr(model, 'get_booster') or hasattr(model, 'feature_importances_'):
+        explainer = get_or_create_explainer(model, scaler, background_data)
+        if explainer is not None:
+            try:
                 sv = explainer.shap_values(X_scaled)
                 if isinstance(sv, list):
                     sv = sv[1]  # Class 1 (disease) SHAP values
@@ -296,8 +313,8 @@ def compute_shap_explanation(
                     "feature_contributions": contributions,
                     "top_3_risk_drivers": contributions[:3],
                 }
-        except Exception as e:
-            print(f"[SHAP] TreeExplainer failed: {e}, falling back to feature importance")
+            except Exception as e:
+                print(f"[SHAP] shap_values failed: {e}, falling back to feature importance")
 
     # ── Fallback: Model feature importances ──
     return _importance_based_explanation(model, X_scaled, feature_names)
