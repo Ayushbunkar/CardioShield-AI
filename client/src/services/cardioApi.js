@@ -10,15 +10,16 @@ import axios from 'axios';
 // API CLIENTS
 // =============================================================================
 
-// In production, all AI calls go through the Express proxy (/ai → Flask backend)
-// This avoids CORS issues since client only talks to one server
+// ALL AI calls go through the Express proxy (/ai → Flask backend)
+// This avoids CORS issues since client only ever talks to one origin (Express)
+// NEVER set VITE_AI_API_URL to the Flask backend URL directly!
 const SERVER_API = import.meta.env.VITE_SERVER_URL || 'http://localhost:4500';
-const AI_API = import.meta.env.VITE_AI_API_URL || `${SERVER_API}/ai`;
+const AI_API = `${SERVER_API}/ai`;
 
 const aiClient = axios.create({
   baseURL: AI_API,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 60000,
+  timeout: 120000,  // 2 min — Render free tier can cold-start + load models
   withCredentials: true,
 });
 

@@ -8,6 +8,7 @@ services:
   # ─────────────────────────────────────────────
   # 1. AI Flask Backend (Python)
   # ─────────────────────────────────────────────
+  # URL: https://navkalpana-ricr-nk-0040-ai-backend.onrender.com
   - type: web
     name: cardioshield-ai
     runtime: python
@@ -15,17 +16,22 @@ services:
     plan: free
     rootDir: ai-backend
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 300 --workers 1 --preload
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.9"
+      # CORS: Allow the Express server to call Flask (proxy requests)
+      # Also allow the client origin as fallback
       - key: CORS_ORIGINS
-        sync: false    # You fill this after deploy
+        sync: false
+        # Set in Render Dashboard to:
+        # https://navkalpana-ricr-nk-0040.onrender.com,https://navkalpana-ricr-nk-0040-h64h.onrender.com
 
   # ─────────────────────────────────────────────
   # 2. Express Backend (Node.js)
   # ─────────────────────────────────────────────
+  # URL: https://navkalpana-ricr-nk-0040.onrender.com
   - type: web
     name: cardioshield-server
     runtime: node
@@ -42,10 +48,12 @@ services:
         value: mongodb+srv://ayushbunkar100:Ayush_Bunkar_2005@ayushkadatabase.uogh5vj.mongodb.net/CardioShieldAi?retryWrites=true&w=majority&appName=CardioShieldAI
       - key: JWT_SECRET
         value: cardioshield_jwt_secret_key_2024
+      # CRITICAL: Must be the internal Render URL of the Flask service
       - key: AI_BACKEND_URL
-        sync: false    # Set to your AI backend Render URL after it deploys
+        value: https://navkalpana-ricr-nk-0040-ai-backend.onrender.com
+      # CRITICAL: Must be the client URL on Render
       - key: CORS_ORIGINS
-        sync: false    # Set to your client Render URL after it deploys
+        value: https://navkalpana-ricr-nk-0040-h64h.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
         value: dx7ztr9i3
       - key: CLOUDINARY_API_KEY
@@ -56,6 +64,9 @@ services:
   # ─────────────────────────────────────────────
   # 3. React Frontend (Static Site)
   # ─────────────────────────────────────────────
+  # URL: https://navkalpana-ricr-nk-0040-h64h.onrender.com
+  # NOTE: VITE_ env vars are baked at BUILD TIME. After changing,
+  #        you MUST trigger a manual deploy or push a new commit.
   - type: web
     name: cardioshield-client
     runtime: static
@@ -73,7 +84,11 @@ services:
         name: X-Frame-Options
         value: DENY
     envVars:
+      # CRITICAL: Must be the Express server URL (NOT the Flask AI backend!)
+      # All AI calls go through Express proxy: /ai → Flask
       - key: VITE_SERVER_URL
         sync: false
-      - key: VITE_AI_API_URL
-        sync: false
+        # Set in Render Dashboard to:
+        # https://navkalpana-ricr-nk-0040.onrender.com
+      # DO NOT set VITE_AI_API_URL — it is intentionally removed.
+      # The client always uses ${VITE_SERVER_URL}/ai to route through Express.

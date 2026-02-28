@@ -51,12 +51,22 @@ app.use("/ai", createProxyMiddleware({
   timeout: 120000,          // 2 min — Render free tier can be slow to wake
   proxyTimeout: 120000,
   pathRewrite: { "^/ai": "" },
+  // Re-stream the body for POST/PUT if express.json() consumed it upstream
   onProxyReq: (proxyReq, req) => {
     console.log(`[AI] ${req.method} ${req.path}`);
+    // If body was already parsed (e.g. by another middleware), re-write it
+    if (req.body && Object.keys(req.body).length > 0) {
+      const bodyData = JSON.stringify(req.body);
+      proxyReq.setHeader("Content-Type", "application/json");
+      proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+      proxyReq.write(bodyData);
+    }
   },
   onError: (err, req, res) => {
     console.error("[AI Error]", err.message);
-    res.status(503).json({ error: "AI backend unavailable" });
+    if (!res.headersSent) {
+      res.status(503).json({ error: "AI backend unavailable", details: err.message });
+    }
   }
 }));
 

@@ -113,13 +113,15 @@ app.json = NumpyJSONProvider(app)
 
 ALLOWED_ORIGINS = os.environ.get(
     "CORS_ORIGINS",
-    "http://localhost:3000,http://localhost:5173"
+    "http://localhost:3000,http://localhost:5173,http://localhost:4500"
 ).split(",")
 
 CORS(
     app,
-    origins=[o.strip() for o in ALLOWED_ORIGINS],
+    origins=[o.strip() for o in ALLOWED_ORIGINS if o.strip()],
     supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 )
 
 
@@ -448,9 +450,13 @@ def predict():
     """Quick prediction with consent validation and audit logging."""
     try:
         if not Models.xgboost:
-            return jsonify({"error": "XGBoost model not loaded"}), 500
+            Models.load_all()
+            if not Models.xgboost:
+                return jsonify({"error": "XGBoost model not loaded"}), 500
 
-        data = request.get_json()
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"error": "No JSON body received"}), 400
         patient = data.get("patientData", data)
         raw_input = data.get("input", [])
         consent = data.get("consent", True)
@@ -958,9 +964,13 @@ def predict_full():
     """Combined prediction + explanation in a single call for speed."""
     try:
         if not Models.xgboost:
-            return jsonify({"error": "XGBoost model not loaded"}), 500
+            Models.load_all()  # Retry loading if not yet loaded
+            if not Models.xgboost:
+                return jsonify({"error": "XGBoost model not loaded"}), 500
 
-        data = request.get_json()
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"error": "No JSON body received"}), 400
         patient = data.get("patientData", data)
         raw_input = data.get("input", [])
         consent = data.get("consent", True)
@@ -1071,10 +1081,12 @@ def audit_cleanup():
 
 
 # =============================================================================
-# MAIN
+# STARTUP — runs for BOTH gunicorn and `python app.py`
 # =============================================================================
 
-if __name__ == "__main__":
+def _startup():
+    """Load models and pre-warm SHAP explainer.
+    Called at module level so gunicorn workers also run it."""
     print("\n" + "=" * 60)
     print("  CARDIOSHIELD AI - Cardiovascular Disease Prediction")
     print("  Trained on 70,000 patient records (cardio_train.csv)")
@@ -1086,8 +1098,11 @@ if __name__ == "__main__":
     # Pre-warm SHAP explainer so first request is fast
     if Models.xgboost:
         from explainability_engine import get_or_create_explainer
-        get_or_create_explainer(Models.xgboost, Models.scaler)
-        print("[SHAP] Explainer pre-warmed at startup")
+        try:
+            get_or_create_explainer(Models.xgboost, Models.scaler)
+            print("[SHAP] Explainer pre-warmed at startup")
+        except Exception as e:
+            print(f"[SHAP] Warning: Could not pre-warm explainer: {e}")
 
     print("\n[Endpoints]")
     endpoints = [
@@ -1102,4 +1117,14 @@ if __name__ == "__main__":
     print(f"\n[Server] http://localhost:{os.environ.get('PORT', 5001)}")
     print("=" * 60 + "\n")
 
+
+# Run startup at import time (works with gunicorn, Render, etc.)
+_startup()
+
+
+# =============================================================================
+# MAIN (local dev only)
+# =============================================================================
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5001)), debug=False, use_reloader=False)
