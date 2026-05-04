@@ -9,6 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("EventUser");
     sessionStorage.removeItem("EventUser");
     setUser("");
     setIsLogin(false);

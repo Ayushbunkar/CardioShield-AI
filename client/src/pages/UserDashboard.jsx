@@ -120,7 +120,10 @@ const UserDashboard = () => {
                 setUser(null);
                 setIsLogin(false);
                 setIsAdmin(false);
-                try { sessionStorage.removeItem("EventUser"); } catch (e) {}
+                try {
+                  localStorage.removeItem("EventUser");
+                  sessionStorage.removeItem("EventUser");
+                } catch (e) {}
                 navigate("/login");
               }}
               className="mt-auto w-full py-2 rounded-lg bg-white text-purple-700 font-semibold"

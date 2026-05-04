@@ -12,6 +12,7 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import mongoose from "mongoose";
 
 import connectDB from "./src/config/db.js";
 import cloudinary from "./src/config/cloudinary.js";
@@ -75,6 +76,18 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+app.use((req, res, next) => {
+  if (req.path === "/" || req.path.startsWith("/ai")) {
+    return next();
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: "Database unavailable" });
+  }
+
+  return next();
+});
+
 // =============================================================================
 // ROUTES
 // =============================================================================
@@ -98,18 +111,27 @@ app.use((err, req, res, next) => {
 // START
 // =============================================================================
 
+const connectDBWithRetry = async (delayMs = 10000) => {
+  const result = await connectDB();
+  if (result.ok) {
+    return;
+  }
+
+  if (result.reason === "missing-uri") {
+    console.warn("[DB] Skipping retries because MONGO_URI is missing.");
+    return;
+  }
+
+  console.warn(`[DB] Retry in ${delayMs / 1000}s`);
+  setTimeout(() => connectDBWithRetry(delayMs), delayMs);
+};
+
 app.listen(PORT, async () => {
   console.log(`\n[Server] http://localhost:${PORT}`);
   console.log(`[AI Backend] ${AI_BACKEND}`);
   console.log(`[Environment] ${IS_PROD ? "production" : "development"}`);
-  
-  try {
-    await connectDB();
-    console.log("[DB] Connected");
-  } catch (err) {
-    console.error("[DB Error]", err.message);
-    process.exit(1);
-  }
+
+  connectDBWithRetry();
 
   try {
     await cloudinary.api.resources({ max_results: 1 });

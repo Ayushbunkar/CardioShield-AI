@@ -3,9 +3,15 @@ import React, { useContext, useEffect, useState } from "react";
 const AuthContext = React.createContext();
 
 export const AuthProvider = (props) => {
-  const [user, setUser] = useState(
-    JSON.parse(sessionStorage.getItem("EventUser")) || ""
-  );
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("EventUser") || sessionStorage.getItem("EventUser");
+      return stored ? JSON.parse(stored) : "";
+    } catch (e) {
+      console.warn("Could not read user from storage", e);
+      return "";
+    }
+  });
   const [isLogin, setIsLogin] = useState(!!user);
   const [isAdmin, setIsAdmin] = useState(user?.role === "Admin");
 
@@ -14,15 +20,17 @@ export const AuthProvider = (props) => {
     setIsAdmin(user?.role === "Admin");
   }, [user]);
 
-  // Persist user to sessionStorage so state survives page refresh
+  // Persist user across browser restarts until explicit logout
   useEffect(() => {
     if (user) {
       try {
-        sessionStorage.setItem("EventUser", JSON.stringify(user));
+        localStorage.setItem("EventUser", JSON.stringify(user));
+        sessionStorage.removeItem("EventUser");
       } catch (e) {
-        console.warn("Could not persist user to sessionStorage", e);
+        console.warn("Could not persist user to localStorage", e);
       }
     } else {
+      localStorage.removeItem("EventUser");
       sessionStorage.removeItem("EventUser");
     }
   }, [user]);

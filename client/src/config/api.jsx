@@ -26,8 +26,8 @@ api.interceptors.response.use(
   (error) => {
     if (!error.response) {
       // Network error or CORS block — no response from server
-      console.error("[API] Network error — server may be starting up or CORS not configured:", error.message);
-      error.message = "Server is starting up. Please wait 30s and try again.";
+      console.error("[API] Network error — backend not reachable:", error.message);
+      error.message = "Backend not reachable. Start the API server on http://localhost:4500 and try again.";
     }
     return Promise.reject(error);
   }

@@ -8,14 +8,15 @@ const connectDB = async () => {
       "  → Local: add MONGO_URI=mongodb+srv://... to server/.env\n" +
       "  → Render: add MONGO_URI in Dashboard → Environment"
     );
-    process.exit(1);
+    return { ok: false, reason: "missing-uri" };
   }
   try {
     const conn = await mongoose.connect(uri);
     console.log("MongoDB Connected :", conn.connection.host);
+    return { ok: true };
   } catch (error) {
     console.log("Error connecting Db : ", error);
-    process.exit(1);
+    return { ok: false, reason: "connect-failed" };
   }
 };
 

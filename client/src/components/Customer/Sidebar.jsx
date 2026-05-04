@@ -19,6 +19,7 @@ const Sidebar = ({ active, setActive }) => {
   const handleLogout = async () => {
     const res = await api.get("/auth/logout");
     setUser("");
+    localStorage.removeItem("EventUser");
     sessionStorage.removeItem("EventUser");
     setIsLogin(false);
     setIsAdmin(false);

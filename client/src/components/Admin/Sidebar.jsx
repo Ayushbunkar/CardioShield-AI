@@ -43,6 +43,7 @@ const Sidebar = ({ active, setActive }) => {
     setUser("");
     setIsLogin(false);
     setIsAdmin(false);
+    localStorage.removeItem("EventUser");
     sessionStorage.removeItem("EventUser");
     navigate("/login");
   };
