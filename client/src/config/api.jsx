@@ -10,12 +10,20 @@ const ensureHttps = (url) => {
   return `https://${url}`;
 };
 
+const LOCAL_API_URL = "http://localhost:4500";
+const ENV_API_URL = ensureHttps(import.meta.env.VITE_SERVER_URL);
+const API_BASE_URL = ENV_API_URL || LOCAL_API_URL;
+
+if (import.meta.env.PROD && !ENV_API_URL) {
+  console.warn("[API] VITE_SERVER_URL is not set in production; using localhost fallback.");
+}
+
 /**
  * Axios instance for the Express backend (auth, users, admin, assessments).
- * Uses VITE_SERVER_URL env var in production; defaults to localhost:4500 in dev.
+ * Uses VITE_SERVER_URL in production; falls back to localhost in dev.
  */
 const api = axios.create({
-  baseURL: ensureHttps(import.meta.env.VITE_SERVER_URL) || "http://localhost:4500",
+  baseURL: API_BASE_URL,
   withCredentials: true,
   timeout: 60000,
 });
@@ -27,7 +35,11 @@ api.interceptors.response.use(
     if (!error.response) {
       // Network error or CORS block — no response from server
       console.error("[API] Network error — backend not reachable:", error.message);
-      error.message = "Backend not reachable. Start the API server on http://localhost:4500 and try again.";
+      if (ENV_API_URL) {
+        error.message = `Backend not reachable. Check ${ENV_API_URL} and CORS settings.`;
+      } else {
+        error.message = `Backend not reachable. Set VITE_SERVER_URL or start the API server on ${LOCAL_API_URL}.`;
+      }
     }
     return Promise.reject(error);
   }
