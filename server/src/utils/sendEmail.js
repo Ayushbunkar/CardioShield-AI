@@ -1,28 +1,40 @@
 import nodemailer from "nodemailer";
 
-const sendEmail = async (to, subject, mailBody) => {
+const sendEmail = async (to, subject, mailBody, fromOverride = null) => {
   try {
-    console.log(to, subject, mailBody);
+    const smtpUser = process.env.SMTP_USER || process.env.GMAIL_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.GMAIL_PASSCODE;
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = Number(process.env.SMTP_PORT || 587);
+    const mailFrom = fromOverride || process.env.MAIL_FROM || smtpUser;
 
-    const bullet = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASSCODE,
-      },
-    });
+    if (!smtpUser || !smtpPass) {
+      console.warn("Email not sent: SMTP credentials missing.");
+      return false;
+    }
 
-    console.log("bullet Trayr Ho gya");
+    const transportConfig = smtpHost
+      ? {
+          host: smtpHost,
+          port: smtpPort,
+          secure: smtpPort === 465,
+          auth: { user: smtpUser, pass: smtpPass },
+        }
+      : {
+          service: "gmail",
+          auth: { user: smtpUser, pass: smtpPass },
+        };
+
+    const transporter = nodemailer.createTransport(transportConfig);
 
     const mailOptions = {
-      from: process.env.GMAIL_USER,
+      from: mailFrom,
       to,
       subject,
       html: mailBody,
     };
-    console.log("Saman load Ho gya");
 
-    const result = await bullet.sendMail(mailOptions);
+    const result = await transporter.sendMail(mailOptions);
     console.log("Email Sent Successfully", result.messageId);
     return true;
   } catch (error) {

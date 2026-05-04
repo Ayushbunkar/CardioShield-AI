@@ -1,20 +1,10 @@
 import { useState, useCallback } from 'react';
+import api from '../config/api';
 
 /**
- * Overpass API endpoint (free, no API key required)
- * Uses OpenStreetMap data
+ * Overpass API requests are proxied via the backend to avoid browser CORS issues.
  */
-const OVERPASS_API_URL = 'https://overpass-api.de/api/interpreter';
 
-/**
- * Healthcare amenity types for different risk levels
- * These map to OpenStreetMap amenity tags
- */
-export const HEALTHCARE_TYPES = {
-  HIGH_RISK: ['hospital', 'clinic', 'doctors'],
-  MEDIUM_RISK: ['hospital', 'clinic', 'doctors', 'pharmacy'],
-  LOW_RISK: []
-};
 
 /**
  * Custom hook for fetching nearby healthcare facilities using OpenStreetMap Overpass API
@@ -68,36 +58,6 @@ const useNearbyPlaces = () => {
     }
   };
 
-  /**
-   * Build Overpass QL query for healthcare facilities
-   * @param {number} lat - Center latitude
-   * @param {number} lng - Center longitude
-   * @param {number} radius - Search radius in meters
-   * @param {string} riskLevel - 'HIGH', 'MEDIUM', or 'LOW'
-   */
-  const buildOverpassQuery = (lat, lng, radius, riskLevel) => {
-    const types = HEALTHCARE_TYPES[`${riskLevel}_RISK`] || HEALTHCARE_TYPES.MEDIUM_RISK;
-    
-    // Build query for multiple amenity types
-    const amenityFilters = types.map(type => `node["amenity"="${type}"](around:${radius},${lat},${lng});`).join('\n');
-    const wayFilters = types.map(type => `way["amenity"="${type}"](around:${radius},${lat},${lng});`).join('\n');
-    
-    // Also search for healthcare-specific tags
-    const healthcareQuery = `
-      node["healthcare"](around:${radius},${lat},${lng});
-      way["healthcare"](around:${radius},${lat},${lng});
-    `;
-
-    return `
-      [out:json][timeout:25];
-      (
-        ${amenityFilters}
-        ${wayFilters}
-        ${healthcareQuery}
-      );
-      out body center;
-    `;
-  };
 
   /**
    * Reverse geocode coordinates using Nominatim (free, no API key)
@@ -168,21 +128,12 @@ const useNearbyPlaces = () => {
     setError(null);
 
     try {
-      const query = buildOverpassQuery(location.lat, location.lng, radius, riskLevel);
-      
-      const response = await fetch(OVERPASS_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `data=${encodeURIComponent(query)}`
+      const { data } = await api.post('/public/nearby-places', {
+        lat: location.lat,
+        lng: location.lng,
+        radius,
+        riskLevel,
       });
-
-      if (!response.ok) {
-        throw new Error(`Overpass API error: ${response.status}`);
-      }
-
-      const data = await response.json();
 
       // Process results
       const processedPlaces = data.elements

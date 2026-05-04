@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { FaHeart, FaLinkedin, FaTwitter, FaGithub, FaEnvelope, FaShieldAlt, FaLock } from 'react-icons/fa';
+import { FaHeart, FaLinkedin, FaGithub, FaEnvelope, FaShieldAlt, FaLock } from 'react-icons/fa';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -67,8 +67,8 @@ const Footer = () => {
   return (
     <footer ref={footerRef} className="relative bg-[#4A3B5C] text-white overflow-hidden">
       {/* Animated Top Border */}
-      <div 
-        ref={borderRef} 
+      <div
+        ref={borderRef}
         className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8B7FCF] via-[#E8DFF5] to-[#8B7FCF] origin-left"
       ></div>
 
@@ -82,7 +82,7 @@ const Footer = () => {
       <div className="relative max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Section */}
-          <div 
+          <div
             ref={(el) => (columnsRef.current[0] = el)}
             className="lg:col-span-2"
           >
@@ -95,7 +95,7 @@ const Footer = () => {
             <p className="text-gray-300 text-sm leading-relaxed mb-6 max-w-sm">
               AI-Powered Cardiovascular Risk Assessment Platform. Leveraging ensemble machine learning models with explainable AI for proactive heart health management.
             </p>
-            
+
             {/* Trust Badges */}
             <div className="flex gap-4 mb-6">
               <div className="flex items-center gap-2 text-xs text-gray-300">
@@ -111,11 +111,11 @@ const Footer = () => {
             {/* Social Links */}
             <div className="flex gap-3">
               {[
-                { icon: FaGithub, href: 'https://github.com' },
-                { icon: FaLinkedin, href: 'https://linkedin.com' },
-                { icon: FaTwitter, href: 'https://twitter.com' },
+                { icon: FaGithub, href: 'https://github.com/Ayushbunkar' },
+                { icon: FaLinkedin, href: 'https://www.linkedin.com/in/ayush-bunkar-56519a398/' },
+                { icon: FaEnvelope, href: 'mailto:ayushbunkar100@gmail.com' },
               ].map((social, idx) => (
-                <a 
+                <a
                   key={idx}
                   href={social.href}
                   target="_blank"
@@ -134,8 +134,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {quickLinks.map((link, idx) => (
                 <li key={idx}>
-                  <Link 
-                    to={link.to} 
+                  <Link
+                    to={link.to}
                     className="text-gray-300 hover:text-[#E8DFF5] transition-colors duration-300 text-sm flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-[#8B7FCF] rounded-full group-hover:scale-150 transition-transform duration-300"></span>
@@ -153,15 +153,15 @@ const Footer = () => {
               {features.map((link, idx) => (
                 <li key={idx}>
                   {link.to ? (
-                    <Link 
-                      to={link.to} 
+                    <Link
+                      to={link.to}
                       className="text-gray-300 hover:text-[#E8DFF5] transition-colors duration-300 text-sm flex items-center gap-2 group"
                     >
                       <span className="w-1.5 h-1.5 bg-[#8B7FCF] rounded-full group-hover:scale-150 transition-transform duration-300"></span>
                       {link.label}
                     </Link>
                   ) : (
-                    <a 
+                    <a
                       href={link.href}
                       className="text-gray-300 hover:text-[#E8DFF5] transition-colors duration-300 text-sm flex items-center gap-2 group"
                     >
@@ -180,7 +180,7 @@ const Footer = () => {
             <ul className="space-y-3 mb-6">
               {legal.map((link, idx) => (
                 <li key={idx}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-gray-300 hover:text-[#E8DFF5] transition-colors duration-300 text-sm flex items-center gap-2 group"
                   >
@@ -194,8 +194,8 @@ const Footer = () => {
             {/* Email */}
             <div className="flex items-center gap-2 text-sm text-gray-300">
               <FaEnvelope className="text-[#8B7FCF]" />
-              <a href="mailto:CardioShieldAi@gmail.com" className="hover:text-[#E8DFF5] transition-colors duration-300">
-                CardioShieldAi@gmail.com
+              <a href="mailto:ayushbunkar100@gmail.com" className="hover:text-[#E8DFF5] transition-colors duration-300">
+                ayushbunkar100@gmail.com
               </a>
             </div>
           </div>

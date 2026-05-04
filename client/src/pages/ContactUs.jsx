@@ -138,6 +138,31 @@ const ContactUs = () => {
                 <p className="text-[#6B5B7C] text-sm">Your data is protected with enterprise-grade security</p>
               </div>
             </div>
+
+            {/* Contact Methods */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-[#4A3B5C] flex items-center gap-2">
+                <Mail className="w-5 h-5 text-[#8B7FCF]" />
+                Contact Directly
+              </h3>
+
+              <a
+                ref={(el) => (cardsRef.current[0] = el)}
+                href="mailto:ayushbunkar100@gmail.com"
+                className="group flex items-center justify-between gap-3 p-4 bg-white border border-[#E8DFF5] rounded-2xl shadow-sm hover:shadow-md transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#E8DFF5] flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-[#8B7FCF]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[#4A3B5C]">Email</p>
+                    <p className="text-xs text-[#6B5B7C]">ayushbunkar100@gmail.com</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[#8B7FCF] group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </div>
           </motion.div>
 
           {/* Right Side - Form */}
@@ -163,6 +188,7 @@ const ContactUs = () => {
                   </div>
                   <h3 className="text-2xl font-bold text-[#4A3B5C] mb-2">Message Sent!</h3>
                   <p className="text-[#6B5B7C]">We'll get back to you within 24 hours.</p>
+                  <p className="text-[#6B5B7C] text-sm mt-2">Message emailed to Ayush Bunkar.</p>
                 </motion.div>
               ) : (
                 /* Form */

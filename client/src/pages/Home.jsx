@@ -7,7 +7,6 @@ import ModelPerformance from '../components/ModelPerformance'
 import Explainability from '../components/Explainability'
 import TargetUsers from '../components/TargetUsers'
 import CTA from '../components/CTA'
-import Team from '../components/Team'
 import Footer from '../components/Footer'
 
 const Home = () => {
@@ -21,7 +20,6 @@ const Home = () => {
       <Explainability />
       <TargetUsers />
       <CTA />
-      <Team />
       <Footer />
     </>
   )

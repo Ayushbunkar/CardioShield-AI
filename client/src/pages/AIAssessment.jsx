@@ -16,6 +16,7 @@ const AIAssessment = () => {
   const { isLoading, isSaving, result, predict, save, hasResult } = usePredict(isLogin);
   const [backendReady, setBackendReady] = useState(null);
   const [errors, setErrors] = useState({});
+  const [showWarmupHint, setShowWarmupHint] = useState(false);
 
   const [formData, setFormData] = useState({
     age: 50, gender: 2, height: 170, weight: 70,
@@ -28,6 +29,16 @@ const AIAssessment = () => {
       .then(h => setBackendReady(h.status === 'healthy'))
       .catch(() => setBackendReady(false));
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setShowWarmupHint(false);
+      return;
+    }
+
+    const timer = setTimeout(() => setShowWarmupHint(true), 3000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const bmi = useMemo(() => {
     const h = formData.height / 100;
@@ -214,6 +225,17 @@ const AIAssessment = () => {
               )}
             </motion.button>
           </div>
+
+          {isLoading && (
+            <div className="mt-2 flex items-center gap-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>
+                {showWarmupHint
+                  ? "Waking the AI server... first request can take up to 60s on free tier."
+                  : "Running prediction..."}
+              </span>
+            </div>
+          )}
         </form>
 
         {/* Results Section - Below Form */}
