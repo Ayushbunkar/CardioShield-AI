@@ -89,6 +89,7 @@ export const getUserStats = async (req, res, next) => {
 
     const stats = await RiskAssessment.aggregate([
       { $match: { user: userId } },
+      { $sort: { createdAt: 1 } }, // Ensure order for $last
       {
         $group: {
           _id: null,

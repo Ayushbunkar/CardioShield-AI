@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { predictRisk, getExplanation, saveAssessment } from '../services/cardioApi';
+import { predictFull, saveAssessment } from '../services/cardioApi';
 import toast from 'react-hot-toast';
 
 /**
@@ -79,17 +79,10 @@ const usePredict = (isLoggedIn = false) => {
         return { success: false, errors: validation.errors };
       }
 
-      // Call prediction API
-      const predResult = await predictRisk(formData);
+      // Call prediction API (Combined predict + explain for speed)
+      const { result: predResult, explanation: explainResult } = await predictFull(formData);
       setResult(predResult);
-
-      // Get explanation for explainability
-      try {
-        const explainResult = await getExplanation(formData);
-        setExplanation(explainResult);
-      } catch (explainError) {
-        console.warn('Failed to get explanation:', explainError);
-      }
+      setExplanation(explainResult);
 
       toast.success(`Assessment complete: ${predResult.risk_level} Risk`);
       

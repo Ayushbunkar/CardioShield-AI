@@ -23,6 +23,7 @@ import json
 import traceback
 from datetime import datetime
 from typing import Dict, List, Any, Optional
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pandas as pd
@@ -95,20 +96,29 @@ DEFAULT_IMPORTANCE = {
 # =============================================================================
 
 
+app = Flask(__name__)
+
+# Thread pool for asynchronous audit logging
+log_executor = ThreadPoolExecutor(max_workers=4)
+
+def run_async_log(func, *args, **kwargs):
+    """Run a logging function in the background."""
+    try:
+        log_executor.submit(func, *args, **kwargs)
+    except Exception as e:
+        print(f"[Async Log Error] {e}")
+
 class NumpyJSONProvider(DefaultJSONProvider):
     """Custom JSON provider to handle numpy types."""
     def default(self, obj):
-        if isinstance(obj, np.integer):
+        if isinstance(obj, (np.integer, np.int64, np.int32)):
             return int(obj)
-        if isinstance(obj, np.floating):
+        if isinstance(obj, (np.floating, np.float64, np.float32)):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return super().default(obj)
 
-
-app = Flask(__name__)
-app.json_provider_class = NumpyJSONProvider
 app.json = NumpyJSONProvider(app)
 
 ALLOWED_ORIGINS = os.environ.get(
@@ -215,7 +225,46 @@ def calculate_bmi(height: float, weight: float) -> float:
 
 
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add engineered features matching training pipeline."""
+    """Add engineered features matching training pipeline. Optimized for single rows."""
+    # If it's a single row, use faster dictionary/numpy logic instead of full Pandas
+    if len(df) == 1:
+        row = df.iloc[0].to_dict()
+        age_years = row["age"] / 365.25
+        bmi = row["weight"] / ((row["height"] / 100) ** 2) if row["height"] > 0 else 0
+        ap_hi = row["ap_hi"]
+        ap_lo = row["ap_lo"]
+        chol = row["cholesterol"]
+        gluc = row["gluc"]
+        smoke = row["smoke"]
+        alco = row["alco"]
+        active = row["active"]
+
+        engineered = {
+            "age_years": age_years,
+            "bmi": bmi,
+            "pulse_pressure": ap_hi - ap_lo,
+            "map": (ap_hi + 2 * ap_lo) / 3,
+            "age_bp_interaction": age_years * ap_hi / 100,
+            "age_chol_interaction": age_years * chol,
+            "bmi_bp_interaction": bmi * ap_hi / 100,
+            "bmi_chol_interaction": bmi * chol,
+            "metabolic_risk": chol + gluc,
+            "lifestyle_risk": smoke + alco - active,
+            "overall_risk": ((chol - 1) * 2 + (gluc - 1) * 1.5 + smoke * 1.5 + alco - active * 1.5),
+            "bmi_category": (3 if bmi >= 30 else 2 if bmi >= 25 else 1 if bmi >= 18.5 else 0),
+            "bp_category": (3 if ap_hi >= 140 else 2 if ap_hi >= 130 else 1 if ap_hi >= 120 else 0),
+            "age_category": (4 if age_years >= 60 else 3 if age_years >= 55 else 2 if age_years >= 50 else 1 if age_years >= 40 else 0),
+            "ap_hi_sq": ap_hi ** 2 / 10000,
+            "bmi_sq": bmi ** 2 / 1000,
+            "age_years_sq": age_years ** 2 / 1000
+        }
+        
+        # Merge original features (excluding 'age') with engineered ones
+        final_row = {k: v for k, v in row.items() if k != "age"}
+        final_row.update(engineered)
+        return pd.DataFrame([final_row])
+
+    # Fallback for batch processing
     df = df.copy()
     df["age_years"] = df["age"] / 365.25
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
@@ -481,8 +530,9 @@ def predict():
         # Disclaimers & escalation
         disclaimers = get_disclaimers(prob_disease)
 
-        # Audit log
-        log_prediction(
+        # Audit log (Async)
+        run_async_log(
+            log_prediction,
             patient if not raw_input else {"input_array": True},
             prob_disease, risk_level, "XGBoost", consent,
         )
@@ -616,8 +666,8 @@ def assess():
         response["urgency"] = disclaimers["urgency"]
         response["model_version"] = MODEL_VERSION
 
-        # Audit log
-        log_prediction(patient, avg_prob, risk_level, "Ensemble", consent)
+        # Audit log (Async)
+        run_async_log(log_prediction, patient, avg_prob, risk_level, "Ensemble", consent)
 
         return jsonify(response)
 
@@ -701,7 +751,7 @@ def fairness():
         result = precompute_fairness()
         if "error" in result:
             return _static_fairness_fallback()
-        log_fairness_audit(result)
+        run_async_log(log_fairness_audit, result)
         return jsonify(result)
     except Exception as e:
         traceback.print_exc()
@@ -818,8 +868,8 @@ def explain():
         importance = get_feature_importance(Models.xgboost) if Models.xgboost else DEFAULT_IMPORTANCE
         feature_impacts = _build_feature_impacts(patient, importance)
 
-        # Audit log
-        log_explanation_request(patient)
+        # Audit log (Async)
+        run_async_log(log_explanation_request, patient)
 
         return jsonify({
             "feature_importance": importance,
@@ -1008,12 +1058,13 @@ def predict_full():
         # ── Feature impacts with solutions ──
         feature_impacts = _build_feature_impacts(patient, importance)
 
-        # ── Audit ──
-        log_prediction(
+        # Audit (Async)
+        run_async_log(
+            log_prediction,
             patient if not raw_input else {"input_array": True},
             prob_disease, risk_level, "XGBoost", consent,
         )
-        log_explanation_request(patient)
+        run_async_log(log_explanation_request, patient)
 
         return jsonify({
             # prediction data
@@ -1095,14 +1146,22 @@ def _startup():
 
     Models.load_all()
 
-    # Pre-warm SHAP explainer so first request is fast
+    # Pre-warm SHAP and Fairness engines
     if Models.xgboost:
-        from explainability_engine import get_or_create_explainer
+        from explainability_engine import get_or_create_explainer, compute_global_shap_summary
+        from fairness_engine import precompute_fairness
         try:
             get_or_create_explainer(Models.xgboost, Models.scaler)
-            print("[SHAP] Explainer pre-warmed at startup")
+            print("[SHAP] Explainer pre-warmed")
+            
+            # These are slow as they load 70k records; pre-warm them
+            compute_global_shap_summary()
+            print("[SHAP] Global summary pre-computed")
+            
+            precompute_fairness()
+            print("[Fairness] Audit pre-computed")
         except Exception as e:
-            print(f"[SHAP] Warning: Could not pre-warm explainer: {e}")
+            print(f"[Startup] Warning: Could not pre-warm AI engines: {e}")
 
     print("\n[Endpoints]")
     endpoints = [
