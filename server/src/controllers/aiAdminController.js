@@ -19,13 +19,15 @@ export const getAllUsers = async (req, res, next) => {
     if (status && status !== "all") filter.status = status;
     if (role && role !== "all") filter.role = role;
 
-    const users = await User.find(filter)
-      .select("-password")
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
-
-    const total = await User.countDocuments(filter);
+    const [users, total] = await Promise.all([
+      User.find(filter)
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .limit(parseInt(limit))
+        .skip((parseInt(page) - 1) * parseInt(limit))
+        .lean(),
+      User.countDocuments(filter)
+    ]);
 
     res.status(200).json({
       data: users,
@@ -164,13 +166,15 @@ export const getAllAssessments = async (req, res, next) => {
     const filter = {};
     if (riskLevel) filter.riskLevel = riskLevel;
 
-    const assessments = await RiskAssessment.find(filter)
-      .populate("user", "fullName email phone photo")
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
-
-    const total = await RiskAssessment.countDocuments(filter);
+    const [assessments, total] = await Promise.all([
+      RiskAssessment.find(filter)
+        .populate("user", "fullName email phone photo")
+        .sort({ createdAt: -1 })
+        .limit(parseInt(limit))
+        .skip((parseInt(page) - 1) * parseInt(limit))
+        .lean(),
+      RiskAssessment.countDocuments(filter)
+    ]);
 
     res.status(200).json({
       data: assessments,
@@ -315,7 +319,7 @@ export const getUserAssessmentHistory = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select("-password").lean();
     if (!user) {
       const error = new Error("User not found");
       error.statusCode = 404;
@@ -323,7 +327,8 @@ export const getUserAssessmentHistory = async (req, res, next) => {
     }
 
     const assessments = await RiskAssessment.find({ user: userId })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({ data: { user, assessments } });
   } catch (error) {
@@ -377,7 +382,8 @@ export const getAdminMessages = async (req, res, next) => {
       .populate("fromAdmin", "fullName")
       .populate("toUser", "fullName email")
       .populate("assessment", "riskLevel riskScore")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({ data: messages });
   } catch (error) {

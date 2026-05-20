@@ -16,7 +16,8 @@ services:
     plan: free
     rootDir: ai-backend
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 300 --workers 1 --preload
+    # Use an env var `GUNICORN_WORKERS` to configure worker count at deploy time.
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 300 --workers ${GUNICORN_WORKERS:-1} --preload
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
@@ -38,16 +39,19 @@ services:
     region: oregon
     plan: free
     rootDir: server
-    buildCommand: npm install
+    # Use `npm ci` for reproducible installs and faster CI caching (requires lockfile).
+    buildCommand: npm ci
     startCommand: node index.js
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        value: mongodb+srv://ayushbunkar100:Ayush_Bunkar_2005@ayushkadatabase.uogh5vj.mongodb.net/CardioShieldAi?retryWrites=true&w=majority&appName=CardioShieldAI
+        sync: false
+        value: "<SET_MONGO_URI_IN_DASHBOARD>"
       - key: JWT_SECRET
-        value: cardioshield_jwt_secret_key_2024
+        sync: false
+        value: "<SET_JWT_SECRET_IN_DASHBOARD>"
       # CRITICAL: Must be the internal Render URL of the Flask service
       - key: AI_BACKEND_URL
         value: https://navkalpana-ricr-nk-0040-ai-backend.onrender.com
@@ -55,11 +59,14 @@ services:
       - key: CORS_ORIGINS
         value: https://navkalpana-ricr-nk-0040-h64h.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
-        value: dx7ztr9i3
+        sync: false
+        value: "<SET_CLOUDINARY_CLOUD_NAME>"
       - key: CLOUDINARY_API_KEY
-        value: "313846931262354"
+        sync: false
+        value: "<SET_CLOUDINARY_API_KEY>"
       - key: CLOUDINARY_API_SECRET
-        value: f1TAhJDmQ9FWAu9HTnWacMy9Rn0
+        sync: false
+        value: "<SET_CLOUDINARY_API_SECRET>"
 
   # ─────────────────────────────────────────────
   # 3. React Frontend (Static Site)
@@ -73,7 +80,8 @@ services:
     region: oregon
     plan: free
     rootDir: client
-    buildCommand: npm install && npm run build
+    # Use `npm ci` for reproducible installs and to leverage CI caches.
+    buildCommand: npm ci && npm run build
     staticPublishPath: dist
     routes:
       - type: rewrite

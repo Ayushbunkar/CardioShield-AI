@@ -100,6 +100,7 @@ app = Flask(__name__)
 
 # Thread pool for asynchronous audit logging
 log_executor = ThreadPoolExecutor(max_workers=4)
+predict_executor = ThreadPoolExecutor(max_workers=10)
 
 def run_async_log(func, *args, **kwargs):
     """Run a logging function in the background."""
@@ -161,6 +162,9 @@ class ModelManager:
         self.scaler = None
         self.feature_names = None
         self._initialized = True
+        
+        # Warm up models on a separate thread to not block startup
+        ThreadPoolExecutor(max_workers=1).submit(self.load_all)
 
     def _load_model(self, filename: str, name: str) -> Any:
         path = os.path.join(MODELS_DIR, filename)
@@ -224,13 +228,13 @@ def calculate_bmi(height: float, weight: float) -> float:
     return weight / ((height / 100) ** 2)
 
 
-def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
+def add_engineered_features(data: Any) -> pd.DataFrame:
     """Add engineered features matching training pipeline. Optimized for single rows."""
-    # If it's a single row, use faster dictionary/numpy logic instead of full Pandas
-    if len(df) == 1:
-        row = df.iloc[0].to_dict()
+    # If it's a single dict, use faster dictionary logic instead of full Pandas
+    if isinstance(data, dict):
+        row = data
         age_years = row["age"] / 365.25
-        bmi = row["weight"] / ((row["height"] / 100) ** 2) if row["height"] > 0 else 0
+        bmi = row["weight"] / ((row["height"] / 100) ** 2) if row.get("height", 0) > 0 else 0
         ap_hi = row["ap_hi"]
         ap_lo = row["ap_lo"]
         chol = row["cholesterol"]
@@ -265,7 +269,7 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame([final_row])
 
     # Fallback for batch processing
-    df = df.copy()
+    df = data.copy() if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
     df["age_years"] = df["age"] / 365.25
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
     df["pulse_pressure"] = df["ap_hi"] - df["ap_lo"]
@@ -313,7 +317,7 @@ def prepare_input(patient: Dict[str, Any]) -> pd.DataFrame:
         "alco": int(patient.get("alco", 0)),
         "active": int(patient.get("active", 1)),
     }
-    df = add_engineered_features(pd.DataFrame([features]))
+    df = add_engineered_features(features)
     if Models.feature_names:
         df = df[Models.feature_names]
     return df
@@ -322,7 +326,8 @@ def prepare_input(patient: Dict[str, Any]) -> pd.DataFrame:
 def prepare_input_array(raw_input: List) -> pd.DataFrame:
     """Convert raw input array to model DataFrame."""
     values = [int(raw_input[0]) * 365] + [float(v) for v in raw_input[1:]]
-    df = add_engineered_features(pd.DataFrame([dict(zip(BASE_FEATURE_NAMES, values))]))
+    features = dict(zip(BASE_FEATURE_NAMES, values))
+    df = add_engineered_features(features)
     if Models.feature_names:
         df = df[Models.feature_names]
     return df
@@ -347,111 +352,82 @@ def get_feature_importance(model) -> Dict[str, float]:
         return {name: round(1.0 / len(display_names), 3) for name in display_names}
 
 
-def get_recommendations(patient: Dict, risk_level: str) -> List[Dict]:
-    """Generate health recommendations based on patient data and risk level."""
+def get_patient_profile(patient: Dict) -> Dict:
+    """Precompute common metrics for a patient to avoid redundant calculations."""
+    height = float(patient.get("height", 170))
+    weight = float(patient.get("weight", 70))
+    age = int(patient.get("age", 50))
+    ap_hi = int(patient.get("ap_hi", 120))
+    ap_lo = int(patient.get("ap_lo", 80))
+    chol = int(patient.get("cholesterol", 1))
+    gluc = int(patient.get("gluc", 1))
+    
+    bmi = weight / ((height / 100) ** 2) if height > 0 else 0.0
+    
+    return {
+        "height": height,
+        "weight": weight,
+        "age": age,
+        "ap_hi": ap_hi,
+        "ap_lo": ap_lo,
+        "cholesterol": chol,
+        "gluc": gluc,
+        "bmi": bmi,
+        "smoke": int(patient.get("smoke", 0)),
+        "alco": int(patient.get("alco", 0)),
+        "active": int(patient.get("active", 1)),
+        "family_history": int(patient.get("family_history", 0)),
+        "gender": int(patient.get("gender", 2))
+    }
+
+def get_recommendations(profile: Dict, risk_level: str) -> List[Dict]:
+    """Generate health recommendations based on precomputed profile."""
     recs = []
-
     if risk_level in ("High", "Very High"):
-        recs.append({
-            "priority": "critical", "category": "Medical",
-            "text": "Schedule an appointment with a cardiologist immediately",
-        })
+        recs.append({"priority": "critical", "category": "Medical", "text": "Schedule an appointment with a cardiologist immediately"})
 
-    ap_hi, ap_lo = patient.get("ap_hi", 120), patient.get("ap_lo", 80)
-    if ap_hi > 140:
-        recs.append({"priority": "high", "category": "Blood Pressure",
-                      "text": f"Systolic BP ({ap_hi} mmHg) elevated. Monitor daily and reduce salt intake."})
-    if ap_lo > 90:
-        recs.append({"priority": "high", "category": "Blood Pressure",
-                      "text": f"Diastolic BP ({ap_lo} mmHg) elevated. Consult your doctor."})
+    if profile["ap_hi"] > 140:
+        recs.append({"priority": "high", "category": "Blood Pressure", "text": f"Systolic BP ({profile['ap_hi']} mmHg) elevated. Monitor daily."})
+    if profile["ap_lo"] > 90:
+        recs.append({"priority": "high", "category": "Blood Pressure", "text": f"Diastolic BP ({profile['ap_lo']} mmHg) elevated."})
 
-    chol = patient.get("cholesterol", 1)
-    if chol >= 3:
-        recs.append({"priority": "high", "category": "Cholesterol",
-                      "text": "Cholesterol is well above normal. Consider dietary changes and medication."})
-    elif chol == 2:
-        recs.append({"priority": "medium", "category": "Cholesterol",
-                      "text": "Cholesterol is above normal. Monitor and adjust diet."})
+    if profile["cholesterol"] >= 3:
+        recs.append({"priority": "high", "category": "Cholesterol", "text": "Cholesterol is well above normal."})
+    elif profile["cholesterol"] == 2:
+        recs.append({"priority": "medium", "category": "Cholesterol", "text": "Cholesterol is above normal."})
 
-    gluc = patient.get("gluc", 1)
-    if gluc >= 3:
-        recs.append({"priority": "high", "category": "Glucose",
-                      "text": "Glucose level is well above normal. Get tested for diabetes."})
-    elif gluc == 2:
-        recs.append({"priority": "medium", "category": "Glucose",
-                      "text": "Glucose is above normal. Monitor blood sugar levels."})
+    if profile["gluc"] >= 3:
+        recs.append({"priority": "high", "category": "Glucose", "text": "Glucose level is well above normal."})
 
-    if patient.get("smoke", 0) == 1:
-        recs.append({"priority": "high", "category": "Smoking",
-                      "text": "Smoking significantly increases cardiovascular risk. Consider cessation programs."})
-    if patient.get("alco", 0) == 1:
-        recs.append({"priority": "medium", "category": "Alcohol",
-                      "text": "Alcohol consumption can affect heart health. Consider reducing intake."})
-    if patient.get("active", 1) == 0:
-        recs.append({"priority": "medium", "category": "Exercise",
-                      "text": "Physical inactivity increases risk. Aim for 150 minutes of exercise per week."})
+    if profile["smoke"] == 1:
+        recs.append({"priority": "high", "category": "Smoking", "text": "Smoking significantly increases cardiovascular risk."})
+    if profile["active"] == 0:
+        recs.append({"priority": "medium", "category": "Exercise", "text": "Physical inactivity increases risk. Aim for 150 min/week."})
 
-    bmi = calculate_bmi(patient.get("height", 170), patient.get("weight", 70))
-    if bmi > 30:
-        recs.append({"priority": "high", "category": "Weight",
-                      "text": f"BMI ({bmi:.1f}) indicates obesity. Weight management is recommended."})
-    elif bmi > 25:
-        recs.append({"priority": "medium", "category": "Weight",
-                      "text": f"BMI ({bmi:.1f}) indicates overweight. Consider a healthy diet plan."})
-
-    if patient.get("family_history", 0) == 1:
-        recs.append({"priority": "high", "category": "Family History",
-                      "text": "Family history of heart disease increases risk. Regular screening recommended."})
+    if profile["bmi"] > 30:
+        recs.append({"priority": "high", "category": "Weight", "text": f"BMI ({profile['bmi']:.1f}) indicates obesity."})
+    elif profile["bmi"] > 25:
+        recs.append({"priority": "medium", "category": "Weight", "text": f"BMI ({profile['bmi']:.1f}) indicates overweight."})
 
     if not recs:
-        recs = [
-            {"priority": "low", "category": "Diet",
-             "text": "Maintain heart-healthy diet rich in fruits and vegetables."},
-            {"priority": "low", "category": "Exercise",
-             "text": "Continue regular physical activity — at least 150 min per week."},
-            {"priority": "low", "category": "Checkup",
-             "text": "Continue regular health screenings and check-ups."},
-        ]
+        recs = [{"priority": "low", "category": "General", "text": "Maintain heart-healthy diet and regular exercise."}]
     return recs
 
-
-def get_risk_factors(patient: Dict) -> List[Dict]:
-    """Extract risk factors from patient data."""
+def get_risk_factors(profile: Dict) -> List[Dict]:
+    """Extract risk factors from precomputed profile."""
     factors = []
-    age = patient.get("age", 0)
-    if age > 55:
-        factors.append({"factor": "Age", "value": f"{age} years", "level": "High"})
-    elif age > 45:
-        factors.append({"factor": "Age", "value": f"{age} years", "level": "Moderate"})
-
-    ap_hi, ap_lo = patient.get("ap_hi", 120), patient.get("ap_lo", 80)
-    if ap_hi > 140:
-        factors.append({"factor": "Systolic BP", "value": f"{ap_hi} mmHg", "level": "High"})
-    if ap_lo > 90:
-        factors.append({"factor": "Diastolic BP", "value": f"{ap_lo} mmHg", "level": "High"})
-
-    level_labels = {2: ("Above Normal", "Moderate"), 3: ("Well Above Normal", "High")}
-    for name, key in [("Cholesterol", "cholesterol"), ("Glucose", "gluc")]:
-        val = patient.get(key, 1)
-        if val in level_labels:
-            label, level = level_labels[val]
-            factors.append({"factor": name, "value": label, "level": level})
-
-    if patient.get("smoke", 0) == 1:
+    if profile["age"] > 55:
+        factors.append({"factor": "Age", "value": f"{profile['age']} years", "level": "High"})
+    if profile["ap_hi"] > 140 or profile["ap_lo"] > 90:
+        factors.append({"factor": "Blood Pressure", "value": f"{profile['ap_hi']}/{profile['ap_lo']}", "level": "High"})
+    
+    if profile["cholesterol"] >= 2:
+        factors.append({"factor": "Cholesterol", "value": "Above Normal", "level": "Moderate"})
+    if profile["smoke"] == 1:
         factors.append({"factor": "Smoking", "value": "Yes", "level": "High"})
-    if patient.get("alco", 0) == 1:
-        factors.append({"factor": "Alcohol", "value": "Yes", "level": "Moderate"})
-    if patient.get("active", 1) == 0:
-        factors.append({"factor": "Physical Inactivity", "value": "Inactive", "level": "Moderate"})
-    if patient.get("family_history", 0) == 1:
-        factors.append({"factor": "Family History", "value": "Positive", "level": "High"})
-
-    bmi = calculate_bmi(patient.get("height", 170), patient.get("weight", 70))
-    if bmi > 30:
-        factors.append({"factor": "BMI", "value": f"{bmi:.1f} (Obese)", "level": "High"})
-    elif bmi > 25:
-        factors.append({"factor": "BMI", "value": f"{bmi:.1f} (Overweight)", "level": "Moderate"})
-
+    if profile["bmi"] > 25:
+        factors.append({"factor": "BMI", "value": f"{profile['bmi']:.1f}", "level": "Moderate" if profile["bmi"] < 30 else "High"})
+    
     return factors
 
 
@@ -506,6 +482,7 @@ def predict():
         data = request.get_json(force=True, silent=True)
         if not data:
             return jsonify({"error": "No JSON body received"}), 400
+        
         patient = data.get("patientData", data)
         raw_input = data.get("input", [])
         consent = data.get("consent", True)
@@ -518,19 +495,19 @@ def predict():
                 "consent_required": True,
             }), 403
 
-        # Prepare input
+        # Prepare profile and input
+        profile = get_patient_profile(patient)
         X = prepare_input_array(raw_input) if len(raw_input) == 11 else prepare_input(patient)
         X_scaled = scale_features(X)
 
-        pred = int(Models.xgboost.predict(X_scaled)[0])
+        # Prediction
         probs = Models.xgboost.predict_proba(X_scaled)[0]
         prob_disease = float(probs[1])
+        pred = 1 if prob_disease >= 0.5 else 0
         risk_level = get_risk_level(prob_disease)
 
-        # Disclaimers & escalation
+        # Disclaimers & audit
         disclaimers = get_disclaimers(prob_disease)
-
-        # Audit log (Async)
         run_async_log(
             log_prediction,
             patient if not raw_input else {"input_array": True},
@@ -575,26 +552,25 @@ def assess():
                 "consent_required": True,
             }), 403
 
-        height, weight = patient.get("height", 170), patient.get("weight", 70)
-        bmi = round(calculate_bmi(height, weight), 1) if height > 0 else "N/A"
-
+        profile = get_patient_profile(patient)
         chol_labels = ["", "Normal", "Above Normal", "Well Above Normal"]
+        
         response = {
             "assessment_id": f"CA-{datetime.now().strftime('%Y%m%d%H%M%S')}",
             "timestamp": datetime.now().isoformat(),
             "patient_summary": {
-                "age": patient.get("age", "N/A"),
-                "gender": "Male" if patient.get("gender", 2) == 2 else "Female",
-                "height": f"{height} cm",
-                "weight": f"{weight} kg",
-                "bmi": bmi,
-                "blood_pressure": f"{patient.get('ap_hi', 120)}/{patient.get('ap_lo', 80)} mmHg",
-                "cholesterol": chol_labels[patient.get("cholesterol", 1)],
-                "glucose": chol_labels[patient.get("gluc", 1)],
-                "smoking": "Yes" if patient.get("smoke", 0) == 1 else "No",
-                "alcohol": "Yes" if patient.get("alco", 0) == 1 else "No",
-                "active": "Yes" if patient.get("active", 1) == 1 else "No",
-                "family_history": "Yes" if patient.get("family_history", 0) == 1 else "No",
+                "age": profile["age"],
+                "gender": "Male" if profile["gender"] == 2 else "Female",
+                "height": f"{profile['height']} cm",
+                "weight": f"{profile['weight']} kg",
+                "bmi": round(profile["bmi"], 1),
+                "blood_pressure": f"{profile['ap_hi']}/{profile['ap_lo']} mmHg",
+                "cholesterol": chol_labels[profile["cholesterol"]] if profile["cholesterol"] < 4 else "N/A",
+                "glucose": chol_labels[profile["gluc"]] if profile["gluc"] < 4 else "N/A",
+                "smoking": "Yes" if profile["smoke"] == 1 else "No",
+                "alcohol": "Yes" if profile["alco"] == 1 else "No",
+                "active": "Yes" if profile["active"] == 1 else "No",
+                "family_history": "Yes" if profile["family_history"] == 1 else "No",
             },
             "predictions": {},
             "ensemble_result": {},
@@ -609,24 +585,25 @@ def assess():
         X_scaled = scale_features(X_cardio)
         all_probs, base_probs = [], []
 
+        # Parallel model execution
         model_configs = [
             (Models.xgboost, "XGBoost", "XGBoost"),
             (Models.tabnet, "TabNet", "TabNet / GradientBoosting"),
             (Models.nn, "NeuralNetwork", "Neural Network MLP"),
         ]
 
-        for model, key, name in model_configs:
-            if model:
-                result, prob = predict_with_model(model, X_scaled, name)
-                if result:
-                    response["predictions"][key] = result
-                    all_probs.append(prob)
-                    base_probs.append(prob)
+        futures = [predict_executor.submit(predict_with_model, m, X_scaled, n) for m, k, n in model_configs if m]
+        for (m, key, n), future in zip([(m, k, n) for m, k, n in model_configs if m], futures):
+            result, prob = future.result()
+            if result:
+                response["predictions"][key] = result
+                all_probs.append(prob)
+                base_probs.append(prob)
 
         if Models.xgboost:
             response["feature_importance"] = get_feature_importance(Models.xgboost)
 
-        # Weighted ensemble
+        # Weighted ensemble logic
         if Models.ensemble and len(base_probs) == 3:
             try:
                 ens_data = Models.ensemble
@@ -659,8 +636,8 @@ def assess():
             "models_used": len(response["predictions"]),
             "recommendation": "Consult cardiologist" if avg_prob > 0.5 else "Continue monitoring",
         }
-        response["risk_factors"] = get_risk_factors(patient)
-        response["recommendations"] = get_recommendations(patient, risk_level)
+        response["risk_factors"] = get_risk_factors(profile)
+        response["recommendations"] = get_recommendations(profile, risk_level)
         response["model_details"] = Models.get_status()
         response["escalation"] = disclaimers["escalation"]
         response["urgency"] = disclaimers["urgency"]
@@ -1014,13 +991,14 @@ def predict_full():
     """Combined prediction + explanation in a single call for speed."""
     try:
         if not Models.xgboost:
-            Models.load_all()  # Retry loading if not yet loaded
+            Models.load_all()
             if not Models.xgboost:
                 return jsonify({"error": "XGBoost model not loaded"}), 500
 
         data = request.get_json(force=True, silent=True)
         if not data:
             return jsonify({"error": "No JSON body received"}), 400
+        
         patient = data.get("patientData", data)
         raw_input = data.get("input", [])
         consent = data.get("consent", True)
@@ -1033,20 +1011,21 @@ def predict_full():
                 "consent_required": True,
             }), 403
 
-        # Prepare input
+        # Prepare profile and input
+        profile = get_patient_profile(patient)
         X = prepare_input_array(raw_input) if len(raw_input) == 11 else prepare_input(patient)
         feature_names = Models.feature_names or list(X.columns)
         X_scaled = scale_features(X)
 
         # ── Prediction ──
-        pred = int(Models.xgboost.predict(X_scaled)[0])
         probs = Models.xgboost.predict_proba(X_scaled)[0]
         prob_disease = float(probs[1])
+        pred = 1 if prob_disease >= 0.5 else 0
         risk_level = get_risk_level(prob_disease)
         disclaimers = get_disclaimers(prob_disease)
         importance = get_feature_importance(Models.xgboost)
 
-        # ── SHAP explanation (uses cached explainer — fast) ──
+        # ── SHAP explanation ──
         shap_result = compute_shap_explanation(
             Models.xgboost, X.values, feature_names, Models.scaler,
         )
@@ -1055,7 +1034,7 @@ def predict_full():
         contributions = shap_result.get("feature_contributions", [])
         plain = generate_plain_explanation(patient, prob_disease, contributions)
 
-        # ── Feature impacts with solutions ──
+        # ── Feature impacts ──
         feature_impacts = _build_feature_impacts(patient, importance)
 
         # Audit (Async)
@@ -1067,7 +1046,6 @@ def predict_full():
         run_async_log(log_explanation_request, patient)
 
         return jsonify({
-            # prediction data
             "prediction": pred,
             "probability": {
                 "disease": round(prob_disease, 4),
@@ -1083,7 +1061,6 @@ def predict_full():
             "escalation": disclaimers["escalation"],
             "urgency": disclaimers["urgency"],
             "model_version": MODEL_VERSION,
-            # explanation data
             "feature_impacts": feature_impacts,
             "shap": shap_result,
             "plain_explanation": plain,

@@ -48,19 +48,24 @@ export const getUserAssessments = async (req, res, next) => {
     const userId = req.user._id;
     const { limit = 10, page = 1 } = req.query;
 
-    const assessments = await RiskAssessment.find({ user: userId })
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
+    const limitParsed = parseInt(limit) || 10;
+    const pageParsed = parseInt(page) || 1;
 
-    const total = await RiskAssessment.countDocuments({ user: userId });
+    const [assessments, total] = await Promise.all([
+      RiskAssessment.find({ user: userId })
+        .sort({ createdAt: -1 })
+        .limit(limitParsed)
+        .skip((pageParsed - 1) * limitParsed)
+        .lean(),
+      RiskAssessment.countDocuments({ user: userId })
+    ]);
 
     res.status(200).json({
       data: assessments,
       pagination: {
         total,
-        page: parseInt(page),
-        pages: Math.ceil(total / parseInt(limit)),
+        page: pageParsed,
+        pages: Math.ceil(total / limitParsed),
       },
     });
   } catch (error) {
@@ -74,7 +79,8 @@ export const getLatestAssessment = async (req, res, next) => {
     const userId = req.user._id;
 
     const assessment = await RiskAssessment.findOne({ user: userId })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({ data: assessment });
   } catch (error) {
@@ -87,30 +93,37 @@ export const getUserStats = async (req, res, next) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user._id);
 
-    const stats = await RiskAssessment.aggregate([
+    const results = await RiskAssessment.aggregate([
       { $match: { user: userId } },
-      { $sort: { createdAt: 1 } }, // Ensure order for $last
       {
-        $group: {
-          _id: null,
-          totalAssessments: { $sum: 1 },
-          avgRiskScore: { $avg: "$riskScore" },
-          highRiskCount: {
-            $sum: { $cond: [{ $in: ["$riskLevel", ["High", "Very High"]] }, 1, 0] },
-          },
-          latestRiskScore: { $last: "$riskScore" },
+        $facet: {
+          stats: [
+            { $sort: { createdAt: 1 } },
+            {
+              $group: {
+                _id: null,
+                totalAssessments: { $sum: 1 },
+                avgRiskScore: { $avg: "$riskScore" },
+                highRiskCount: {
+                  $sum: { $cond: [{ $in: ["$riskLevel", ["High", "Very High"]] }, 1, 0] },
+                },
+                latestRiskScore: { $last: "$riskScore" },
+              },
+            },
+          ],
+          riskDistribution: [
+            { $group: { _id: "$riskLevel", count: { $sum: 1 } } },
+          ],
         },
       },
     ]);
 
-    const riskDistribution = await RiskAssessment.aggregate([
-      { $match: { user: userId } },
-      { $group: { _id: "$riskLevel", count: { $sum: 1 } } },
-    ]);
+    const stats = results[0].stats[0] || { totalAssessments: 0, avgRiskScore: 0, highRiskCount: 0 };
+    const riskDistribution = results[0].riskDistribution;
 
     res.status(200).json({
       data: {
-        stats: stats[0] || { totalAssessments: 0, avgRiskScore: 0, highRiskCount: 0 },
+        stats,
         riskDistribution,
       },
     });
@@ -124,12 +137,14 @@ export const getUserMessages = async (req, res, next) => {
   try {
     const userId = req.user._id;
 
-    const messages = await AdminMessage.find({ toUser: userId })
-      .populate("fromAdmin", "fullName email")
-      .populate("assessment", "riskLevel riskScore createdAt")
-      .sort({ createdAt: -1 });
-
-    const unreadCount = await AdminMessage.countDocuments({ toUser: userId, isRead: false });
+    const [messages, unreadCount] = await Promise.all([
+      AdminMessage.find({ toUser: userId })
+        .populate("fromAdmin", "fullName email")
+        .populate("assessment", "riskLevel riskScore createdAt")
+        .sort({ createdAt: -1 })
+        .lean(),
+      AdminMessage.countDocuments({ toUser: userId, isRead: false })
+    ]);
 
     res.status(200).json({ data: messages, unreadCount });
   } catch (error) {

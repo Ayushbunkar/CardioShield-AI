@@ -3,7 +3,7 @@ import sendEmail from "../utils/sendEmail.js";
 
 export const GetAllContacts = async (req, res, next) => {
   try {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find().lean();
     res.status(200).json({ message: "All Contacts Fetched", data: contacts });
   } catch (error) {
     next(error);
